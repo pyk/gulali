@@ -7,5 +7,6 @@ authors = ["Bayu Aldi Yansyah <bayualdiyansyah@gmail.com>"]
 edition = "2018"
 homepage = "https://github.com/pyk/np"
 repository = "https://github.com/pyk/np"
+readme = "README.md"
 
 [dependencies]
