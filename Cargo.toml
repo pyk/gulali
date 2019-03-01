@@ -2,9 +2,10 @@
 name = "np"
 description = "np is an easy-to-use fundamental library for scientific computing with Rust, highly inspired by NumPy."
 license = "BSD-3-Clause"
-version = "2019.3.1"
+version = "2019.3.2"
 authors = ["Bayu Aldi Yansyah <bayualdiyansyah@gmail.com>"]
 edition = "2018"
+documentation = "https://docs.rs/np/"
 homepage = "https://github.com/pyk/np"
 repository = "https://github.com/pyk/np"
 readme = "README.md"
