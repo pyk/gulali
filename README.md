@@ -3,7 +3,6 @@
 highly inspired by [NumPy].
 
 Documentation:
-- [Usage][#usage]
 - [Quickstart Tutorial][quickstart tutorial]
 - [API Reference]
 
