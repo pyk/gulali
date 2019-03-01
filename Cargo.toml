@@ -9,4 +9,3 @@ homepage = "https://github.com/pyk/np"
 repository = "https://github.com/pyk/np"
 
 [dependencies]
-num = "0.2.0"
