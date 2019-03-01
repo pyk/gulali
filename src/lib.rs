@@ -9,7 +9,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! np = "0.1.2"
+//! np = "2018.3.2"
 //! ```
 //!
 //! To get started using `np`, read the quickstart tutorial below.
@@ -51,27 +51,26 @@
 //! - [shape]: This is a list of integers indicating the
 //!   size of the vector in each dimension.
 //!   For a matrix with `n` rows and `m` columns, shape will be `[n,m]`.
-//!   The length of the shape slice is therefore the number of
+//!   The length of the shape is therefore the number of
 //!   dimensions, `dim()`.
 //! - [size]: the total number of elements of the vector.
 //!   This is equal to the product of the elements of shape.
 //!
 //! [slice]: https://doc.rust-lang.org/rust-by-example/primitives/array.html
-//! [dim]: https://EDITME.com
-//! [shape]: https://EDITME.com
-//! [size]: https://EDITME.com
+//! [dim]: trait.Dimension.html
+//! [shape]: trait.Shape.html
+//! [size]: trait.Size.html
 //!
 //! ### An Example
 //! ```rust
 //! # use np::*;
-//!
 //! // Create two-dimensional vector with shape [3, 3]
 //! // filled with zeros
 //! let matrix: Vec<Vec<i32>> = Vec::two_dim(3, 3).zeros();
 //!
-//! matrix.dim();
-//! matrix.shape();
-//! matrix.size();
+//! assert_eq!(matrix.dim(), 2);
+//! assert_eq!(matrix.shape(), [3, 3]);
+//! assert_eq!(matrix.size(), 9);
 //! ```
 //!
 //! ## Getting help
@@ -212,11 +211,12 @@ where
     }
 }
 
+/// Dimension of the vector
 pub trait Dimension<T>
 where
     T: Copy,
 {
-    // Returns the number of dimensions of the vector
+    /// Returns the number of dimensions of the vector
     fn dim(&self) -> usize;
 }
 
@@ -256,12 +256,13 @@ where
     }
 }
 
+/// A list of integers indicating the size of the vector in each dimension
 pub trait Shape<T>
 where
     T: Copy,
 {
-    // Returns a slice of integers indicating the length of the
-    // vector in each dimension
+    /// Returns a list of integers indicating the length of the
+    /// vector in each dimension
     fn shape(&self) -> Vec<usize>;
 }
 
@@ -306,12 +307,13 @@ where
     }
 }
 
+/// Total number of elements of the vector
 pub trait Size<T>
 where
     T: Copy,
 {
-    // Returns the total number of elements of the vector.
-    // This is equal to the product of the elements of shape.
+    /// Returns the total number of elements of the vector.
+    /// This is equal to the product of the elements of shape.
     fn size(&self) -> usize;
 }
 
