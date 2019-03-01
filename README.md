@@ -14,7 +14,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-np = "0.1.2"
+np = "2018.3.2"
 ```
 
 To get started using `np`, read the [quickstart tutorial].
