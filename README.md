@@ -2,7 +2,13 @@
 `np` is an easy-to-use fundamental library for scientific computing with Rust,
 highly inspired by [NumPy].
 
+Documentation:
+- [Usage][#usage]
+- [Quickstart Tutorial][quickstart tutorial]
+- [API Reference]
+
 [NumPy]: http://www.numpy.org/
+[API Reference]: https://docs.rs/np
 
 ### Usage
 Add this to your `Cargo.toml`:
