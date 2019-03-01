@@ -1,25 +1,87 @@
-//! `np` is the fundamental package for scientific computing with Rust.
-//! It contains among other things:
+//! `np` is an easy-to-use fundamental library for scientific computing with
+//! Rust, highly inspired by [NumPy].
 //!
-//! - a powerful N-dimensional array routines
-//! - sophisticated (broadcasting) functions
-//! - useful linear algebra, Fourier transform, and random number capabilities
+//! [NumPy]: http://www.numpy.org/
 //!
-//! Besides its obvious scientific uses, `np` can also be used as an efficient
-//! multi-dimensional container of generic data. Arbitrary data-types can be defined.
-//! This allows `np` to seamlessly and speedily integrate with a wide variety
-//! of databases.
 //!
-//! `np` is licensed under the [BSD 3-Clause](https://github.com/pyk/np/blob/master/LICENSE)
-//! license, enabling reuse with few restrictions.
+//! ## Usage
+//! Add this to your `Cargo.toml`:
 //!
-//! All materials in this documentation are copy from
-//! [NumPy documentation](http://www.numpy.org/) with a modification.
-
-extern crate num;
-
-use num::Num;
-
+//! ```toml
+//! [dependencies]
+//! np = "0.1.2"
+//! ```
+//!
+//! To get started using `np`, read the quickstart tutorial below.
+//!
+//! ## Quickstart Tutorial
+//! ### Prerequisites
+//! Before reading this quick tutorial you should know a bit of Rust.
+//! If you would like to refresh your memory, take a look at the
+//! [Rust book].
+//!
+//! [Rust book]: https://doc.rust-lang.org/book/
+//!
+//! ### The Basics
+//! np's main data type is the homogeneous multidimensional [vector].
+//! It is a table of elements (usually numbers), all of the same type,
+//! indexed by a tuple of positive integers.
+//!
+//! [vector]: https://doc.rust-lang.org/std/vec/struct.Vec.html
+//!
+//! For example, the coordinates of a point in 3D space `[1, 2, 1]` has
+//! one dimension. That dimension has 3 elements in it, so we say
+//! it has a length of 3. In the example pictured below,
+//! the vector has 2 dimensions. The first dimension has a length of 2,
+//! the second dimension has a length of 3.
+//!
+//! ```ignore
+//! [
+//!     [ 1., 0., 0.],
+//!     [ 0., 1., 2.]
+//! ]
+//! ```
+//!
+//! np uses Rust's [vector] standard data type extensively. We don't reinvent
+//! yet-another data type to keep things simple and easy to use.
+//! np added useful attributes for Rust's vector like
+//! the following:
+//!
+//! - [dim]: the number of dimensions of the vector.
+//! - [shape]: This is a list of integers indicating the
+//!   size of the vector in each dimension.
+//!   For a matrix with `n` rows and `m` columns, shape will be `[n,m]`.
+//!   The length of the shape slice is therefore the number of
+//!   dimensions, `dim()`.
+//! - [size]: the total number of elements of the vector.
+//!   This is equal to the product of the elements of shape.
+//!
+//! [slice]: https://doc.rust-lang.org/rust-by-example/primitives/array.html
+//! [dim]: https://EDITME.com
+//! [shape]: https://EDITME.com
+//! [size]: https://EDITME.com
+//!
+//! ### An Example
+//! ```rust
+//! # use np::*;
+//!
+//! // Create two-dimensional vector with shape [3, 3]
+//! // filled with zeros
+//! let matrix: Vec<Vec<i32>> = Vec::two_dim(3, 3).zeros();
+//!
+//! matrix.dim();
+//! matrix.shape();
+//! matrix.size();
+//! ```
+//!
+//! ## Getting help
+//! Feel free to start discussion at [GitHub issues].
+//!
+//! [Github issues]: https://github.com/pyk/np/issues/new/choose
+//!
+//! ## License
+//! `np` is licensed under the BSD 3-Clause license.
+//!
 
 pub fn zeros(shape: [usize; 2]) -> Vec<Vec<i64>> {
     let mut rows = Vec::with_capacity(shape[0]);
@@ -34,20 +96,29 @@ pub fn zeros(shape: [usize; 2]) -> Vec<Vec<i64>> {
 }
 
 /// One-dimensional vectors
-pub trait OneDimensional<T> where T: Num + Copy {
+pub trait OneDimensional<T>
+where
+    T: Copy,
+{
     /// Returns new one-dimensional vector with specified `size`.
     // TODO(pyk): Add example
     fn one_dim(size: usize) -> Self;
 }
 
-impl<T> OneDimensional<T> for Vec<T> where T: Num + Copy {
+impl<T> OneDimensional<T> for Vec<T>
+where
+    T: Copy,
+{
     fn one_dim(size: usize) -> Vec<T> {
         Vec::with_capacity(size)
     }
 }
 
 /// Two-dimensional vectors
-pub trait TwoDimensional<T> where T: Num + Copy {
+pub trait TwoDimensional<T>
+where
+    T: Copy,
+{
     /// Returns new two-dimensional vector with specified
     /// number of rows and number of columns.
     ///
@@ -55,7 +126,10 @@ pub trait TwoDimensional<T> where T: Num + Copy {
     fn two_dim(nrows: usize, ncols: usize) -> Self;
 }
 
-impl<T> TwoDimensional<T> for Vec<Vec<T>> where T: Num + Copy {
+impl<T> TwoDimensional<T> for Vec<Vec<T>>
+where
+    T: Copy,
+{
     fn two_dim(nrows: usize, ncols: usize) -> Vec<Vec<T>> {
         let mut array2d: Vec<Vec<T>> = Vec::with_capacity(nrows);
         for _ in 0..nrows {
@@ -66,7 +140,10 @@ impl<T> TwoDimensional<T> for Vec<Vec<T>> where T: Num + Copy {
 }
 
 /// Three-dimensional vectors
-pub trait ThreeDimensional<T> where T: Num + Copy {
+pub trait ThreeDimensional<T>
+where
+    T: Copy,
+{
     /// Returns new three-dimensional vector with specified shape.
     ///
     /// # Arguments
@@ -79,7 +156,10 @@ pub trait ThreeDimensional<T> where T: Num + Copy {
     fn three_dim(n1: usize, n2: usize, n3: usize) -> Self;
 }
 
-impl<T> ThreeDimensional<T> for Vec<Vec<Vec<T>>> where T: Num + Copy {
+impl<T> ThreeDimensional<T> for Vec<Vec<Vec<T>>>
+where
+    T: Copy,
+{
     fn three_dim(n1: usize, n2: usize, n3: usize) -> Vec<Vec<Vec<T>>> {
         let mut array3d: Vec<Vec<Vec<T>>> = Vec::with_capacity(n1);
         for _ in 0..n1 {
@@ -94,7 +174,10 @@ impl<T> ThreeDimensional<T> for Vec<Vec<Vec<T>>> where T: Num + Copy {
 }
 
 /// Four-dimensional vectors
-pub trait FourDimensional<T> where T: Num + Copy {
+pub trait FourDimensional<T>
+where
+    T: Copy,
+{
     /// Returns new four-dimensional vector with specified shape.
     ///
     /// # Arguments
@@ -108,8 +191,10 @@ pub trait FourDimensional<T> where T: Num + Copy {
     fn four_dim(n1: usize, n2: usize, n3: usize, n4: usize) -> Self;
 }
 
-
-impl<T> FourDimensional<T> for Vec<Vec<Vec<Vec<T>>>> where T: Num + Copy {
+impl<T> FourDimensional<T> for Vec<Vec<Vec<Vec<T>>>>
+where
+    T: Copy,
+{
     fn four_dim(n1: usize, n2: usize, n3: usize, n4: usize) -> Vec<Vec<Vec<Vec<T>>>> {
         let mut array4d: Vec<Vec<Vec<Vec<T>>>> = Vec::with_capacity(n1);
         for _ in 0..n1 {
@@ -127,13 +212,159 @@ impl<T> FourDimensional<T> for Vec<Vec<Vec<Vec<T>>>> where T: Num + Copy {
     }
 }
 
+pub trait Dimension<T>
+where
+    T: Copy,
+{
+    // Returns the number of dimensions of the vector
+    fn dim(&self) -> usize;
+}
+
+impl<T> Dimension<T> for Vec<T>
+where
+    T: Copy,
+{
+    fn dim(&self) -> usize {
+        1
+    }
+}
+
+impl<T> Dimension<T> for Vec<Vec<T>>
+where
+    T: Copy,
+{
+    fn dim(&self) -> usize {
+        2
+    }
+}
+
+impl<T> Dimension<T> for Vec<Vec<Vec<T>>>
+where
+    T: Copy,
+{
+    fn dim(&self) -> usize {
+        3
+    }
+}
+
+impl<T> Dimension<T> for Vec<Vec<Vec<Vec<T>>>>
+where
+    T: Copy,
+{
+    fn dim(&self) -> usize {
+        4
+    }
+}
+
+pub trait Shape<T>
+where
+    T: Copy,
+{
+    // Returns a slice of integers indicating the length of the
+    // vector in each dimension
+    fn shape(&self) -> Vec<usize>;
+}
+
+impl<T> Shape<T> for Vec<T>
+where
+    T: Copy,
+{
+    fn shape(&self) -> Vec<usize> {
+        vec![self.len()]
+    }
+}
+
+impl<T> Shape<T> for Vec<Vec<T>>
+where
+    T: Copy,
+{
+    fn shape(&self) -> Vec<usize> {
+        vec![self.len(), self[0].len()]
+    }
+}
+
+impl<T> Shape<T> for Vec<Vec<Vec<T>>>
+where
+    T: Copy,
+{
+    fn shape(&self) -> Vec<usize> {
+        vec![self.len(), self[0].len(), self[0][0].len()]
+    }
+}
+
+impl<T> Shape<T> for Vec<Vec<Vec<Vec<T>>>>
+where
+    T: Copy,
+{
+    fn shape(&self) -> Vec<usize> {
+        vec![
+            self.len(),
+            self[0].len(),
+            self[0][0].len(),
+            self[0][0][0].len(),
+        ]
+    }
+}
+
+pub trait Size<T>
+where
+    T: Copy,
+{
+    // Returns the total number of elements of the vector.
+    // This is equal to the product of the elements of shape.
+    fn size(&self) -> usize;
+}
+
+impl<T> Size<T> for Vec<T>
+where
+    T: Copy,
+{
+    fn size(&self) -> usize {
+        self.shape().iter().product()
+    }
+}
+
+impl<T> Size<T> for Vec<Vec<T>>
+where
+    T: Copy,
+{
+    fn size(&self) -> usize {
+        let shape: Vec<usize> = self.shape();
+        shape.iter().product()
+    }
+}
+
+impl<T> Size<T> for Vec<Vec<Vec<T>>>
+where
+    T: Copy,
+{
+    fn size(&self) -> usize {
+        self.shape().iter().product()
+    }
+}
+
+impl<T> Size<T> for Vec<Vec<Vec<Vec<T>>>>
+where
+    T: Copy,
+{
+    fn size(&self) -> usize {
+        self.shape().iter().product()
+    }
+}
+
 /// Fillable vectors
-pub trait Full<T> where T: Num + Copy {
+pub trait Full<T>
+where
+    T: Copy,
+{
     /// Returns a new array of given shape and type, filled with `value`.
     fn full(&mut self, value: T) -> Self;
 }
 
-impl<T> Full<T> for Vec<T> where T: Num + Copy {
+impl<T> Full<T> for Vec<T>
+where
+    T: Copy,
+{
     // Return a new 1D array of given shape and type, filled with `value`.
     fn full(&mut self, value: T) -> Vec<T> {
         for _ in 0..self.capacity() {
@@ -143,7 +374,10 @@ impl<T> Full<T> for Vec<T> where T: Num + Copy {
     }
 }
 
-impl<T> Full<T> for Vec<Vec<T>> where T: Num + Copy {
+impl<T> Full<T> for Vec<Vec<T>>
+where
+    T: Copy,
+{
     // Return a new 2D array of given shape and type, filled with `value`.
     fn full(&mut self, value: T) -> Vec<Vec<T>> {
         for i in 0..self.capacity() {
@@ -155,8 +389,10 @@ impl<T> Full<T> for Vec<Vec<T>> where T: Num + Copy {
     }
 }
 
-
-impl<T> Full<T> for Vec<Vec<Vec<T>>> where T: Num + Copy {
+impl<T> Full<T> for Vec<Vec<Vec<T>>>
+where
+    T: Copy,
+{
     // Return a new 3D array of given shape and type, filled with `value`.
     fn full(&mut self, value: T) -> Vec<Vec<Vec<T>>> {
         for i in 0..self.capacity() {
@@ -170,8 +406,10 @@ impl<T> Full<T> for Vec<Vec<Vec<T>>> where T: Num + Copy {
     }
 }
 
-
-impl<T> Full<T> for Vec<Vec<Vec<Vec<T>>>> where T: Num + Copy {
+impl<T> Full<T> for Vec<Vec<Vec<Vec<T>>>>
+where
+    T: Copy,
+{
     // Return a new 4D array of given shape and type, filled with `value`.
     fn full(&mut self, value: T) -> Vec<Vec<Vec<Vec<T>>>> {
         for i in 0..self.capacity() {
@@ -193,7 +431,6 @@ pub trait Zero {
     /// filled with zeros.
     fn zeros(&mut self) -> Self;
 }
-
 
 impl Zero for Vec<u8> {
     fn zeros(&mut self) -> Vec<u8> {
@@ -218,7 +455,6 @@ impl Zero for Vec<Vec<Vec<Vec<u8>>>> {
         self.full(0)
     }
 }
-
 
 impl Zero for Vec<u16> {
     fn zeros(&mut self) -> Vec<u16> {
@@ -484,7 +720,6 @@ impl Zero for Vec<Vec<Vec<Vec<f64>>>> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -492,10 +727,7 @@ mod tests {
     #[test]
     fn test_fn_zeros() {
         let arr2d: Vec<Vec<i64>> = zeros([2, 2]);
-        assert_eq!(arr2d, [
-            [0, 0],
-            [0, 0],
-        ])
+        assert_eq!(arr2d, [[0, 0], [0, 0],])
     }
 
     #[test]
@@ -852,5 +1084,50 @@ mod tests {
     fn test_zeros_f64_four_dim() {
         let arr: Vec<Vec<Vec<Vec<f64>>>> = Vec::four_dim(1, 1, 1, 2).zeros();
         assert_eq!(arr, [[[[0.0, 0.0]]]]);
+    }
+
+    #[test]
+    fn test_dim() {
+        let arr1: Vec<i32> = Vec::one_dim(2).zeros();
+        assert_eq!(arr1.dim(), 1);
+
+        let arr2: Vec<Vec<i32>> = Vec::two_dim(2, 2).zeros();
+        assert_eq!(arr2.dim(), 2);
+
+        let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim(2, 2, 2).zeros();
+        assert_eq!(arr3.dim(), 3);
+
+        let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim(2, 2, 2, 3).zeros();
+        assert_eq!(arr4.dim(), 4);
+    }
+
+    #[test]
+    fn test_shape() {
+        let arr1: Vec<i32> = Vec::one_dim(2).zeros();
+        assert_eq!(arr1.shape(), [2]);
+
+        let arr2: Vec<Vec<i32>> = Vec::two_dim(2, 2).zeros();
+        assert_eq!(arr2.shape(), [2, 2]);
+
+        let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim(2, 2, 2).zeros();
+        assert_eq!(arr3.shape(), [2, 2, 2]);
+
+        let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim(2, 2, 2, 3).zeros();
+        assert_eq!(arr4.shape(), [2, 2, 2, 3]);
+    }
+
+    #[test]
+    fn test_size() {
+        let arr1: Vec<i32> = Vec::one_dim(2).zeros();
+        assert_eq!(arr1.size(), 2);
+
+        let arr2: Vec<Vec<i32>> = Vec::two_dim(2, 2).zeros();
+        assert_eq!(arr2.size(), 4);
+
+        let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim(2, 2, 2).zeros();
+        assert_eq!(arr3.size(), 8);
+
+        let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim(2, 2, 2, 3).zeros();
+        assert_eq!(arr4.size(), 24);
     }
 }
