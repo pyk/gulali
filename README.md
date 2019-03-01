@@ -14,7 +14,16 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-np = "2019.3.1"
+np = "2019.3.3"
+```
+
+and this to your crate root:
+
+```rust
+extern crate np;
+
+// Import all required traits
+use np::*;
 ```
 
 To get started using `np`, read the [quickstart tutorial].
