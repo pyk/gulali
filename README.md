@@ -1,5 +1,5 @@
-# np
-`np` is an easy-to-use fundamental library for scientific computing with Rust,
+# Gulali
+Gulali is an easy-to-use fundamental library for scientific computing with Rust,
 highly inspired by [NumPy].
 
 Documentation:
@@ -7,33 +7,39 @@ Documentation:
 - [API Reference]
 
 [NumPy]: http://www.numpy.org/
-[API Reference]: https://docs.rs/np
+[API Reference]: https://docs.rs/gulali
 
 ### Usage
 Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-np = "2019.3.3"
+gulali = "2019.3.4"
 ```
 
 and this to your crate root:
 
 ```rust
-extern crate np;
+extern crate gulali;
 
 // Import all required traits
-use np::*;
+use gulali::prelude::*;
 ```
 
-To get started using `np`, read the [quickstart tutorial].
+To get started using Gulali, read the [quickstart tutorial].
 
-[quickstart tutorial]:  https://docs.rs/np#quickstart-tutorial
+[quickstart tutorial]:  https://docs.rs/gulali#quickstart-tutorial
 
 ### Getting help
 Feel free to start discussion at [GitHub issues].
 
-[Github issues]: https://github.com/pyk/np/issues/new/choose
+[Github issues]: https://github.com/pyk/gulali/issues/new/choose
 
 ### License
-`np` is licensed under the [BSD 3-Clause](./LICENSE) license.
+Gulali is licensed under the [Apache-2.0](./LICENSE) license.
+
+#### Contribution
+Unless you explicitly state otherwise, any contribution intentionally
+submitted for inclusion in Gulali by you, as defined in the Apache-2.0
+license, shall be dual licensed as above, without
+any additional terms or conditions.

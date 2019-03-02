@@ -1,13 +1,13 @@
 [package]
-name = "np"
-description = "np is an easy-to-use fundamental library for scientific computing with Rust, highly inspired by NumPy."
+name = "gulali"
+description = "Gulali is an easy-to-use fundamental library for scientific computing with Rust, highly inspired by NumPy."
 license = "BSD-3-Clause"
-version = "2019.3.3"
+version = "2019.3.4"
 authors = ["Bayu Aldi Yansyah <bayualdiyansyah@gmail.com>"]
 edition = "2018"
-documentation = "https://docs.rs/np/"
-homepage = "https://github.com/pyk/np"
-repository = "https://github.com/pyk/np"
+documentation = "https://docs.rs/gulali/"
+homepage = "https://github.com/pyk/gulali"
+repository = "https://github.com/pyk/gulali"
 readme = "README.md"
 
 [dependencies]
