@@ -15,7 +15,7 @@
 // This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Convenience re-export of common members
+//! Gulali's prelude
 //!
 //! Like the standard library's prelude, this module simplifies importing of
 //! common items. Unlike the standard prelude, the contents of this module must
@@ -28,10 +28,8 @@
 //! # assert_eq!(matrix.dim(), 2);
 //! ```
 
+pub use crate::attributes::*;
 pub use crate::builders::dimensional::*;
 pub use crate::builders::full::*;
 pub use crate::builders::ones::*;
 pub use crate::builders::zeros::*;
-pub use crate::properties::dim::*;
-pub use crate::properties::shape::*;
-pub use crate::properties::size::*;

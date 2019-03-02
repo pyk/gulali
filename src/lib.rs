@@ -84,9 +84,9 @@
 //!   This is equal to the product of the elements of shape.
 //!
 //! [slice]: https://doc.rust-lang.org/rust-by-example/primitives/array.html
-//! [dim]: trait.Dimension.html
-//! [shape]: trait.Shape.html
-//! [size]: trait.Size.html
+//! [dim]: attributes/trait.Dimension.html
+//! [shape]: attributes/trait.Shape.html
+//! [size]: attributes/trait.Size.html
 //!
 //! ### An Example
 //! ```rust
@@ -163,11 +163,8 @@
 //! Gulali is licensed under the BSD 3-Clause license.
 //!
 
-// Vector builders
 pub mod builders;
 
-// Vector properties
-pub mod properties;
+pub mod attributes;
 
 pub mod prelude;
-// pub use prelude;
