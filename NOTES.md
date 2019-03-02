@@ -149,3 +149,8 @@ eigenic
 fuk ternyata susah banget cari nama ASW.
 udah ah np aja. tai.
 
+I think I'm gonna use Gulali as a name,
+Gulali is an Indonesian-flavored candy.
+It's sweet and everyone favorite. I think it
+describe how this library so swell. I want to
+make library that easy-to-use and learn.
