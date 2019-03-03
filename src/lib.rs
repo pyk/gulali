@@ -11,9 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// This file may not be copied, modified, or distributed
-// except according to those terms.
 
 //! Gulali is an easy-to-use fundamental library for scientific computing with
 //! Rust, highly inspired by [NumPy].
@@ -133,11 +130,11 @@
 //! create vectors with initial placeholder content. These minimize
 //! the necessity of growing vectors, an expensive operation.
 //!
-//! The function [`zeros`][zeros] creates a vector full of zeros,
-//! and the function [`ones`][ones] creates a vector full of ones.
+//! The function [`zeros`] creates a vector full of zeros,
+//! and the function [`ones`] creates a vector full of ones.
 //!
-//! [zeros]: trait.Zero.html
-//! [ones]: trait.One.html
+//! [`zeros`]: builders/zeros/trait.Zero.html#tymethod.zeros
+//! [`ones`]: builders/ones/trait.One.html#tymethod.ones
 //!
 // TODO: ADD `rand()`, keyg
 //!

@@ -11,16 +11,25 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// This file may not be copied, modified, or distributed
-// except according to those terms.
 
 use crate::builders::full::*;
 
 /// A vector full of ones
 pub trait One {
-    /// Return a new vector of given data type and shape,
+    /// Return a new [vector] of given data type and shape,
     /// filled with ones.
+    ///
+    /// [vector]: https://doc.rust-lang.org/std/vec/struct.Vec.html
+    ///
+    /// # Examples
+    /// ```
+    /// # use gulali::prelude::*;
+    /// let arr1: Vec<i64> = Vec::one_dim(2).ones();
+    /// assert_eq!(arr1, [1, 1]);
+    ///
+    /// let arr2: Vec<Vec<Vec<Vec<f64>>>> = Vec::four_dim(1, 1, 1, 2).ones();
+    /// assert_eq!(arr2, [[[[1.0, 1.0]]]]);
+    /// ```
     fn ones(&mut self) -> Self;
 }
 

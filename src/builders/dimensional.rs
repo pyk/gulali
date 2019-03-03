@@ -11,9 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// This file may not be copied, modified, or distributed
-// except according to those terms.
 
 /// One-dimensional vectors
 pub trait OneDimensional<T>

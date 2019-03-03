@@ -11,9 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// This file may not be copied, modified, or distributed
-// except according to those terms.
 
 //! Gulali's prelude
 //!
@@ -32,4 +29,5 @@ pub use crate::attributes::*;
 pub use crate::builders::dimensional::*;
 pub use crate::builders::full::*;
 pub use crate::builders::ones::*;
+pub use crate::builders::range::*;
 pub use crate::builders::zeros::*;

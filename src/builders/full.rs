@@ -11,16 +11,25 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// This file may not be copied, modified, or distributed
-// except according to those terms.
 
 /// Fillable vectors
 pub trait Full<T>
 where
     T: Copy,
 {
-    /// Returns a new array of given shape and type, filled with `value`.
+    /// Returns a new [vector] of given shape and type, filled with `value`.
+    ///
+    /// [vector]: https://doc.rust-lang.org/std/vec/struct.Vec.html
+    ///
+    /// # Examples
+    /// ```
+    /// # use gulali::prelude::*;
+    /// let arr1: Vec<i64> = Vec::one_dim(2).full(10);
+    /// assert_eq!(arr1, [10, 10]);
+    ///
+    /// let arr2: Vec<Vec<Vec<Vec<f64>>>> = Vec::four_dim(1, 1, 1, 2).full(2.5);
+    /// assert_eq!(arr2, [[[[2.5, 2.5]]]]);
+    /// ```
     fn full(&mut self, value: T) -> Self;
 }
 
