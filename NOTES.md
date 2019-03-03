@@ -154,3 +154,57 @@ Gulali is an Indonesian-flavored candy.
 It's sweet and everyone favorite. I think it
 describe how this library so swell. I want to
 make library that easy-to-use and learn.
+
+
+# Vector creation
+
+We will use [Numpy Array Creation Routines] as the reference.
+
+We already implement:
+
+```
+ones()
+zeros()
+full()
+```
+
+NumPy array creation routines:
+
+```
+empty(shape[, dtype, order])	Return a new array of given shape and type, without initializing entries.
+empty_like(prototype[, dtype, order, subok])	Return a new array with the same shape and type as a given array.
+eye(N[, M, k, dtype, order])	Return a 2-D array with ones on the diagonal and zeros elsewhere.
+identity(n[, dtype])	Return the identity array.
+ones_like(a[, dtype, order, subok])	Return an array of ones with the same shape and type as a given array.
+zeros_like(a[, dtype, order, subok])	Return an array of zeros with the same shape and type as a given array.
+full_like(a, fill_value[, dtype, order, subok])	Return a full array with the same shape and type as a given array.
+```
+
+anw kita fokus ke [Numpy Array Creation] dulu untuk edit `src/builders/mod.rs`.
+keyh.
+
+
+[Numpy Array Creation]: https://docs.scipy.org/doc/numpy-1.16.1/user/basics.creation.html
+[Numpy Array Creation Routines]: https://docs.scipy.org/doc/numpy-1.16.1/reference/routines.array-creation.html
+
+Let's create `np.arange` API:
+
+```
+numpy.arange([start, ]stop, [step, ]dtype=None) -> returns 1D array
+```
+
+```
+>>> np.arange(3)
+array([0, 1, 2])
+>>> np.arange(3.0)
+array([ 0.,  1.,  2.])
+>>> np.arange(3,7)
+array([3, 4, 5, 6])
+>>> np.arange(3,7,2)
+array([3, 5])
+```
+
+So maybe we ...
+
+
+Oke `range()` udah. Sip.
