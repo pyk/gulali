@@ -160,7 +160,14 @@
 //! [Github issues]: https://github.com/pyk/gulali/issues/new/choose
 //!
 //! ## License
-//! Gulali is licensed under the BSD 3-Clause license.
+//! Gulali is licensed under the [Apache-2.0] license.
+//!
+//! Unless you explicitly state otherwise, any contribution intentionally
+//! submitted for inclusion in Gulali by you, as defined in the Apache-2.0
+//! license, shall be dual licensed as above, without
+//! any additional terms or conditions.
+//!
+//! [Apache-2.0]: https://github.com/pyk/gulali/blob/master/LICENSE
 //!
 
 pub mod builders;

@@ -9,7 +9,7 @@ Documentation:
 [NumPy]: http://www.numpy.org/
 [API Reference]: https://docs.rs/gulali
 
-### Usage
+## Usage
 Add this to your `Cargo.toml`:
 
 ```toml
@@ -30,15 +30,15 @@ To get started using Gulali, read the [quickstart tutorial].
 
 [quickstart tutorial]:  https://docs.rs/gulali#quickstart-tutorial
 
-### Getting help
+## Getting help
 Feel free to start discussion at [GitHub issues].
 
 [Github issues]: https://github.com/pyk/gulali/issues/new/choose
 
-### License
+## License
 Gulali is licensed under the [Apache-2.0](./LICENSE) license.
 
-#### Contribution
+### Contribution
 Unless you explicitly state otherwise, any contribution intentionally
 submitted for inclusion in Gulali by you, as defined in the Apache-2.0
 license, shall be dual licensed as above, without
