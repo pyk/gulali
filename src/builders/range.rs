@@ -62,7 +62,7 @@ where
     /// let range: Vec<f64> = Vec::range()
     ///     .stop_at(5.0)
     ///     .init();
-    /// assert_eq!(range, [1.0, 2.0, 3.0, 4.0]);
+    /// assert_eq!(range, [0.0, 1.0, 2.0, 3.0, 4.0]);
     /// ````
     pub fn stop_at(self, value: T) -> RangeParameters<T> {
         RangeParameters {
