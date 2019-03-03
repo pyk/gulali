@@ -23,7 +23,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! gulali = "2019.3.5"
+//! gulali = "2019.3.6"
 //! ```
 //!
 //! and this to your crate root:
