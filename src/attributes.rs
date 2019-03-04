@@ -11,30 +11,27 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// This file may not be copied, modified, or distributed
-// except according to those terms.
 
 //! Vector attributes
 //!
 //! # Overview
-//! Gulali uses Rust's [vector] standard data type extensively. We don't reinvent
-//! yet-another data type to keep things simple and easy to use. Gulali added
-//! the following attributes to Rust's vector:
+//! Gulali uses Rust's [vector] standard data structure extensively. We don't
+//! reinvent yet-another data structure to keep things simple and easy to use.
+//! Gulali add the following attributes to Rust's vector:
 //!
-//! - [dim]: the number of dimensions of the vector.
-//! - [shape]: This is a list of integers indicating the
+//! - [`dim()`]: the number of dimensions of the vector.
+//! - [`shape()`]: This is a list of integers indicating the
 //!   size of the vector in each dimension.
 //!   For a matrix with `n` rows and `m` columns, shape will be `[n,m]`.
 //!   The length of the shape is therefore the number of
 //!   dimensions, `dim()`.
-//! - [size]: the total number of elements of the vector.
+//! - [`size()`]: the total number of elements of the vector.
 //!   This is equal to the product of the elements of shape.
 //!
 //! [slice]: https://doc.rust-lang.org/rust-by-example/primitives/array.html
-//! [dim]: trait.Dimension.html
-//! [shape]: trait.Shape.html
-//! [size]: trait.Size.html
+//! [`dim()`]: trait.Dimension.html#tymethod.dim
+//! [`shape()`]: trait.Shape.html#tymethod.shape
+//! [`size()`]: trait.Size.html#tymethod.size
 //! [vector]: https://doc.rust-lang.org/std/vec/struct.Vec.html
 //!
 //! # Examples

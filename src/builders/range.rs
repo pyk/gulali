@@ -132,9 +132,8 @@ where
     /// The parameter can be configured using
     /// the following methods: [`start_at()`], [`stop_at()`]
     /// and [`step_by()`]. After the range parameters are configured,
-    /// use [`init()`] to initialie the range vector.
-    ///
-    /// Values are generated within the half-open interval `[start, stop)`
+    /// use [`init()`] to initialize the range vector. Values are
+    /// generated within the half-open interval `[start, stop)`
     /// (in other words, the interval including start but excluding stop).
     ///
     /// [`RangeParameters`]: struct.RangeParameters.html

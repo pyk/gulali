@@ -69,8 +69,8 @@
 //! the specified dimension and shape. It is identical to
 //! [`zeros()`] in all other respects.
 //!
-//! [`zeros()`]: zeros/trait.Zero.html#tymethod.zeros
-//! [`ones()`]: ones/trait.One.html#tymethod.ones
+//! [`zeros()`]: trait.Zero.html#tymethod.zeros
+//! [`ones()`]: trait.One.html#tymethod.ones
 //!
 //! [`range()`] will create vectors with regularly incrementing values.
 //! For example:
@@ -87,20 +87,27 @@
 //! assert_eq!(range2, [1.0, 1.5, 2.0, 2.5]);
 //! ```
 //!
-//! [`range()`]: range/trait.Range.html#tymethod.range
+//! [`range()`]: trait.Range.html#tymethod.range
 //!
+// TODO: Continue here https://docs.scipy.org/doc/numpy-1.16.1/user/basics.creation.html
 
 /// Dimension and the shape of the vectors
-pub mod dimensional;
+mod dimensional;
 
 /// Fill vectors with specified value
-pub mod full;
+mod full;
 
-/// Fill vectors with 1 value
-pub mod ones;
+/// Fill vectors with ones
+mod ones;
 
 /// Range vector builder
-pub mod range;
+mod range;
 
-/// Fill vectors with 0 value
-pub mod zeros;
+/// Fill vectors with zeros
+mod zeros;
+
+pub use dimensional::*;
+pub use full::*;
+pub use ones::*;
+pub use range::*;
+pub use zeros::*;

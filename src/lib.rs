@@ -47,7 +47,7 @@
 //! [Rust book]: https://doc.rust-lang.org/book/
 //!
 //! ### The Basics
-//! Gulali's main data type is the homogeneous multidimensional [vector].
+//! Gulali's main data structure is the homogeneous multidimensional [vector].
 //! It is a table of elements (usually numbers), all of the same type,
 //! indexed by a tuple of positive integers.
 //!
@@ -66,24 +66,24 @@
 //! ]
 //! ```
 //!
-//! Gulali uses Rust's [vector] standard data type extensively. We don't reinvent
-//! yet-another data type to keep things simple and easy to use.
-//! Gulali added useful attributes for Rust's vector like
-//! the following:
+//! Gulali uses Rust's [vector] standard data structure extensively.
+//! Gulali don't reinvent yet-another data strucutre to keep things
+//! simple and easy to use. Gulali add attributes to Rust's [vector]
+//! like the following:
 //!
-//! - [dim]: the number of dimensions of the vector.
-//! - [shape]: This is a list of integers indicating the
+//! - [`dim()`]: the number of dimensions of the vector.
+//! - [`shape()`]: This is a list of integers indicating the
 //!   size of the vector in each dimension.
 //!   For a matrix with `n` rows and `m` columns, shape will be `[n,m]`.
 //!   The length of the shape is therefore the number of
 //!   dimensions, `dim()`.
-//! - [size]: the total number of elements of the vector.
+//! - [`size()`]: the total number of elements of the vector.
 //!   This is equal to the product of the elements of shape.
 //!
 //! [slice]: https://doc.rust-lang.org/rust-by-example/primitives/array.html
-//! [dim]: attributes/trait.Dimension.html
-//! [shape]: attributes/trait.Shape.html
-//! [size]: attributes/trait.Size.html
+//! [`dim()`]: attributes/trait.Dimension.html#tymethod.dim
+//! [`shape()`]: attributes/trait.Shape.html#tymethod.shape
+//! [`size()`]: attributes/trait.Size.html#tymethod.size
 //!
 //! ### An Example
 //! ```rust
@@ -130,11 +130,11 @@
 //! create vectors with initial placeholder content. These minimize
 //! the necessity of growing vectors, an expensive operation.
 //!
-//! The function [`zeros`] creates a vector full of zeros,
-//! and the function [`ones`] creates a vector full of ones.
+//! The function [`zeros()`] creates a vector full of zeros,
+//! and the function [`ones()`] creates a vector full of ones.
 //!
-//! [`zeros`]: builders/zeros/trait.Zero.html#tymethod.zeros
-//! [`ones`]: builders/ones/trait.One.html#tymethod.ones
+//! [`zeros()`]: builders/zeros/trait.Zero.html#tymethod.zeros
+//! [`ones()`]: builders/ones/trait.One.html#tymethod.ones
 //!
 // TODO: ADD `rand()`, keyg
 //!
@@ -161,7 +161,7 @@
 //!
 //! Unless you explicitly state otherwise, any contribution intentionally
 //! submitted for inclusion in Gulali by you, as defined in the Apache-2.0
-//! license, shall be dual licensed as above, without
+//! license, shall be licensed as above, without
 //! any additional terms or conditions.
 //!
 //! [Apache-2.0]: https://github.com/pyk/gulali/blob/master/LICENSE

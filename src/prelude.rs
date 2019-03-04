@@ -26,8 +26,4 @@
 //! ```
 
 pub use crate::attributes::*;
-pub use crate::builders::dimensional::*;
-pub use crate::builders::full::*;
-pub use crate::builders::ones::*;
-pub use crate::builders::range::*;
-pub use crate::builders::zeros::*;
+pub use crate::builders::*;
