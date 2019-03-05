@@ -23,7 +23,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! gulali = "2019.3.6"
+//! gulali = "2019.3.7"
 //! ```
 //!
 //! and this to your crate root:
@@ -166,6 +166,7 @@
 //!
 //! [Apache-2.0]: https://github.com/pyk/gulali/blob/master/LICENSE
 //!
+extern crate num;
 
 pub mod builders;
 

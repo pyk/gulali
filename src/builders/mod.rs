@@ -89,25 +89,52 @@
 //!
 //! [`range()`]: trait.Range.html#tymethod.range
 //!
+//! [`linspace()`] will create vectors with a specified number of elements,
+//! and spaced equally between the specified beginning and end values.
+//! For example:
+//! ```
+//! # use gulali::prelude::*;
+//! // Generate linearly spaced vector within interval [2.0, 5.0]
+//! let lin: Vec<f32> = Vec::linspace()
+//!     .start_at(2.0)
+//!     .stop_at(5.0)
+//!     .with_size(10)
+//!     .generate()
+//!     .unwrap();
+//!
+//! assert_eq!(
+//!     lin,
+//!     [
+//!         2.0, 2.33333333, 2.6666665, 2.9999998, 3.333333,
+//!         3.6666663, 3.9999995, 4.333333, 4.6666665, 5.0
+//!     ]
+//! );
+//! ```
+//! The advantage of this vector builder function is that one
+//! can guarantee the number of elements and the starting and
+//! end point, which [`range()`] generally will not do for
+//! arbitrary start, stop, and step values.
+//!
+//! [`linspace()`]: trait.Linspace.html#tymethod.linspace
+//!
 // TODO: Continue here https://docs.scipy.org/doc/numpy-1.16.1/user/basics.creation.html
 
-/// Dimension and the shape of the vectors
+// Dimension and the shape of the vectors
 mod dimensional;
-
-/// Fill vectors with specified value
+// Fill vectors with specified value
 mod full;
-
-/// Fill vectors with ones
+// Fill vectors with ones
 mod ones;
-
-/// Range vector builder
+// Range vector builder
 mod range;
-
-/// Fill vectors with zeros
+// Fill vectors with zeros
 mod zeros;
+// Linearly spaced vector builder
+mod linspace;
 
 pub use dimensional::*;
 pub use full::*;
+pub use linspace::*;
 pub use ones::*;
 pub use range::*;
 pub use zeros::*;

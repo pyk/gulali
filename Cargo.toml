@@ -2,7 +2,7 @@
 name = "gulali"
 description = "Gulali is an easy-to-use fundamental library for scientific computing with Rust, highly inspired by NumPy."
 license = "Apache-2.0"
-version = "2019.3.6"
+version = "2019.3.7"
 authors = ["Bayu Aldi Yansyah <bayualdiyansyah@gmail.com>"]
 edition = "2018"
 documentation = "https://docs.rs/gulali/"
@@ -11,3 +11,4 @@ repository = "https://github.com/pyk/gulali"
 readme = "README.md"
 
 [dependencies]
+num = "0.2"

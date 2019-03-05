@@ -208,3 +208,34 @@ So maybe we ...
 
 
 Oke `range()` udah. Sip.
+
+# Init vs Generate
+Currently we use the following API to create range vector:
+
+```rust
+let range2: Vec<f64> = Vec::range()
+    .start_at(1.0)
+    .stop_at(3.0)
+    .init();
+assert_eq!(range2, [1.0, 2.0]);
+```
+
+Inspired by [MATLAB linspace()], we can use `generate` instead
+of `init`. It is far more intuitive. Ok.
+
+[MATLAB linspace()]: https://www.mathworks.com/help/matlab/ref/linspace.html
+
+
+# Rust error handling
+btw how to handle the error?
+
+I have a function like the following:
+
+```
+pub fn generate(self) -> Vec<T>
+```
+
+it generates `Vec<T>` based on `self`.
+
+There are two cases:
+1. `stop` value should be specified. otherwise it returns None.
