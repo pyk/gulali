@@ -23,7 +23,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! gulali = "2019.3.7"
+//! gulali = "2019.3.8"
 //! ```
 //!
 //! and this to your crate root:
@@ -76,7 +76,7 @@
 //!   size of the vector in each dimension.
 //!   For a matrix with `n` rows and `m` columns, shape will be `[n,m]`.
 //!   The length of the shape is therefore the number of
-//!   dimensions, `dim()`.
+//!   dimensions, [`dim()`].
 //! - [`size()`]: the total number of elements of the vector.
 //!   This is equal to the product of the elements of shape.
 //!
@@ -88,9 +88,13 @@
 //! ### An Example
 //! ```rust
 //! # use gulali::prelude::*;
-//! // Create two-dimensional vector with shape [3, 3]
-//! // filled with zeros
-//! let matrix: Vec<Vec<i32>> = Vec::two_dim(3, 3).zeros();
+//! // Generate a new two-dimensional vector with shape [3, 3]
+//! // filled with zeros; i32 can be changed into any
+//! // numeric data types.
+//! let matrix: Vec<Vec<i32>> = Vec::two_dim()
+//!     .with_shape([3, 3])
+//!     .zeros()
+//!     .generate();
 //!
 //! assert_eq!(matrix.dim(), 2);
 //! assert_eq!(matrix.shape(), [3, 3]);
@@ -130,26 +134,75 @@
 //! create vectors with initial placeholder content. These minimize
 //! the necessity of growing vectors, an expensive operation.
 //!
-//! The function [`zeros()`] creates a vector full of zeros,
-//! and the function [`ones()`] creates a vector full of ones.
+//! [`one_dim()`] will create a one-dimensional vector with specified
+//! shape and values. For example:
 //!
-//! [`zeros()`]: builders/zeros/trait.Zero.html#tymethod.zeros
-//! [`ones()`]: builders/ones/trait.One.html#tymethod.ones
-//!
-// TODO: ADD `rand()`, keyg
-//!
-//! ```rust
-//! # use gulali::prelude::*;
-//! // Create two-dimensional vector with shape [3, 3]
-//! // filled with zeros
-//! let a: Vec<Vec<i32>> = Vec::two_dim(3, 3).zeros();
-//! assert_eq!(a, [[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
-//!
-//! // Create three-dimensional vector with shape [1, 1, 3]
-//! // filled with ones
-//! let b: Vec<Vec<Vec<f64>>> = Vec::three_dim(1, 1, 3).ones();
-//! assert_eq!(b, [[[1.0, 1.0, 1.0]]]);
 //! ```
+//! # use gulali::prelude::*;
+//! // Generate a one-dimensional vector with shape [5]
+//! // filled with zeros; f64 can be changed into any
+//! // numeric data types.
+//! let bias: Vec<f64> = Vec::one_dim()
+//!     .with_shape([5])
+//!     .zeros()
+//!     .generate();
+//!
+//! assert_eq!(bias, [0.0, 0.0, 0.0, 0.0, 0.0]);
+//! ```
+//!
+//! [`two_dim()`] will create a two-dimensional vector with specified
+//! shape and values. For example:
+//!
+//! ```
+//! # use gulali::prelude::*;
+//! // Generate a two-dimensional vector with shape [2, 2]
+//! // filled with ones; f64 can be changed into any
+//! // numeric data types.
+//! let matrix: Vec<Vec<f64>> = Vec::two_dim()
+//!     .with_shape([2, 2])
+//!     .ones()
+//!     .generate();
+//!
+//! assert_eq!(matrix, [[1.0, 1.0], [1.0, 1.0]]);
+//! ```
+//!
+//! [`three_dim()`] will create a three-dimensional vector with specified
+//! shape and values. For example:
+//!
+//! ```
+//! # use gulali::prelude::*;
+//! // Generate a three-dimensional vector with shape [1, 1, 2]
+//! // filled with 5.0; f64 can be changed into any
+//! // numeric data types.
+//! let test: Vec<Vec<Vec<f64>>> = Vec::three_dim()
+//!     .with_shape([1, 1, 2])
+//!     .full_of(5.0)
+//!     .generate();
+//!
+//! assert_eq!(test, [[[5.0, 5.0]]]);
+//! ```
+//!
+//! [`four_dim()`] will create a four-dimensional vector with specified
+//! shape and values. For example:
+//!
+//! ```
+//! # use gulali::prelude::*;
+//! // Generate a four-dimensional vector with shape [1, 1, 1, 2]
+//! // filled with ones; f64 can be changed into any
+//! // numeric data types.
+//! let test: Vec<Vec<Vec<Vec<f64>>>> = Vec::four_dim()
+//!     .with_shape([1, 1, 1, 2])
+//!     .ones()
+//!     .generate();
+//!
+//! assert_eq!(test, [[[[1.0, 1.0]]]]);
+//! ```
+//!
+//! [`one_dim()`]: builders/trait.OneDimensional.html#tymethod.one_dim
+//! [`two_dim()`]: builders/trait.TwoDimensional.html#tymethod.two_dim
+//! [`three_dim()`]: builders/trait.ThreeDimensional.html#tymethod.three_dim
+//! [`four_dim()`]: builders/trait.FourDimensional.html#tymethod.four_dim
+//!
 //!
 //! ## Getting help
 //! Feel free to start discussion at [GitHub issues].

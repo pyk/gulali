@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Vector creation routines
+//! Vector builders
 //!
 //! # Overview
 //!
 //! There are 4 general mechanisms for creating vectors:
 //!
 //! 1. Conversion from other Rust primitive types: [`array`] and [`slice`].
-//! 2. Using Gulali's vector builder routines (e.g., [`ones()`],
-//!    [`zeros()`], etc.)
+//! 2. Using Gulali's vector builder routines (e.g., [`one_dim()`],
+//!    [`range()`], etc.)
 //! 3. Reading vectors from disk, either from standard or
 //!    custom formats *(Not available yet)*
 //! 4. Creating vectors from raw bytes through the use of
@@ -52,38 +52,89 @@
 //! [`to_vec()`]: https://doc.rust-lang.org/std/vec/struct.Vec.html#method.to_vec
 //!
 //! # Vector Builders
-//! Gulali has built-in functions for creating vectors from scratch:
+//! Gulali has built-in functions for creating vectors from scratch.
 //!
-//! [`zeros()`] will create a vector filled with 0 values with
-//! the specified dimension and shape. For example:
+//! [`one_dim()`] will create a one-dimensional vector with specified
+//! shape and values. For example:
 //!
 //! ```
 //! # use gulali::prelude::*;
-//! // Create two-dimensional vector with shape [3, 3]
-//! // filled with zeros
-//! let a: Vec<Vec<i32>> = Vec::two_dim(3, 3).zeros();
-//! assert_eq!(a, [[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
+//! // Generate a one-dimensional vector with shape [5]
+//! // filled with zeros; f64 can be changed into any
+//! // numeric data types.
+//! let bias: Vec<f64> = Vec::one_dim()
+//!     .with_shape([5])
+//!     .zeros()
+//!     .generate();
+//!
+//! assert_eq!(bias, [0.0, 0.0, 0.0, 0.0, 0.0]);
 //! ```
 //!
-//! [`ones()`]  will create a vector filled with 1 values with
-//! the specified dimension and shape. It is identical to
-//! [`zeros()`] in all other respects.
+//! [`two_dim()`] will create a two-dimensional vector with specified
+//! shape and values. For example:
 //!
-//! [`zeros()`]: trait.Zero.html#tymethod.zeros
-//! [`ones()`]: trait.One.html#tymethod.ones
+//! ```
+//! # use gulali::prelude::*;
+//! // Generate a two-dimensional vector with shape [2, 2]
+//! // filled with ones; f64 can be changed into any
+//! // numeric data types.
+//! let matrix: Vec<Vec<f64>> = Vec::two_dim()
+//!     .with_shape([2, 2])
+//!     .ones()
+//!     .generate();
+//!
+//! assert_eq!(matrix, [[1.0, 1.0], [1.0, 1.0]]);
+//! ```
+//!
+//! [`three_dim()`] will create a three-dimensional vector with specified
+//! shape and values. For example:
+//!
+//! ```
+//! # use gulali::prelude::*;
+//! // Generate a three-dimensional vector with shape [1, 1, 2]
+//! // filled with 5.0; f64 can be changed into any
+//! // numeric data types.
+//! let test: Vec<Vec<Vec<f64>>> = Vec::three_dim()
+//!     .with_shape([1, 1, 2])
+//!     .full_of(5.0)
+//!     .generate();
+//!
+//! assert_eq!(test, [[[5.0, 5.0]]]);
+//! ```
+//!
+//! [`four_dim()`] will create a four-dimensional vector with specified
+//! shape and values. For example:
+//!
+//! ```
+//! # use gulali::prelude::*;
+//! // Generate a four-dimensional vector with shape [1, 1, 1, 2]
+//! // filled with ones; f64 can be changed into any
+//! // numeric data types.
+//! let test: Vec<Vec<Vec<Vec<f64>>>> = Vec::four_dim()
+//!     .with_shape([1, 1, 1, 2])
+//!     .ones()
+//!     .generate();
+//!
+//! assert_eq!(test, [[[[1.0, 1.0]]]]);
+//! ```
+//!
+//! [`one_dim()`]: trait.OneDimensional.html#tymethod.one_dim
+//! [`two_dim()`]: trait.TwoDimensional.html#tymethod.two_dim
+//! [`three_dim()`]: trait.ThreeDimensional.html#tymethod.three_dim
+//! [`four_dim()`]: trait.FourDimensional.html#tymethod.four_dim
 //!
 //! [`range()`] will create vectors with regularly incrementing values.
 //! For example:
 //! ```
 //! # use gulali::prelude::*;
-//! let range1: Vec<i32> = Vec::range().stop_at(5).init();
+//! let range1: Vec<i32> = Vec::range().stop_at(5).generate();
 //! assert_eq!(range1, [0, 1, 2, 3, 4]);
 //!
 //! let range2: Vec<f64> = Vec::range()
 //!     .start_at(1.0)
 //!     .stop_at(3.0)
 //!     .step_by(0.5)
-//!     .init();
+//!     .generate();
 //! assert_eq!(range2, [1.0, 1.5, 2.0, 2.5]);
 //! ```
 //!
@@ -99,8 +150,7 @@
 //!     .start_at(2.0)
 //!     .stop_at(5.0)
 //!     .with_size(10)
-//!     .generate()
-//!     .unwrap();
+//!     .generate();
 //!
 //! assert_eq!(
 //!     lin,
@@ -119,22 +169,16 @@
 //!
 // TODO: Continue here https://docs.scipy.org/doc/numpy-1.16.1/user/basics.creation.html
 
-// Dimension and the shape of the vectors
-mod dimensional;
-// Fill vectors with specified value
-mod full;
-// Fill vectors with ones
-mod ones;
-// Range vector builder
-mod range;
-// Fill vectors with zeros
-mod zeros;
-// Linearly spaced vector builder
+mod four_dimensional;
 mod linspace;
+mod one_dimensional;
+mod range;
+mod three_dimensional;
+mod two_dimensional;
 
-pub use dimensional::*;
-pub use full::*;
+pub use four_dimensional::*;
 pub use linspace::*;
-pub use ones::*;
+pub use one_dimensional::*;
 pub use range::*;
-pub use zeros::*;
+pub use three_dimensional::*;
+pub use two_dimensional::*;

@@ -14,7 +14,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-gulali = "2019.3.7"
+gulali = "2019.3.8"
 ```
 
 and this to your crate root:

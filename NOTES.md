@@ -239,3 +239,253 @@ it generates `Vec<T>` based on `self`.
 
 There are two cases:
 1. `stop` value should be specified. otherwise it returns None.
+2. `start >= stop` it returns None.
+
+# API Dilemma
+So, currently we have the following API to generate multidimensional
+vector:
+
+```rust
+let arr: Vec<u8> = Vec::one_dim(2).ones();
+let arr: Vec<Vec<u8>> = Vec::two_dim(2, 2).ones();
+let arr: Vec<Vec<Vec<u8>>> = Vec::three_dim(2, 2, 2).ones();
+let arr: Vec<Vec<Vec<Vec<u8>>>> = Vec::four_dim(2, 2, 2, 2).ones();
+```
+
+and the following api to generate numerical range vector:
+
+```rust
+let range: Vec<f64> = Vec::range()
+    .start_at(1.0)
+    .stop_at(3.0)
+    .init();
+
+let lin: Vec<f64> = Vec::linspace()
+    .start_at(1.0)
+    .stop_at(3.0)
+    .with_size(4)
+    .generate()
+    .unwrap();
+```
+
+first of all it's not consistent.
+
+Currently:
+
+```rust
+// Create two-dimensional vector with shape [3, 3]
+// filled with zeros
+let matrix: Vec<Vec<i32>> = Vec::two_dim(3, 3).zeros();
+```
+
+We should say **Generate** for consistency:
+
+```rust
+// Generate n-dimensional vector with shape [3, 3]
+// filled with zeros
+let matrix: Vec<Vec<i32>> = Vec::zeros()
+    .with_shape([3, 3])
+    .generate();
+```
+
+anw how about `full`?
+
+```rust
+let matrix: Vec<Vec<i32>> = Vec::full()
+    .of_value(2.5)
+    .with_shape([2, 2])
+    .generate();
+```
+
+hmmm i think it's not intuitive. Let's get inspiration.
+
+Numpy
+
+```python
+# Return a new array of given shape and type, filled with fill_value.
+np.full((2, 2), np.inf)
+np.full((2, 2), 10)
+```
+
+hmm I can't find any
+[related function](https://www.mathworks.com/help/matlab/matrices-and-arrays.html)
+in matlab.
+
+Wording:
+
+- Return a new array of given shape and type, filled with `fill_value`.
+- Generate a new vector of given shape, filled with `fill_value`.
+
+```rust
+let matrix: Vec<Vec<i32>> = Vec::new()
+    .with_shape([2, 2])
+    .full_of(2)
+    .generate();
+
+// Generate a new m-dimensional vector of given shape,
+// filled with zeros
+let matrix: Vec<Vec<i32>> = Vec::new()
+    .with_shape([2, 2])
+    .zeros()
+    .generate();
+```
+
+Mantul! Jadi gini ya
+
+```rust
+// Generate a new n-dimensional vector of given shape,
+// filled with zeros
+let matrix: Vec<Vec<i32>> = Vec::new()
+    .with_shape([2, 2])
+    .zeros()
+    .generate();
+
+// Generate a new n-dimensional vector of given shape,
+// filled with ones
+let matrix: Vec<Vec<i32>> = Vec::new()
+    .with_shape([2, 2])
+    .ones()
+    .generate();
+
+// Generate a new n-dimensional vector of given shape,
+// filled with 2
+let matrix: Vec<Vec<i32>> = Vec::new()
+    .with_shape([2, 2])
+    .full_of(2)
+    .generate();
+
+// Generate a new n-dimensional vector of given shape,
+// filled with 2
+let matrix: Vec<Vec<i32>> = Vec::new()
+    .with_shape([2, 2])
+    .full_of(2)
+    .generate();
+
+// Generate a new range vector
+let range: Vec<f64> = Vec::new()
+    .range()
+    .start_at(1.0)
+    .stop_at(3.0)
+    .generate();
+
+// Generate a new linearly spaced vector
+let lin: Vec<f64> = Vec::new()
+    .linspace()
+    .start_at(1.0)
+    .stop_at(3.0)
+    .with_size(4)
+    .generate();
+```
+
+Btw, we can't use `Vec::new()` because it returns
+`Vec<T>`. Not works for n-dimensional vector.
+
+How about:
+
+```rust
+Vec::ndim(); // n-dimensional vector
+Vec::new_ndim() // new n-dimensional vector;
+```
+
+So, we will revisit the API like the following:
+
+
+```rust
+// Generate a new n-dimensional vector of given shape,
+// filled with zeros
+let matrix: Vec<Vec<i32>> = Vec::ndim()
+    .with_shape([2, 2])
+    .zeros()
+    .generate();
+
+// Generate a new n-dimensional vector of given shape,
+// filled with ones
+let matrix: Vec<Vec<i32>> = Vec::ndim()
+    .with_shape([2, 2])
+    .ones()
+    .generate();
+
+// Generate a new n-dimensional vector of given shape,
+// filled with 2
+let matrix: Vec<Vec<i32>> = Vec::ndim()
+    .with_shape([2, 2])
+    .full_of(2)
+    .generate();
+
+// Generate a new n-dimensional vector of given shape,
+// filled with 2
+let matrix: Vec<Vec<i32>> = Vec::ndim()
+    .with_shape([2, 2])
+    .full_of(2)
+    .generate();
+
+// Generate a new range vector
+let range: Vec<f64> = Vec::ndim()
+    .range()
+    .start_at(1.0)
+    .stop_at(3.0)
+    .generate();
+
+// Generate a new linearly spaced vector
+let lin: Vec<f64> = Vec::ndim()
+    .linspace()
+    .start_at(1.0)
+    .stop_at(3.0)
+    .with_size(4)
+    .generate();
+```
+
+Oh forgot, we can't use the same method trait like this:
+
+```
+let arr: Vec<u8> = Vec::ndim();
+let arr: Vec<Vec<u8>> = Vec::ndim();
+let arr: Vec<Vec<Vec<u8>>> = Vec::ndim();
+let arr: Vec<Vec<Vec<Vec<u8>>>> = Vec::ndim();
+```
+
+if we implement `ndim` for other `Vec<T>`, it will raise
+a conflict:
+
+```
+error[E0119]: conflicting implementations of trait `builders::NDimensional` for type `std::vec::Vec<std::vec::Vec<_>>`:
+   --> src/builders/mod.rs:167:1
+    |
+158 | / impl<T> NDimensional for Vec<T>
+159 | | where
+160 | |     T: Num + FromPrimitive + Copy,
+161 | | {
+...   |
+164 | |     }
+165 | | }
+    | |_- first implementation here
+166 |
+167 | / impl<T> NDimensional for Vec<Vec<T>>
+168 | | where
+169 | |     T: Num + FromPrimitive + Copy,
+170 | | {
+...   |
+173 | |     }
+174 | | }
+    | |_^ conflicting implementation for `std::vec::Vec<std::vec::Vec<_>>`
+    |
+    = note: upstream crates may add new impl of trait `num::Num` for type `std::vec::Vec<_>` in future versions
+    = note: upstream crates may add new impl of trait `num::FromPrimitive` for type `std::vec::Vec<_>` in future versions
+    = note: upstream crates may add new impl of trait `std::marker::Copy` for type `std::vec::Vec<_>` in future versions
+```
+
+so our previous solution works perfectly:
+
+```
+let arr: Vec<u8> = Vec::one_dim();
+let arr: Vec<Vec<u8>> = Vec::two_dim();
+let arr: Vec<Vec<Vec<u8>>> = Vec::three_dim();
+let arr: Vec<Vec<Vec<Vec<u8>>>> = Vec::four_dim();
+```
+
+OK.
+
+Hmmm let's modify it a litle bit.
+
+Instead of returns `Vec<T>` in `one_dim()`,
+we may return a new struct.

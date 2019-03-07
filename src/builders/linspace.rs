@@ -20,15 +20,14 @@ use num::{Float, FromPrimitive};
 use std::ops::AddAssign;
 
 /// Linearly spaced vector parameters
-pub struct LinspaceParameters<T>
+pub struct LinspaceVectorParams<T>
 where
     T: Float + FromPrimitive + AddAssign,
 {
     /// The starting value of the sequence.
     /// The default `start` value is 0.
-    pub start: T,
+    pub start: Option<T>,
     /// The end value of the sequence.
-    /// The default `stop` value is `None`.
     pub stop: Option<T>,
     /// The size of the vectors or number
     /// of points to generate.
@@ -36,7 +35,7 @@ where
     pub size: usize,
 }
 
-impl<T> LinspaceParameters<T>
+impl<T> LinspaceVectorParams<T>
 where
     T: Float + FromPrimitive + AddAssign,
 {
@@ -49,15 +48,14 @@ where
     ///     .start_at(1.0)
     ///     .stop_at(3.0)
     ///     .with_size(4)
-    ///     .generate()
-    ///     .unwrap();
+    ///     .generate();
     ///
     /// // The first value should be 1.0
     /// assert_eq!(lin[0], 1.0);
     /// ````
-    pub fn start_at(self, value: T) -> LinspaceParameters<T> {
-        LinspaceParameters {
-            start: value,
+    pub fn start_at(self, value: T) -> LinspaceVectorParams<T> {
+        LinspaceVectorParams {
+            start: Some(value),
             stop: self.stop,
             size: self.size,
         }
@@ -72,14 +70,13 @@ where
     ///     .start_at(1.0)
     ///     .stop_at(3.0)
     ///     .with_size(4)
-    ///     .generate()
-    ///     .unwrap();
+    ///     .generate();
     ///
     /// // The end value should be 3.0
     /// assert_eq!(*lin.last().unwrap(), 3.0);
     /// ````
-    pub fn stop_at(self, value: T) -> LinspaceParameters<T> {
-        LinspaceParameters {
+    pub fn stop_at(self, value: T) -> LinspaceVectorParams<T> {
+        LinspaceVectorParams {
             start: self.start,
             stop: Some(value),
             size: self.size,
@@ -95,14 +92,13 @@ where
     ///     .start_at(1.0)
     ///     .stop_at(3.0)
     ///     .with_size(4)
-    ///     .generate()
-    ///     .unwrap();
+    ///     .generate();
     ///
     /// // The size of generated vectors should be 4
     /// assert_eq!(lin.size(), 4);
     /// ````
-    pub fn with_size(self, value: usize) -> LinspaceParameters<T> {
-        LinspaceParameters {
+    pub fn with_size(self, value: usize) -> LinspaceVectorParams<T> {
+        LinspaceVectorParams {
             start: self.start,
             stop: self.stop,
             size: value,
@@ -115,6 +111,8 @@ where
     /// It returns `None`, if `stop` value is not specified
     /// or the `start >= stop`.
     ///
+    /// # Panics
+    /// Panics if the `stop` value is not specified or
     /// # Examples
     /// ````
     /// # use gulali::prelude::*;
@@ -122,26 +120,26 @@ where
     ///     .start_at(1.0)
     ///     .stop_at(3.0)
     ///     .with_size(4)
-    ///     .generate()
-    ///     .unwrap();
+    ///     .generate();
     ///
     /// assert_eq!(lin, [1.0, 1.6666667, 2.3333335, 3.0]);
     /// ````
-    pub fn generate(self) -> Option<Vec<T>> {
-        // Returns None if the `stop` value is not specified
+    pub fn generate(self) -> Vec<T> {
+        // Panics if the `stop` value is not specified
         if self.stop.is_none() {
-            return None;
+            panic!("Linspace: stop value should be specified")
         }
-        let mut output = Vec::with_capacity(self.size);
-        let mut current_step = self.start;
+        let start = self.start.unwrap_or(T::from_i32(0).unwrap());
+        let stop = self.stop.unwrap();
+        // Panics if start >= stop, it should be start < stop
+        if start >= stop {
+            panic!("Linspace: start >= stop, it should be start < stop")
+        }
         // Convert size to float type
         let size = T::from_usize(self.size).unwrap();
-        let stop = self.stop.unwrap();
-        // Returns None if start >= stop, it should be start < stop
-        if self.start >= stop {
-            return None;
-        }
-        let step = (stop - self.start) / (size - T::from_f32(1.0).unwrap());
+        let mut output = Vec::with_capacity(self.size);
+        let mut current_step = start;
+        let step = (stop - start) / (size - T::from_f32(1.0).unwrap());
         while current_step < stop {
             output.push(current_step);
             current_step += step;
@@ -154,7 +152,7 @@ where
             output.push(stop);
         }
 
-        Some(output)
+        output
     }
 }
 
@@ -163,11 +161,11 @@ pub trait Linspace<T>
 where
     T: Float + FromPrimitive + AddAssign,
 {
-    /// A linearly spaced vectors builder. It returns [`LinspaceParameters`]
+    /// A linearly spaced vectors builder. It returns [`LinspaceVectorParams`]
     /// with the following default value:
     ///
     /// ```ignore
-    /// LinspaceParameters{
+    /// LinspaceVectorParams{
     ///     start: 0,
     ///     stop: None,
     ///     size: 100
@@ -186,11 +184,11 @@ where
     /// including `start` and `stop`). The spacing between the values
     /// is `(stop-start)/(size-1)`.
     ///
-    /// [`LinspaceParameters`]: struct.LinspaceParameters.html
-    /// [`start_at()`]: struct.LinspaceParameters.html#method.start_at
-    /// [`stop_at()`]: struct.LinspaceParameters.html#method.stop_at
-    /// [`with_size()`]: struct.LinspaceParameters.html#method.with_size
-    /// [`generate()`]: struct.LinspaceParameters.html#method.generate
+    /// [`LinspaceVectorParams`]: struct.LinspaceVectorParams.html
+    /// [`start_at()`]: struct.LinspaceVectorParams.html#method.start_at
+    /// [`stop_at()`]: struct.LinspaceVectorParams.html#method.stop_at
+    /// [`with_size()`]: struct.LinspaceVectorParams.html#method.with_size
+    /// [`generate()`]: struct.LinspaceVectorParams.html#method.generate
     ///
     /// # Examples
     /// ```
@@ -201,7 +199,7 @@ where
     ///     .stop_at(5.0)
     ///     .with_size(10)
     ///     .generate()
-    ///     .unwrap();
+    ///     ;
     ///
     /// assert_eq!(
     ///     lin,
@@ -212,80 +210,18 @@ where
     /// );
     /// ```
     ///
-    fn linspace() -> LinspaceParameters<T>;
+    fn linspace() -> LinspaceVectorParams<T>;
 }
 
 impl<T> Linspace<T> for Vec<T>
 where
     T: Float + FromPrimitive + AddAssign,
 {
-    fn linspace() -> LinspaceParameters<T> {
-        LinspaceParameters {
-            start: T::from_f32(0.0).unwrap(),
+    fn linspace() -> LinspaceVectorParams<T> {
+        LinspaceVectorParams {
+            start: None,
             stop: None,
             size: 10,
         }
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    #[should_panic]
-    fn test_linspace_f32_none() {
-        // If stop_at is not used, it should returns none
-        Vec::<f32>::linspace().generate().unwrap();
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_linspace_f64_none() {
-        // If stop_at is not used, it should returns none
-        Vec::<f64>::linspace().generate().unwrap();
-    }
-
-    #[test]
-    fn test_linspace_default() {
-        // Default
-        let lin: Vec<f32> = Vec::linspace().stop_at(5.0).generate().unwrap();
-        assert_eq!(
-            lin,
-            [
-                0.0, 0.55555556, 1.11111111, 1.6666667, 2.22222222, 2.777778,
-                3.3333335, 3.888889, 4.44444444, 5.0
-            ]
-        );
-    }
-
-    #[test]
-    fn test_linspace_start_at() {
-        // Default
-        let lin: Vec<f32> = Vec::linspace()
-            .start_at(1.0)
-            .stop_at(5.0)
-            .generate()
-            .unwrap();
-        assert_eq!(
-            lin,
-            [
-                1.0, 1.44444444, 1.88888889, 2.33333333, 2.77777778, 3.222222,
-                3.6666665, 4.11111111, 4.555556, 5.0
-            ]
-        );
-    }
-
-    #[test]
-    fn test_linspace_with_size() {
-        // Default
-        let lin: Vec<f32> = Vec::linspace()
-            .start_at(1.0)
-            .stop_at(5.0)
-            .with_size(5)
-            .generate()
-            .unwrap();
-        assert_eq!(lin, [1.0, 2.0, 3.0, 4.0, 5.0]);
-    }
-
 }

@@ -24,7 +24,7 @@
 //!   size of the vector in each dimension.
 //!   For a matrix with `n` rows and `m` columns, shape will be `[n,m]`.
 //!   The length of the shape is therefore the number of
-//!   dimensions, `dim()`.
+//!   dimensions, [`dim()`].
 //! - [`size()`]: the total number of elements of the vector.
 //!   This is equal to the product of the elements of shape.
 //!
@@ -37,35 +37,52 @@
 //! # Examples
 //! ```rust
 //! # use gulali::prelude::*;
-//! // Create two-dimensional vector with shape [3, 3]
+//! // Generate a two-dimensional vector with shape [3, 3]
 //! // filled with zeros
-//! let matrix: Vec<Vec<i32>> = Vec::two_dim(3, 3).zeros();
+//! let matrix: Vec<Vec<i32>> = Vec::two_dim()
+//!     .with_shape([3, 3])
+//!     .zeros()
+//!     .generate();
 //!
 //! assert_eq!(matrix.dim(), 2);
 //! assert_eq!(matrix.shape(), [3, 3]);
 //! assert_eq!(matrix.size(), 9);
 //! ```
 
+use num::{FromPrimitive, Num};
+
 /// Dimension of the vector
 pub trait Dimension<T>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     /// Returns the number of dimensions of the vector
     ///
     /// # Examples
     /// ```
     /// # use gulali::prelude::*;
-    /// let arr1: Vec<i32> = Vec::one_dim(2).zeros();
+    /// let arr1: Vec<i32> = Vec::one_dim()
+    ///     .with_shape([2])
+    ///     .zeros()
+    ///     .generate();
     /// assert_eq!(arr1.dim(), 1);
     ///
-    /// let arr2: Vec<Vec<i32>> = Vec::two_dim(2, 2).zeros();
+    /// let arr2: Vec<Vec<i32>> = Vec::two_dim()
+    ///     .with_shape([2, 2])
+    ///     .zeros()
+    ///     .generate();
     /// assert_eq!(arr2.dim(), 2);
     ///
-    /// let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim(2, 2, 2).zeros();
+    /// let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim()
+    ///     .with_shape([2, 2, 2])
+    ///     .zeros()
+    ///     .generate();
     /// assert_eq!(arr3.dim(), 3);
     ///
-    /// let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim(2, 2, 2, 3).zeros();
+    /// let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim()
+    ///     .with_shape([2, 2, 2, 3])
+    ///     .zeros()
+    ///     .generate();
     /// assert_eq!(arr4.dim(), 4);
     /// ```
     fn dim(&self) -> usize;
@@ -73,7 +90,7 @@ where
 
 impl<T> Dimension<T> for Vec<T>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn dim(&self) -> usize {
         1
@@ -82,7 +99,7 @@ where
 
 impl<T> Dimension<T> for Vec<Vec<T>>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn dim(&self) -> usize {
         2
@@ -91,7 +108,7 @@ where
 
 impl<T> Dimension<T> for Vec<Vec<Vec<T>>>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn dim(&self) -> usize {
         3
@@ -100,7 +117,7 @@ where
 
 impl<T> Dimension<T> for Vec<Vec<Vec<Vec<T>>>>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn dim(&self) -> usize {
         4
@@ -110,7 +127,7 @@ where
 /// A list of integers indicating the size of the vector in each dimension
 pub trait Shape<T>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     /// Returns a list of integers indicating the length of the
     /// vector in each dimension.
@@ -118,16 +135,28 @@ where
     /// # Examples
     /// ```
     /// # use gulali::prelude::*;
-    /// let arr1: Vec<i32> = Vec::one_dim(2).zeros();
+    /// let arr1: Vec<i32> = Vec::one_dim()
+    ///     .with_shape([2])
+    ///     .zeros()
+    ///     .generate();
     /// assert_eq!(arr1.shape(), [2]);
     ///
-    /// let arr2: Vec<Vec<i32>> = Vec::two_dim(2, 2).zeros();
+    /// let arr2: Vec<Vec<i32>> = Vec::two_dim()
+    ///     .with_shape([2, 2])
+    ///     .zeros()
+    ///     .generate();;
     /// assert_eq!(arr2.shape(), [2, 2]);
     ///
-    /// let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim(2, 2, 2).zeros();
+    /// let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim()
+    ///     .with_shape([2, 2, 2])
+    ///     .zeros()
+    ///     .generate();
     /// assert_eq!(arr3.shape(), [2, 2, 2]);
     ///
-    /// let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim(2, 2, 2, 3).zeros();
+    /// let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim()
+    ///     .with_shape([2, 2, 2, 3])
+    ///     .zeros()
+    ///     .generate();
     /// assert_eq!(arr4.shape(), [2, 2, 2, 3]);
     /// ```
     fn shape(&self) -> Vec<usize>;
@@ -135,7 +164,7 @@ where
 
 impl<T> Shape<T> for Vec<T>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn shape(&self) -> Vec<usize> {
         vec![self.len()]
@@ -144,7 +173,7 @@ where
 
 impl<T> Shape<T> for Vec<Vec<T>>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn shape(&self) -> Vec<usize> {
         vec![self.len(), self[0].len()]
@@ -153,7 +182,7 @@ where
 
 impl<T> Shape<T> for Vec<Vec<Vec<T>>>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn shape(&self) -> Vec<usize> {
         vec![self.len(), self[0].len(), self[0][0].len()]
@@ -162,7 +191,7 @@ where
 
 impl<T> Shape<T> for Vec<Vec<Vec<Vec<T>>>>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn shape(&self) -> Vec<usize> {
         vec![
@@ -177,7 +206,7 @@ where
 /// Total number of elements of the vector
 pub trait Size<T>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     /// Returns the total number of elements of the vector.
     /// This is equal to the product of the elements of shape.
@@ -185,16 +214,28 @@ where
     /// # Examples
     /// ```
     /// # use gulali::prelude::*;
-    /// let arr1: Vec<i32> = Vec::one_dim(2).zeros();
+    /// let arr1: Vec<i32> = Vec::one_dim()
+    ///     .with_shape([2])
+    ///     .zeros()
+    ///     .generate();
     /// assert_eq!(arr1.size(), 2);
     ///
-    /// let arr2: Vec<Vec<i32>> = Vec::two_dim(2, 2).zeros();
+    /// let arr2: Vec<Vec<i32>> = Vec::two_dim()
+    ///     .with_shape([2, 2])
+    ///     .zeros()
+    ///     .generate();;
     /// assert_eq!(arr2.size(), 4);
     ///
-    /// let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim(2, 2, 2).zeros();
+    /// let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim()
+    ///     .with_shape([2, 2, 2])
+    ///     .zeros()
+    ///     .generate();
     /// assert_eq!(arr3.size(), 8);
     ///
-    /// let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim(2, 2, 2, 3).zeros();
+    /// let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim()
+    ///     .with_shape([2, 2, 2, 3])
+    ///     .zeros()
+    ///     .generate();
     /// assert_eq!(arr4.size(), 24);
     /// ```
     fn size(&self) -> usize;
@@ -202,7 +243,7 @@ where
 
 impl<T> Size<T> for Vec<T>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn size(&self) -> usize {
         self.shape().iter().product()
@@ -211,17 +252,16 @@ where
 
 impl<T> Size<T> for Vec<Vec<T>>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn size(&self) -> usize {
-        let shape: Vec<usize> = self.shape();
-        shape.iter().product()
+        self.shape().iter().product()
     }
 }
 
 impl<T> Size<T> for Vec<Vec<Vec<T>>>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn size(&self) -> usize {
         self.shape().iter().product()
@@ -230,7 +270,7 @@ where
 
 impl<T> Size<T> for Vec<Vec<Vec<Vec<T>>>>
 where
-    T: Copy,
+    T: Num + FromPrimitive + Copy,
 {
     fn size(&self) -> usize {
         self.shape().iter().product()
@@ -244,46 +284,58 @@ mod tests {
 
     #[test]
     fn test_dim() {
-        let arr1: Vec<i32> = Vec::one_dim(2).zeros();
+        let arr1: Vec<i32> =
+            Vec::one_dim().with_shape([2]).zeros().generate();
         assert_eq!(arr1.dim(), 1);
 
-        let arr2: Vec<Vec<i32>> = Vec::two_dim(2, 2).zeros();
+        let arr2: Vec<Vec<i32>> =
+            Vec::two_dim().with_shape([2, 2]).zeros().generate();
         assert_eq!(arr2.dim(), 2);
 
-        let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim(2, 2, 2).zeros();
+        let arr3: Vec<Vec<Vec<i32>>> =
+            Vec::three_dim().with_shape([2, 2, 2]).zeros().generate();
         assert_eq!(arr3.dim(), 3);
 
-        let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim(2, 2, 2, 3).zeros();
+        let arr4: Vec<Vec<Vec<Vec<i32>>>> =
+            Vec::four_dim().with_shape([2, 2, 2, 3]).zeros().generate();
         assert_eq!(arr4.dim(), 4);
     }
 
     #[test]
     fn test_shape() {
-        let arr1: Vec<i32> = Vec::one_dim(2).zeros();
+        let arr1: Vec<i32> =
+            Vec::one_dim().with_shape([2]).zeros().generate();
         assert_eq!(arr1.shape(), [2]);
 
-        let arr2: Vec<Vec<i32>> = Vec::two_dim(2, 2).zeros();
+        let arr2: Vec<Vec<i32>> =
+            Vec::two_dim().with_shape([2, 2]).zeros().generate();;
         assert_eq!(arr2.shape(), [2, 2]);
 
-        let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim(2, 2, 2).zeros();
+        let arr3: Vec<Vec<Vec<i32>>> =
+            Vec::three_dim().with_shape([2, 2, 2]).zeros().generate();
         assert_eq!(arr3.shape(), [2, 2, 2]);
 
-        let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim(2, 2, 2, 3).zeros();
+        let arr4: Vec<Vec<Vec<Vec<i32>>>> =
+            Vec::four_dim().with_shape([2, 2, 2, 3]).zeros().generate();
         assert_eq!(arr4.shape(), [2, 2, 2, 3]);
     }
 
     #[test]
     fn test_size() {
-        let arr1: Vec<i32> = Vec::one_dim(2).zeros();
+        let arr1: Vec<i32> =
+            Vec::one_dim().with_shape([2]).zeros().generate();
         assert_eq!(arr1.size(), 2);
 
-        let arr2: Vec<Vec<i32>> = Vec::two_dim(2, 2).zeros();
+        let arr2: Vec<Vec<i32>> =
+            Vec::two_dim().with_shape([2, 2]).zeros().generate();;
         assert_eq!(arr2.size(), 4);
 
-        let arr3: Vec<Vec<Vec<i32>>> = Vec::three_dim(2, 2, 2).zeros();
+        let arr3: Vec<Vec<Vec<i32>>> =
+            Vec::three_dim().with_shape([2, 2, 2]).zeros().generate();
         assert_eq!(arr3.size(), 8);
 
-        let arr4: Vec<Vec<Vec<Vec<i32>>>> = Vec::four_dim(2, 2, 2, 3).zeros();
+        let arr4: Vec<Vec<Vec<Vec<i32>>>> =
+            Vec::four_dim().with_shape([2, 2, 2, 3]).zeros().generate();
         assert_eq!(arr4.size(), 24);
     }
 }

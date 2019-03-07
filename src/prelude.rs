@@ -20,9 +20,6 @@
 //!
 //! ```
 //! use gulali::prelude::*;
-//!
-//! # let matrix: Vec<Vec<i32>> = Vec::two_dim(3, 3).zeros();
-//! # assert_eq!(matrix.dim(), 2);
 //! ```
 
 pub use crate::attributes::*;
