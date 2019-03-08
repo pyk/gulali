@@ -1,5 +1,6 @@
 <p align="center">
-<img alt="Crabsformer. Larva Island S01E06" src="crabsformer.png">
+  <img alt="Crabsformer. Larva Island S01E06" src="crabsformer.png">
+  <p align="center" style="font-size:32px;"><b>Crabsformer</b></p>
 </p>
 
 Crabsformer is an easy-to-use fundamental library for scientific computing with Rust,
