@@ -1,3 +1,5 @@
+![Crabsformer. Larva Island S01E06](crabsformer.png)
+
 # Crabsformer
 Crabsformer is an easy-to-use fundamental library for scientific computing with Rust,
 highly inspired by [NumPy].
