@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Gulali is an easy-to-use fundamental library for scientific computing with
+//! Crabsformer is an easy-to-use fundamental library for scientific computing with
 //! Rust, highly inspired by [NumPy].
 //!
 //! [NumPy]: http://www.numpy.org/
@@ -23,19 +23,19 @@
 //!
 //! ```toml
 //! [dependencies]
-//! gulali = "2019.3.8"
+//! crabsformer = "2019.3.8"
 //! ```
 //!
 //! and this to your crate root:
 //!
 //! ```rust
-//! extern crate gulali;
+//! extern crate crabsformer;
 //!
 //! // Import all required traits
-//! use gulali::prelude::*;
+//! use crabsformer::prelude::*;
 //! ```
 //!
-//! To get started using Gulali, read the quickstart tutorial below.
+//! To get started using Crabsformer, read the quickstart tutorial below.
 //!
 //! ## Quickstart Tutorial
 //!
@@ -47,7 +47,7 @@
 //! [Rust book]: https://doc.rust-lang.org/book/
 //!
 //! ### The Basics
-//! Gulali's main data structure is the homogeneous multidimensional [vector].
+//! Crabsformer's main data structure is the homogeneous multidimensional [vector].
 //! It is a table of elements (usually numbers), all of the same type,
 //! indexed by a tuple of positive integers.
 //!
@@ -66,9 +66,9 @@
 //! ]
 //! ```
 //!
-//! Gulali uses Rust's [vector] standard data structure extensively.
-//! Gulali don't reinvent yet-another data strucutre to keep things
-//! simple and easy to use. Gulali add attributes to Rust's [vector]
+//! Crabsformer uses Rust's [vector] standard data structure extensively.
+//! Crabsformer don't reinvent yet-another data strucutre to keep things
+//! simple and easy to use. Crabsformer add attributes to Rust's [vector]
 //! like the following:
 //!
 //! - [`dim()`]: the number of dimensions of the vector.
@@ -87,8 +87,8 @@
 //!
 //! ### An Example
 //! ```rust
-//! # use gulali::prelude::*;
-//! // Generate a new two-dimensional vector with shape [3, 3]
+//! # use crabsformer::prelude::*;
+//! // Generate two-dimensional vector with shape [3, 3]
 //! // filled with zeros; i32 can be changed into any
 //! // numeric data types.
 //! let matrix: Vec<Vec<i32>> = Vec::two_dim()
@@ -108,7 +108,7 @@
 //! like the following:
 //!
 //! ```rust
-//! # use gulali::prelude::*;
+//! # use crabsformer::prelude::*;
 //! let a = vec![1, 2, 3];
 //! assert_eq!(a.dim(), 1);
 //! assert_eq!(a.shape(), [3]);
@@ -130,7 +130,7 @@
 //! of the elements in the macro.
 //!
 //! Often, the elements of a vector are originally unknown, but
-//! its shape is known. Hence, Gulali offers several functions to
+//! its shape is known. Hence, Crabsformer offers several functions to
 //! create vectors with initial placeholder content. These minimize
 //! the necessity of growing vectors, an expensive operation.
 //!
@@ -138,8 +138,8 @@
 //! shape and values. For example:
 //!
 //! ```
-//! # use gulali::prelude::*;
-//! // Generate a one-dimensional vector with shape [5]
+//! # use crabsformer::prelude::*;
+//! // Generate one-dimensional vector with shape [5]
 //! // filled with zeros; f64 can be changed into any
 //! // numeric data types.
 //! let bias: Vec<f64> = Vec::one_dim()
@@ -154,8 +154,8 @@
 //! shape and values. For example:
 //!
 //! ```
-//! # use gulali::prelude::*;
-//! // Generate a two-dimensional vector with shape [2, 2]
+//! # use crabsformer::prelude::*;
+//! // Generate two-dimensional vector with shape [2, 2]
 //! // filled with ones; f64 can be changed into any
 //! // numeric data types.
 //! let matrix: Vec<Vec<f64>> = Vec::two_dim()
@@ -170,8 +170,8 @@
 //! shape and values. For example:
 //!
 //! ```
-//! # use gulali::prelude::*;
-//! // Generate a three-dimensional vector with shape [1, 1, 2]
+//! # use crabsformer::prelude::*;
+//! // Generate three-dimensional vector with shape [1, 1, 2]
 //! // filled with 5.0; f64 can be changed into any
 //! // numeric data types.
 //! let test: Vec<Vec<Vec<f64>>> = Vec::three_dim()
@@ -186,7 +186,7 @@
 //! shape and values. For example:
 //!
 //! ```
-//! # use gulali::prelude::*;
+//! # use crabsformer::prelude::*;
 //! // Generate a four-dimensional vector with shape [1, 1, 1, 2]
 //! // filled with ones; f64 can be changed into any
 //! // numeric data types.
@@ -207,17 +207,17 @@
 //! ## Getting help
 //! Feel free to start discussion at [GitHub issues].
 //!
-//! [Github issues]: https://github.com/pyk/gulali/issues/new/choose
+//! [Github issues]: https://github.com/pyk/crabsformer/issues/new/choose
 //!
 //! ## License
-//! Gulali is licensed under the [Apache-2.0] license.
+//! Crabsformer is licensed under the [Apache-2.0] license.
 //!
 //! Unless you explicitly state otherwise, any contribution intentionally
-//! submitted for inclusion in Gulali by you, as defined in the Apache-2.0
+//! submitted for inclusion in Crabsformer by you, as defined in the Apache-2.0
 //! license, shall be licensed as above, without
 //! any additional terms or conditions.
 //!
-//! [Apache-2.0]: https://github.com/pyk/gulali/blob/master/LICENSE
+//! [Apache-2.0]: https://github.com/pyk/crabsformer/blob/master/LICENSE
 //!
 extern crate num;
 

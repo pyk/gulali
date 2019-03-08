@@ -43,7 +43,7 @@ where
     ///
     /// # Examples
     /// ````
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let lin: Vec<f64> = Vec::linspace()
     ///     .start_at(1.0)
     ///     .stop_at(3.0)
@@ -65,7 +65,7 @@ where
     ///
     /// # Examples
     /// ````
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let lin: Vec<f64> = Vec::linspace()
     ///     .start_at(1.0)
     ///     .stop_at(3.0)
@@ -87,7 +87,7 @@ where
     ///
     /// # Examples
     /// ````
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let lin: Vec<f64> = Vec::linspace()
     ///     .start_at(1.0)
     ///     .stop_at(3.0)
@@ -115,7 +115,7 @@ where
     /// Panics if the `stop` value is not specified or
     /// # Examples
     /// ````
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let lin: Vec<f32> = Vec::linspace()
     ///     .start_at(1.0)
     ///     .stop_at(3.0)
@@ -192,7 +192,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// // Generate linearly spaced vector within interval [2.0, 5.0]
     /// let lin: Vec<f32> = Vec::linspace()
     ///     .start_at(2.0)

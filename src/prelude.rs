@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Gulali's prelude
+//! Crabsformer's prelude
 //!
 //! Like the standard library's prelude, this module simplifies importing of
 //! common items. Unlike the standard prelude, the contents of this module must
 //! be imported manually:
 //!
 //! ```
-//! use gulali::prelude::*;
+//! use crabsformer::prelude::*;
 //! ```
 
 pub use crate::attributes::*;

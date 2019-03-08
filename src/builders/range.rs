@@ -39,7 +39,7 @@ where
     ///
     /// # Examples
     /// ````
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let range: Vec<f64> = Vec::range()
     ///     .start_at(1.0)
     ///     .stop_at(3.0)
@@ -58,7 +58,7 @@ where
     ///
     /// # Examples
     /// ````
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let range: Vec<f64> = Vec::range()
     ///     .stop_at(5.0)
     ///     .generate();
@@ -76,7 +76,7 @@ where
     ///
     /// # Examples
     /// ````
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let range: Vec<f64> = Vec::range()
     ///     .stop_at(3.0)
     ///     .step_by(0.5)
@@ -101,7 +101,7 @@ where
     ///
     /// # Examples
     /// ````
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let range: Vec<i32> = Vec::range()
     ///     .stop_at(3)
     ///     .generate();
@@ -162,7 +162,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// // Create range vector within interval [0, 5)
     /// let range1: Vec<i64> = Vec::range().stop_at(5).generate();
     /// assert_eq!(range1, [0, 1, 2, 3, 4]);

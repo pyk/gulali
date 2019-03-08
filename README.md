@@ -1,5 +1,5 @@
-# Gulali
-Gulali is an easy-to-use fundamental library for scientific computing with Rust,
+# Crabsformer
+Crabsformer is an easy-to-use fundamental library for scientific computing with Rust,
 highly inspired by [NumPy].
 
 Documentation:
@@ -7,39 +7,39 @@ Documentation:
 - [API Reference]
 
 [NumPy]: http://www.numpy.org/
-[API Reference]: https://docs.rs/gulali
+[API Reference]: https://docs.rs/crabsformer
 
 ## Usage
 Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-gulali = "2019.3.8"
+crabsformer = "2019.3.8"
 ```
 
 and this to your crate root:
 
 ```rust
-extern crate gulali;
+extern crate crabsformer;
 
 // Import all required traits
-use gulali::prelude::*;
+use crabsformer::prelude::*;
 ```
 
-To get started using Gulali, read the [quickstart tutorial].
+To get started using Crabsformer, read the [quickstart tutorial].
 
-[quickstart tutorial]:  https://docs.rs/gulali#quickstart-tutorial
+[quickstart tutorial]:  https://docs.rs/crabsformer#quickstart-tutorial
 
 ## Getting help
 Feel free to start discussion at [GitHub issues].
 
-[Github issues]: https://github.com/pyk/gulali/issues/new/choose
+[Github issues]: https://github.com/pyk/crabsformer/issues/new/choose
 
 ## License
-Gulali is licensed under the [Apache-2.0](./LICENSE) license.
+Crabsformer is licensed under the [Apache-2.0](./LICENSE) license.
 
 ### Contribution
 Unless you explicitly state otherwise, any contribution intentionally
-submitted for inclusion in Gulali by you, as defined in the Apache-2.0
+submitted for inclusion in Crabsformer by you, as defined in the Apache-2.0
 license, shall be licensed as above, without
 any additional terms or conditions.

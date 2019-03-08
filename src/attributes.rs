@@ -15,9 +15,9 @@
 //! Vector attributes
 //!
 //! # Overview
-//! Gulali uses Rust's [vector] standard data structure extensively. We don't
+//! Crabsformer uses Rust's [vector] standard data structure extensively. We don't
 //! reinvent yet-another data structure to keep things simple and easy to use.
-//! Gulali add the following attributes to Rust's vector:
+//! Crabsformer add the following attributes to Rust's vector:
 //!
 //! - [`dim()`]: the number of dimensions of the vector.
 //! - [`shape()`]: This is a list of integers indicating the
@@ -36,7 +36,7 @@
 //!
 //! # Examples
 //! ```rust
-//! # use gulali::prelude::*;
+//! # use crabsformer::prelude::*;
 //! // Generate a two-dimensional vector with shape [3, 3]
 //! // filled with zeros
 //! let matrix: Vec<Vec<i32>> = Vec::two_dim()
@@ -60,7 +60,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let arr1: Vec<i32> = Vec::one_dim()
     ///     .with_shape([2])
     ///     .zeros()
@@ -134,7 +134,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let arr1: Vec<i32> = Vec::one_dim()
     ///     .with_shape([2])
     ///     .zeros()
@@ -213,7 +213,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let arr1: Vec<i32> = Vec::one_dim()
     ///     .with_shape([2])
     ///     .zeros()

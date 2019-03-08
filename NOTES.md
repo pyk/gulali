@@ -489,3 +489,18 @@ Hmmm let's modify it a litle bit.
 
 Instead of returns `Vec<T>` in `one_dim()`,
 we may return a new struct.
+
+# Rename it again to Crabsformer
+Inspired by [Larva Island S01E06: Crabsformer](https://www.imdb.com/title/tt9152116/).
+
+Why?
+
+1. [The rust most used mascot is a crab](http://rustacean.net/)
+2. If you are stranded in an island, you can use Crabsformer to
+   build a ship. See [Larva Island S01E06](https://www.imdb.com/title/tt9152116/).
+
+Also, it's a very good name. wkwk.
+Keyh.
+
+let's rename it.
+We need to update the repo and update the `gulali` docs. Keyh.

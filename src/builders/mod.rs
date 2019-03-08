@@ -19,7 +19,7 @@
 //! There are 4 general mechanisms for creating vectors:
 //!
 //! 1. Conversion from other Rust primitive types: [`array`] and [`slice`].
-//! 2. Using Gulali's vector builder routines (e.g., [`one_dim()`],
+//! 2. Using Crabsformer's vector builder routines (e.g., [`one_dim()`],
 //!    [`range()`], etc.)
 //! 3. Reading vectors from disk, either from standard or
 //!    custom formats *(Not available yet)*
@@ -52,13 +52,13 @@
 //! [`to_vec()`]: https://doc.rust-lang.org/std/vec/struct.Vec.html#method.to_vec
 //!
 //! # Vector Builders
-//! Gulali has built-in functions for creating vectors from scratch.
+//! Crabsformer has built-in functions for creating vectors from scratch.
 //!
 //! [`one_dim()`] will create a one-dimensional vector with specified
 //! shape and values. For example:
 //!
 //! ```
-//! # use gulali::prelude::*;
+//! # use crabsformer::prelude::*;
 //! // Generate a one-dimensional vector with shape [5]
 //! // filled with zeros; f64 can be changed into any
 //! // numeric data types.
@@ -74,7 +74,7 @@
 //! shape and values. For example:
 //!
 //! ```
-//! # use gulali::prelude::*;
+//! # use crabsformer::prelude::*;
 //! // Generate a two-dimensional vector with shape [2, 2]
 //! // filled with ones; f64 can be changed into any
 //! // numeric data types.
@@ -90,7 +90,7 @@
 //! shape and values. For example:
 //!
 //! ```
-//! # use gulali::prelude::*;
+//! # use crabsformer::prelude::*;
 //! // Generate a three-dimensional vector with shape [1, 1, 2]
 //! // filled with 5.0; f64 can be changed into any
 //! // numeric data types.
@@ -106,7 +106,7 @@
 //! shape and values. For example:
 //!
 //! ```
-//! # use gulali::prelude::*;
+//! # use crabsformer::prelude::*;
 //! // Generate a four-dimensional vector with shape [1, 1, 1, 2]
 //! // filled with ones; f64 can be changed into any
 //! // numeric data types.
@@ -126,7 +126,7 @@
 //! [`range()`] will create vectors with regularly incrementing values.
 //! For example:
 //! ```
-//! # use gulali::prelude::*;
+//! # use crabsformer::prelude::*;
 //! let range1: Vec<i32> = Vec::range().stop_at(5).generate();
 //! assert_eq!(range1, [0, 1, 2, 3, 4]);
 //!
@@ -144,7 +144,7 @@
 //! and spaced equally between the specified beginning and end values.
 //! For example:
 //! ```
-//! # use gulali::prelude::*;
+//! # use crabsformer::prelude::*;
 //! // Generate linearly spaced vector within interval [2.0, 5.0]
 //! let lin: Vec<f32> = Vec::linspace()
 //!     .start_at(2.0)

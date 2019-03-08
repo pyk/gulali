@@ -47,7 +47,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vec<Vec<i32>> = Vec::two_dim()
     ///     .with_shape([2, 2])
     ///     .zeros()
@@ -69,7 +69,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vec<Vec<i32>> = Vec::two_dim()
     ///     .with_shape([2, 2])
     ///     .full_of(5)
@@ -88,7 +88,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vec<Vec<i32>> = Vec::two_dim()
     ///     .with_shape([2, 2])
     ///     .zeros()
@@ -104,7 +104,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vec<Vec<i32>> = Vec::two_dim()
     ///     .with_shape([2, 2])
     ///     .ones()
@@ -123,7 +123,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vec<Vec<i32>> = Vec::two_dim()
     ///     .with_shape([2, 2])
     ///     .ones()
@@ -188,7 +188,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// // Generate a two-dimensional vector with shape [2, 2]
     /// // filled with zeros; f64 can be changed into any
     /// // numeric data types.

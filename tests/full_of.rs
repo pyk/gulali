@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-extern crate gulali;
+extern crate crabsformer;
 
-use gulali::prelude::*;
+use crabsformer::prelude::*;
 
 #[test]
 fn test_full_one_dim() {

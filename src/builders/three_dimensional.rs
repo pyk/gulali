@@ -47,7 +47,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vec<Vec<Vec<i32>>> = Vec::three_dim()
     ///     .with_shape([1, 1, 2])
     ///     .zeros()
@@ -70,7 +70,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vec<Vec<Vec<i32>>> = Vec::three_dim()
     ///     .with_shape([1, 1, 2])
     ///     .full_of(5)
@@ -90,7 +90,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vec<Vec<Vec<i32>>> = Vec::three_dim()
     ///     .with_shape([1, 1, 2])
     ///     .zeros()
@@ -107,7 +107,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vec<Vec<Vec<i32>>> = Vec::three_dim()
     ///     .with_shape([1, 1, 2])
     ///     .ones()
@@ -127,7 +127,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vec<Vec<Vec<i32>>> = Vec::three_dim()
     ///     .with_shape([1, 1, 2])
     ///     .zeros()
@@ -198,7 +198,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use gulali::prelude::*;
+    /// # use crabsformer::prelude::*;
     /// // Generate a three-dimensional vector with shape [1, 1, 2]
     /// // filled with zeros; i32 can be changed into any
     /// // numeric data types.

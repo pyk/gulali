@@ -1,13 +1,13 @@
 [package]
-name = "gulali"
-description = "Gulali is an easy-to-use fundamental library for scientific computing with Rust, highly inspired by NumPy."
+name = "crabsformer"
+description = "Crabsformer is an easy-to-use fundamental library for scientific computing with Rust, highly inspired by NumPy."
 license = "Apache-2.0"
 version = "2019.3.8"
 authors = ["Bayu Aldi Yansyah <bayualdiyansyah@gmail.com>"]
 edition = "2018"
-documentation = "https://docs.rs/gulali/"
-homepage = "https://github.com/pyk/gulali"
-repository = "https://github.com/pyk/gulali"
+documentation = "https://docs.rs/crabsformer/"
+homepage = "https://github.com/pyk/crabsformer"
+repository = "https://github.com/pyk/crabsformer"
 readme = "README.md"
 
 [dependencies]
