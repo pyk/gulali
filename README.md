@@ -1,12 +1,16 @@
 <p align="center">
   <img alt="Crabsformer. Larva Island S01E06" src="crabsformer.png">
   <p align="center" style="font-size:32px;"><b>Crabsformer</b></p>
+  <p align="center">
+    <i>
+    Crabsformer is an easy-to-use fundamental library for 
+    scientific computing with Rust, highly inspired by 
+    <a href="http://www.numpy.org/">NumPy</a>.
+    </i>
+  </p>
 </p>
 
-Crabsformer is an easy-to-use fundamental library for scientific computing with Rust,
-highly inspired by [NumPy].
-
-Documentation:
+## Documentation
 - [Quickstart Tutorial][quickstart tutorial]
 - [API Reference]
 
