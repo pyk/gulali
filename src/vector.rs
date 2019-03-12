@@ -120,7 +120,12 @@ where
             data,
         }
     }
+}
 
+impl<F> Vector<F>
+where
+    F: Float + FromPrimitive + Copy + PartialOrd + AddAssign + Display,
+{
     pub fn linspace(size: usize, start: F, stop: F) -> Vector<F> {
         // Panics if start >= stop, it should be start < stop
         if start >= stop {
@@ -348,8 +353,8 @@ mod tests {
     #[test]
     fn test_linspace() {
         // Integer type
-        let a = Vector::linspace(5, 1, 10);
-        assert_eq!(a.data, [1, 3, 5, 7, 10]);
+        let a = Vector::linspace(5, 1.0, 10.0);
+        assert_eq!(a.data, [1.0, 3.25, 5.5, 7.75, 10.0]);
 
         // Float type
         let a = Vector::linspace(3, 3.0, 4.0);
