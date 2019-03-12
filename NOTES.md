@@ -504,3 +504,616 @@ Keyh.
 
 let's rename it.
 We need to update the repo and update the `gulali` docs. Keyh.
+
+# Distribution type
+So I want to be able todo the following:
+
+```rust
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([5])
+    .random()
+    .with_distribution(dist)
+    .generate();
+```
+
+Pokoknya harus bisa kaya gini si:
+
+```rust
+use rand::distributions::{Distribution, Uniform};
+
+fn main() {
+    let between = Uniform::from(10..10000);
+    let mut rng = rand::thread_rng();
+    let mut sum = 0;
+    for _ in 0..1000 {
+        sum += between.sample(&mut rng);
+    }
+    println!("{}", sum);
+}
+```
+
+Harusnya kaya gini bisa bosku
+
+```rust
+#[derive(Debug)]
+struct Test1<T> {
+    data: T
+}
+
+#[derive(Debug)]
+struct Test2<T> {
+    data: T
+}
+
+trait TraitTest<T> {
+    fn set(&self, new_data: T) -> T;
+}
+
+impl<T> TraitTest<T> for Test1<T> {
+    fn set(&self, new_data: T) -> T {
+        new_data
+    }
+}
+
+impl<T> TraitTest<T> for Test2<T> {
+    fn set(&self, new_data: T) -> T {
+        new_data
+    }
+}
+
+#[derive(Debug)]
+struct ContainerStruct<T, D>
+    where D: TraitTest<T>
+{
+    data: T,
+    trait_ok: Option<D>
+}
+
+fn main() {
+    let t1 = Test1{data: 1};
+    println!("{:?}", t1);
+    println!("{:?}", t1.set(12));
+
+    // Kita coba container struct
+    let c1 = ContainerStruct{
+        data: 12,
+        trait_ok: Some(Test1{data: 3})
+    };
+    println!("{:?}", c1);
+    println!("{:?}", c1.trait_ok.unwrap().set(12));
+}
+```
+
+[playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=ef1c26bcc32de6a79962e526da00aff5)
+
+Dalam kasus ini:
+
+```
+Test1, Test2 -> Uniform, bernoulli dll
+ContainerStruct -> OneDimensionalVectorParams
+```
+
+tapi di kodeku kenapa ga bisa ya?
+hmmm?
+
+hmmm ternyata penyebabnya ini:
+
+```
+pub fn random(&self) -> OneDimensionalVectorParams<T, D>;
+```
+
+Kalo fungsinya return `OneDimensionalVectorParams<T, D>`
+somehow dia error.
+
+kenapa ya?
+kita cari de di google.
+ini bro
+
+> The problem arises because you tried to lie to the compiler.
+> This code:
+>
+> ```
+> impl<T> Foo<T> {
+>    fn new() -> Self {}
+> }
+> ```
+>
+> Says "For whatever T the caller chooses, I will create a Foo
+> with that type". Then your actual implementation picks a
+> concrete type — in the example, a bool. There's no guarantee
+> that T is a bool. Note that your new function doesn't even
+> accept any parameter of type T, which is highly suspect as
+> that's how the caller picks the concrete type 99% of the time.
+
+oke oke.
+
+Show we have the following concept:
+
+```
+one_dim() -> vector dimension
+with_shape() -> vector shape
+zeros(), ones(), full_of(), random() -> vector values
+
+random values have distribution:
+1. uniform()
+    uniform distribution have range type
+    -> closed_irange
+    -> half_open_range
+2. normal()
+    mean
+    standard deviation
+3. standard normal
+2. Cauchy
+    median
+    scale
+
+Full: https://docs.rs/rand/0.6.5/rand/distributions/index.html
+```
+
+Brainstorming API:
+
+Random from uniform distribution
+```rust
+// Uniform default half-open range [0, 1)
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([0])
+    .random()
+    .uniform()
+    .generate();
+
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([0])
+    .uniform()
+    .generate();
+
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([0])
+    .random(distribution::uniform())
+    .generate();
+
+// Uniform with specified half-open range
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([10])
+    .random()
+    .uniform()
+    .in_half_open_range(n, m)
+    .generate();
+
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([0])
+    .random(
+        distribution::uniform()
+        .in_range(n, m)
+    )
+    .generate();
+
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([10])
+    .uniform()
+    .in_half_open_range(n, m)
+    .generate();
+
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([20])
+    .random()
+    .uniform()
+    .in_range(n, m)
+    .generate();
+
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([20])
+    .uniform()
+    .in_range(n, m)
+    .generate();
+
+// Uniform with closed range
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([5])
+    .random()
+    .uniform()
+    .in_closed_range(n, m)
+    .generate();
+
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([5])
+    .uniform()
+    .in_closed_range(n, m)
+    .generate();
+
+
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([5])
+    .uniform(0, 1)
+    .generate();
+```
+
+Random normal
+
+```rust
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([0])
+    .random()
+    .normal()
+    .with_mean(x)
+    .with_std_dev(x)
+    .generate();
+
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([0])
+    .normal(mean, std_dev)
+    .generate();
+```
+
+random standard normal
+
+```rust
+// Normal default half-open range [0, 1)
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([0])
+    .standard_normal()
+    .generate();
+```
+
+random cauchy
+
+```rust
+// Cauchy
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([0])
+    .random()
+    .cauchy()
+    .with_median(x)
+    .with_scale(x)
+    .generate();
+
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([0])
+    .cauchy(median, scale)
+    .generate();
+```
+
+anw, we can't do the following:
+
+```rust
+let a: Vec<f32> = Vec::cauchy(median, scale)
+    .with_shape()
+    .generate()
+
+let a: Vec<Vec<f32>> = Vec::cauchy(median, scale)
+    .with_shape()
+    .generate()
+```
+
+It will raise an `conflicting implementation` error for trait cauchy.
+let's try.
+
+kenapa ga konsisten sama `zeros()` ya?
+
+```rust
+let a: Vec<f32> = Vec::one_dim()
+    .with_shape([12])
+    .zeros()
+    .generate();
+```
+
+harusnya kan
+
+```rust
+let a: Vec<f32> = Vec::zeros()
+    .with_shape([12])
+    .generate();
+```
+
+hmmmmmm let's just use these consistent and simple API:
+
+```rust
+let matrix: Vec<Vec<i32>> = Vec::two_dim()
+    .with_shape([2, 2])
+    .zeros()
+    .generate();
+
+let matrix: Vec<Vec<i32>> = Vec::two_dim()
+    .with_shape([2, 2])
+    .ones()
+    .generate();
+
+let matrix: Vec<Vec<i32>> = Vec::two_dim()
+    .with_shape([2, 2])
+    .full_of(2)
+    .generate();
+
+let matrix: Vec<Vec<i32>> = Vec::two_dim()
+    .with_shape([2, 2])
+    .uniform(low, high)
+    .generate();
+
+let matrix: Vec<Vec<i32>> = Vec::two_dim()
+    .with_shape([2, 2])
+    .normal(mean, std_dev)
+    .generate();
+
+let matrix: Vec<Vec<i32>> = Vec::two_dim()
+    .with_shape([2, 2])
+    .cauchy(median, scale)
+    .generate();
+// and so on, nice.
+```
+
+untuk randomnya, itukan random based on the distribution
+
+```rust
+let matrix: Vec<Vec<i32>> = Vec::two_dim()
+    .with_shape([2, 2])
+    .uniform_distribution(low, high)
+    .generate();
+
+let matrix: Vec<Vec<i32>> = Vec::two_dim()
+    .with_shape([2, 2])
+    .normal_distribution(mean, std_dev)
+    .generate();
+
+let matrix: Vec<Vec<i32>> = Vec::two_dim()
+    .with_shape([2, 2])
+    .cauchy_distribution(median, scale)
+    .generate();
+```
+
+How to pronounce?
+
+1. Generate two-dimensional vector with shape [3, 3]
+   filled with random samples from a uniform distribution
+   over half-open interval [0, 1)
+2. Generate two-dimensional vector with shape [3, 3]
+   filled with random samples from a normal distribution
+   with mean x and standard deviation y
+
+```rust
+let matrix: Vec<Vec<f64>> = Vec::two_dim()
+    .with_shape([3, 3])
+    .random_samples_from_uniform_distribution(low, high)
+    .generate();
+
+let matrix: Vec<Vec<f64>> = Vec::two_dim()
+    .with_shape([3, 3])
+    .uniform_distribution(low, high)
+    .generate();
+```
+
+I think I'm gonna use
+
+```rust
+let matrix: Vec<Vec<f64>> = Vec::two_dim()
+    .with_shape([3, 3])
+    .uniform_distribution(low, high)
+    .generate();
+```
+
+keyh
+
+# Multiple Struct Params in One builder
+We cannot branch out the builder struct for each method.
+It will cause "unconstrained type parameter" error
+
+```
+   Compiling crabsformer v2019.3.8 (/Users/pyk/pyk/Crabsformer)
+error[E0207]: the type parameter `T` is not constrained by the impl trait, self type, or predicates
+  --> src/builders/one_dimensional.rs:85:6
+   |
+85 | impl<T> OneDimensionalVectorParams
+   |      ^ unconstrained type parameter
+```
+
+So we can't use proxy like this:
+
+```
+                                            /-> zeros() -> OneDimensionalDefaultValueParams<T>{}
+one_dim() -> OneDimensionalVectorParams{} -
+                                            \-> uniform_distribution() -> OneDimensionalUniformDistributionParams<U>{}
+```
+
+First of all, why we use `one_dim()`? We use `one_dim` to specify the dimension
+of the vector and we can't use `zeros()` directly for other dimension. We can't do
+these:
+
+```rust
+let a: Vec<f32> = Vec::zeros();
+let a: Vec<Vec<f32>> = Vec::zeros();
+```
+
+We can't do overloading: `zeros()` to return `Vec<f32>` and `Vec<Vec<f32>>`.
+
+Btw we can use [Associated types] to this right? I don't know. Let's stry.
+
+[Associated types]: https://doc.rust-lang.org/stable/book/ch19-03-advanced-traits.html#specifying-placeholder-types-in-trait-definitions-with-associated-types
+
+We can use associated types like the following:
+
+```rust
+pub trait Zero<T>
+where
+    T: Num + FromPrimitive + Copy,
+{
+    type Output;
+
+    fn zeros() -> Self::Output;
+}
+
+
+impl<T> Zero<T> for Vec<T>
+where
+    T: Num + FromPrimitive + Copy,
+{
+    type Output = OneDimensionalDefaultValueParams<T>;
+    fn zeros() -> Self::Output {
+        OneDimensionalDefaultValueParams {
+            shape: [1],
+            default_value: T::from_f32(0.0).unwrap(),
+        }
+    }
+}
+
+impl<T> Zero<T> for Vec<Vec<T>>
+where
+    T: Num + FromPrimitive + Copy,
+{
+    type Output = TwoDimensionalDefaultValueParams<T>;
+    fn zeros() -> Self::Output {
+        TwoDimensionalDefaultValueParams {
+            shape: [1, 2],
+            default_value: T::from_f32(0.0).unwrap(),
+        }
+    }
+}
+```
+
+But, if we want to call the `zeros()` we need to do
+the following:
+
+```rust
+let a: Vec<f32> = Vec::<f32>::zeros().generate();
+println!("{:?}", a);
+
+let a: Vec<Vec<f32>> = Vec::<Vec<f32>>::zeros().generate();
+println!("{:?}", a);
+```
+
+otherwise it will raise a compiler error like the following:
+
+```
+error[E0282]: type annotations needed
+   --> src/main.rs:136:23
+    |
+136 |     let a: Vec<f32> = Vec::zeros().generate();
+    |                       ^^^^^^^^^^^^ cannot infer type
+    |
+    = note: type must be known at this point
+```
+
+hmmm, so associated types doesn't resolve this problem:
+
+```rust
+let a: Vec<f32> = Vec::zeros();
+let a: Vec<Vec<f32>> = Vec::zeros();
+```
+
+why we need `Vec` ? Vector? yup. So we end up use `*_dim` right?
+
+```rust
+let a: Vec<f32> = Vec::one_dim().zeros();
+let a: Vec<Vec<f32>> = Vec::two_dim().zeros();
+```
+
+but we can't do the following:
+
+```rust
+let a: Vec<f32> = Vec::one_dim().zeros();
+let a: Vec<f32> = Vec::one_dim().uniform_distribution();
+
+let a: Vec<Vec<f32>> = Vec::two_dim().zeros();
+let a: Vec<Vec<f32>> = Vec::two_dim().uniform_distribution();
+```
+
+because of this
+
+```
+                                            /-> zeros() -> OneDimensionalDefaultValueParams<T>{}
+one_dim() -> OneDimensionalVectorParams{} -
+                                            \-> uniform_distribution() -> OneDimensionalUniformDistributionParams<U>{}
+```
+
+`zeros()` and `uniform_distribution()` are requires different type.
+
+hmmmmmmmmmmmmmmmm ...
+
+I think our current approach is wrong...
+
+> A trait tells the Rust compiler about functionality a
+> particular type has and can share with other types.
+> We can use traits to define shared behavior in an
+> abstract way. We can use trait bounds to specify
+> that a generic can be any type that has certain behavior.
+>
+> -- [Rust book](https://doc.rust-lang.org/book/ch10-02-traits.html)
+
+We use trait as a way to build vector, not the other arround.
+We need type first.
+
+our type is `Vec<T>`, `Vec<Vec<T>>` and so on.
+
+Fak it. Let's just focus on `Vector<T>` and `Matrix<T>`.
+
+
+# Vector<T> & Matrix<T>
+
+We define vector and the matrix like the following:
+
+```rust
+use num::{FromPrimitive, Num};
+
+#[derive(Debug)]
+pub struct Vector<T>
+where
+    T: FromPrimitive + Num,
+{
+    size: usize,
+    data: Vec<T>,
+}
+
+#[derive(Debug)]
+pub struct Matrix<T>
+where
+    T: FromPrimitive + Num,
+{
+    nrows: usize,
+    ncols: usize,
+    data: Vec<Vec<T>>,
+}
+```
+
+Let's prove first how to implement this:
+
+```rust
+let a: Vector<f32> = Vector::zeros(size);
+let a: Vector<f32> = Vector::ones(size);
+let a: Vector<f32> = Vector::full(size, value);
+let a: Vector<f32> = Vector::uniform(size, low, high);
+let a: Vector<f32> = Vector::normal(size, mean, std_dev);
+```
+
+To:
+
+```rust
+let a: Vector<f32> = Vector::with_size(size).zeros();
+let a: Vector<f32> = Vector::with_size(size).ones();
+let a: Vector<f32> = Vector::with_size(size).full(value);
+let a: Vector<f32> = Vector::with_size(size).uniform(low, high);
+let a: Vector<f32> = Vector::with_size(size).normal(mean, std_dev);
+```
+
+Prototype available [here](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=b19da9ed5c99ad0c67f348821259392c)
+
+
+TODO, we will just storm the the door by following tutorials and implement
+it using Crabsformer. Anyway we need to add module datasets. I think it's
+very crucial for tutorial?
+
+- We need to find a way to save the dataset to a file
+- We need to be able to load the dataset
+
+```rust
+use crabsformer::dataset;
+
+dataset::load_mnist("path")
+dataset::load_dataset_name("path")
+```
+
+# API: Rule of Thumb
+We should use constructor only as a static method.
+oke.
+
+Rule:
+
+```
+static method -> for builder
+instance method -> vector ops
+```

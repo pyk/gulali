@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Crabsformer's prelude
-//!
-//! Like the standard library's prelude, this module simplifies importing of
-//! common items. Unlike the standard prelude, the contents of this module must
-//! be imported manually:
-//!
-//! ```
-//! use crabsformer::prelude::*;
-//! ```
+extern crate crabsformer;
 
-pub use crate::matrix::*;
-pub use crate::vector::*;
+use crabsformer::Vector;
+
+#[test]
+fn test_vector_size() {
+    let a = Vector::full(12, 5.0);
+    assert_eq!(a.size(), 12);
+}

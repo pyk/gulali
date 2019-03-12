@@ -9,6 +9,8 @@ documentation = "https://docs.rs/crabsformer/"
 homepage = "https://github.com/pyk/crabsformer"
 repository = "https://github.com/pyk/crabsformer"
 readme = "README.md"
+categories = ["science"]
 
 [dependencies]
 num = "0.2"
+rand = "0.6.5"
