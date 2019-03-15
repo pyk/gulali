@@ -1117,3 +1117,8 @@ Rule:
 static method -> for builder
 instance method -> vector ops
 ```
+
+# Vector operations
+https://www.tutorialspoint.com/numpy/numpy_arithmetic_operations.htm
+
+Use this guide as an example https://www.pluralsight.com/guides/overview-basic-numpy-operations

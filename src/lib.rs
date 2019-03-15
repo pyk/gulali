@@ -76,6 +76,7 @@
 //! ```
 //! # use crabsformer::prelude::*;
 //! let v = Vector::uniform(5, 0.0, 1.0);
+//! // Vector([0.054709196, 0.86043775, 0.21187294, 0.6413728, 0.14186311]) (Random)
 //! ```
 //!
 //! There are also other function such as [`zeros(len)`], [`ones(len)`],
@@ -90,25 +91,10 @@
 //! [`range(start, stop, step)`]: struct.Vector.html#method.range
 //! [`linspace(len, start, stop)`]: struct.Vector.html#method.linspace
 //!
-//! `Vector<T>` support basic operation with scalar like the following:
-//!
-//! ```rust
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
-//! # fn main() {
-//! let a = vector![1.0, 0.4, 0.2, 0.1] + 2.0;
-//! assert_eq!(a, vector![3.0, 2.4, 2.2, 2.1]);
-//!
-//! let b = vector![4, 4, 3, 1] - 2;
-//! assert_eq!(b, vector![2, 2, 1, -1]);
-//!
-//! let c = vector![2.0, 1.0, 3.5, 1.1] * 5.0;
-//! assert_eq!(c, vector![10.0, 5.0, 17.50, 5.5]);
-//!
-//! let d = vector![2.0, 1.0, 3.5, 0.0 ** 2.0;
-//! assert_eq!(d, vector![4.0, 1.0, 12.25, 0.0]);
-//! # }
-//! ```
+//! You can perform arithmetic operations on a `Vector<T>`.
+//! For example, if you add the `Vector<T>`, the arithmetic operator
+//! will work element-wise. The output will be a `Vector<T>` of the same
+//! length.
 //!
 //! ```rust
 //! # #[macro_use] extern crate crabsformer;
@@ -116,60 +102,69 @@
 //! # fn main() {
 //! let a = vector![0.5, 0.6, 0.9, 1.7] + vector![1.0, 0.4, 0.2, 0.1];
 //! assert_eq!(a, vector![1.5, 1.0, 1.1, 1.8]);
-//!
-//! let b = 2.0 + vector![1.0, 0.4, 0.2, 0.1];
-//! assert_eq!(b, vector![3.0, 2.4, 2.2, 2.1]);
-//!
-//! let c = vector![1, 3, 0, 0] - vector![2, 1, -3, 6];
-//! assert_eq!(b, vector![-1, 2, 3, -6]);
 //! # }
 //! ```
 //!
-//! It can also multiplied by scalar or other `Vector<T>` like the
-//! following:
+//! If you try to add `Vector<T>` with a different number of elements,
+//! you will get an error. For example:
 //!
-//! ```rust
+//! ```should_panic
 //! # #[macro_use] extern crate crabsformer;
 //! # use crabsformer::prelude::*;
 //! # fn main() {
-//! # let a = ;
-//! # let b = vector![1.0, 0.4, 0.2, 0.1];
-//! // Multiply vector by scalar
-//! let e = vector![0.5, 0.6, 0.9, 1.7] * a;
-//! assert_eq!(e, vector![1.0, 1.2, 1.8, 3.4]);
-//!
-//! // Dot product
-//! let f = a.dot(b);
-//!
-//! // Cross product
-//! let g = a.cross(b);
+//! let x = vector![3, 1, 4, 1, 5] + vector![2, 10, 9];
 //! # }
 //! ```
+//! ```text
+//! thread 'guide::example::main' panicked at 'Vector addition with invalid length: 5 != 3' src/main.rs:12:13
+//! ```
+//!
+//! You can run an arithmetic operation on the `Vector<T>` with a scalar value.
+//! For example, this code multiplies each element of the `Vector<T>` by 2.
+//!
+//! ```
+//! # #[macro_use] extern crate crabsformer;
+//! # use crabsformer::prelude::*;
+//! # fn main() {
+//! let x = vector![3, 1, 4, 1] * 2;
+//! assert_eq!(x, vector![6, 2, 8, 2]);
+//! # }
+//! ```
+//!
+//! If you would like to square of the individual elements of the `Vector<T>`,
+//! or even higher up, use the [`power`] method. Here, each element of the
+//! `Vector<T>` is raised to the power 2.
+//!
+//! ```
+//! # #[macro_use] extern crate crabsformer;
+//! # use crabsformer::prelude::*;
+//! # fn main() {
+//! let x = vector![3, 1, 4, 1];
+//! let y = x.power(2);
+//! assert_eq!(y, vector![9, 1, 16, 1]);
+//! # }
+//! ```
+//!
+//! [`power`]: struct.Vector.html#method.power
+//!
+//! You can use [`filter`] to find the elements that match your criteria.
+//!
+//! ```
+//! # #[macro_use] extern crate crabsformer;
+//! # use crabsformer::prelude::*;
+//! # fn main() {
+//! let x = vector![3, 1, 4, 1];
+//! let y = x.filter(|x| x >= 2);
+//! assert_eq!(y, vector![3, 4]);
+//! # }
+//! ```
+//!
+//! [`filter`]: struct.Vector.html#method.filter
 //!
 //!
 //! [numeric type]: https://doc.rust-lang.org/reference/types/numeric.html
 //! [`vector!`]: macro.vector.html
-//!
-//! TODO: vector indexing
-//! TODO: vector operations
-//!
-//!
-//! - each element can be accessed by zero-based index
-//!
-//! - [`Vector<T>`] have elements/components, accessed by zero-based index
-//!
-//! Points:
-//! - What is [`Vector<T>`] ?
-//! - What is [`Matrix<T>`] ?
-//! - You can build vector and matrix
-//! - you can perform opertaion on them
-//! - you can
-//!
 //! [`Vector<T>`]: struct.Vector.html
-//!
-//! ### An Example
-//!
-//! ### Vector Creation
 //!
 //! ## Getting help
 //! Feel free to start discussion at [GitHub issues].

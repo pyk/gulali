@@ -165,6 +165,49 @@ where
     pub fn from_vec(elements: Vec<T>) -> Vector<T> {
         Vector { elements }
     }
+
+    /// Raises each elements of vector to the power of `exp`,
+    /// using exponentiation by squaring.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate crabsformer;
+    /// # use crabsformer::prelude::*;
+    /// # fn main() {
+    /// let x = vector![3, 1, 4, 1];
+    /// let y = x.power(2);
+    /// assert_eq!(y, vector![9, 1, 16, 1]);
+    /// # }
+    /// ```
+    pub fn power(&self, exp: usize) -> Vector<T> {
+        let elements =
+            self.elements.iter().map(|x| num::pow(*x, exp)).collect();
+        Vector { elements }
+    }
+
+    /// Filter out the elements that doesn't match the criteria.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate crabsformer;
+    /// # use crabsformer::prelude::*;
+    /// # fn main() {
+    /// let x = vector![3, 1, 4, 1];
+    /// let y = x.filter(|x| x >= 2);
+    /// assert_eq!(y, vector![3, 4]);
+    /// # }
+    /// ```
+    pub fn filter(&self, criteria: impl Fn(T) -> bool) -> Vector<T> {
+        let elements = self
+            .elements
+            .iter()
+            .filter(|&&x| criteria(x))
+            .map(|x| *x)
+            .collect();
+        Vector { elements }
+    }
 }
 
 impl<U> Vector<U>
@@ -318,15 +361,21 @@ impl<T> ops::Index<usize> for Vector<T> {
     }
 }
 
-impl<T: ops::Add<Output = T>> ops::Add for Vector<T>
+// This trait is implemented to support for vector addition
+// operator
+impl<T> ops::Add<Vector<T>> for Vector<T>
 where
-    T: Copy,
+    T: Num + Copy,
 {
     type Output = Vector<T>;
 
     fn add(self, other: Vector<T>) -> Vector<T> {
         if self.len() != other.len() {
-            panic!("Invalid length: {} != {}", self.len(), other.len());
+            panic!(
+                "Vector addition with invalid length: {} != {}",
+                self.len(),
+                other.len()
+            );
         }
 
         // Add the vectors
@@ -340,15 +389,73 @@ where
     }
 }
 
-impl<T: ops::Sub<Output = T>> ops::Sub for Vector<T>
+// This trait is implemented to support for vector addition
+// operator with scalar on the right side,
+// for example:
+//
+// let a = vector![5, 5, 5, 5] + 6;
+//
+impl<T> ops::Add<T> for Vector<T>
 where
-    T: Copy,
+    T: Num + Copy,
+{
+    type Output = Vector<T>;
+
+    fn add(self, value: T) -> Vector<T> {
+        // Add the vectors
+        let elements = self.elements.iter().map(|x| *x + value).collect();
+        Vector { elements }
+    }
+}
+
+// This macro is to generate support for vector addition
+// operator with scalar on the left side,
+// for example:
+//
+// let a = 6 + vector![5, 5, 5, 5];
+//
+macro_rules! impl_add_vector_for_type {
+    ($t: ty) => {
+        impl ops::Add<Vector<$t>> for $t {
+            type Output = Vector<$t>;
+
+            fn add(self, v: Vector<$t>) -> Vector<$t> {
+                // Add the vectors
+                let elements = v.elements.iter().map(|x| *x + self).collect();
+                Vector { elements }
+            }
+        }
+    };
+}
+
+impl_add_vector_for_type!(usize);
+impl_add_vector_for_type!(i8);
+impl_add_vector_for_type!(i16);
+impl_add_vector_for_type!(i32);
+impl_add_vector_for_type!(i64);
+impl_add_vector_for_type!(i128);
+impl_add_vector_for_type!(u8);
+impl_add_vector_for_type!(u16);
+impl_add_vector_for_type!(u32);
+impl_add_vector_for_type!(u64);
+impl_add_vector_for_type!(u128);
+impl_add_vector_for_type!(f32);
+impl_add_vector_for_type!(f64);
+
+// This trait is implemented to support for vector substraction operator
+impl<T> ops::Sub<Vector<T>> for Vector<T>
+where
+    T: Num + Copy,
 {
     type Output = Vector<T>;
 
     fn sub(self, other: Vector<T>) -> Vector<T> {
         if self.len() != other.len() {
-            panic!("Invalid length: {} != {}", self.len(), other.len());
+            panic!(
+                "Vector substraction with invalid length: {} != {}",
+                self.len(),
+                other.len()
+            );
         }
 
         // Add the vectors
@@ -362,6 +469,58 @@ where
     }
 }
 
+// This trait is implemented to support for vector addition
+// operator with scalar on the right side,
+// for example:
+//
+// let a = vector![5, 5, 5, 5] - 6;
+impl<T> ops::Sub<T> for Vector<T>
+where
+    T: Num + Copy,
+{
+    type Output = Vector<T>;
+
+    fn sub(self, value: T) -> Vector<T> {
+        // Add the vectors
+        let elements = self.elements.iter().map(|x| *x - value).collect();
+        Vector { elements }
+    }
+}
+
+// This macro is to generate support for vector substraction
+// operator with scalar on the left side,
+// for example:
+//
+// let a = 6 - vector![5, 5, 5, 5];
+//
+macro_rules! impl_sub_vector_for_type {
+    ($t: ty) => {
+        impl ops::Sub<Vector<$t>> for $t {
+            type Output = Vector<$t>;
+
+            fn sub(self, v: Vector<$t>) -> Vector<$t> {
+                // Add the vectors
+                let elements = v.elements.iter().map(|x| *x - self).collect();
+                Vector { elements }
+            }
+        }
+    };
+}
+
+impl_sub_vector_for_type!(usize);
+impl_sub_vector_for_type!(i8);
+impl_sub_vector_for_type!(i16);
+impl_sub_vector_for_type!(i32);
+impl_sub_vector_for_type!(i64);
+impl_sub_vector_for_type!(i128);
+impl_sub_vector_for_type!(u8);
+impl_sub_vector_for_type!(u16);
+impl_sub_vector_for_type!(u32);
+impl_sub_vector_for_type!(u64);
+impl_sub_vector_for_type!(u128);
+impl_sub_vector_for_type!(f32);
+impl_sub_vector_for_type!(f64);
+
 impl<T> Clone for Vector<T>
 where
     T: Copy,
@@ -373,156 +532,88 @@ where
     }
 }
 
-impl<T> ops::Mul<T> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn mul(self, rhs: T) -> Vector<T> {
-        Vector {
-            elements: self.elements.iter().map(|v| *v * rhs).collect(),
-        }
-    }
-}
-
+// This trait is implemented to support for vector multiplication operator
 impl<T> ops::Mul<Vector<T>> for Vector<T>
 where
     T: Num + Copy,
 {
     type Output = Vector<T>;
 
-    fn mul(self, rhs: Vector<T>) -> Vector<T> {
+    fn mul(self, other: Vector<T>) -> Vector<T> {
+        if self.len() != other.len() {
+            panic!(
+                "Vector multiplication with invalid length: {} != {}",
+                self.len(),
+                other.len()
+            );
+        }
+
         Vector {
             elements: self
                 .elements
                 .iter()
                 .enumerate()
-                .map(|(i, v)| *v * rhs[i])
+                .map(|(i, v)| *v * other[i])
                 .collect(),
         }
     }
 }
 
-impl ops::Mul<Vector<i8>> for i8 {
-    type Output = Vector<i8>;
+// This trait is implemented to support for vector multiplication
+// operator with scalar on the right side,
+// for example:
+//
+// let a = vector![5, 5, 5, 5] * 6;
+impl<T> ops::Mul<T> for Vector<T>
+where
+    T: Num + Copy,
+{
+    type Output = Vector<T>;
 
-    fn mul(self, rhs: Vector<i8>) -> Vector<i8> {
+    fn mul(self, value: T) -> Vector<T> {
         Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+            elements: self.elements.iter().map(|x| *x * value).collect(),
         }
     }
 }
 
-impl ops::Mul<Vector<i16>> for i16 {
-    type Output = Vector<i16>;
+// This macro is to generate support for vector multiplication
+// operator with scalar on the left side,
+// for example:
+//
+// let a = 6 * vector![5, 5, 5, 5];
+//
+macro_rules! impl_mul_vector_for_type {
+    ($t: ty) => {
+        impl ops::Mul<Vector<$t>> for $t {
+            type Output = Vector<$t>;
 
-    fn mul(self, rhs: Vector<i16>) -> Vector<i16> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+            fn mul(self, v: Vector<$t>) -> Vector<$t> {
+                // Add the vectors
+                let elements = v.elements.iter().map(|x| *x * self).collect();
+                Vector { elements }
+            }
         }
-    }
+    };
 }
 
-impl ops::Mul<Vector<i32>> for i32 {
-    type Output = Vector<i32>;
+impl_mul_vector_for_type!(usize);
+impl_mul_vector_for_type!(i8);
+impl_mul_vector_for_type!(i16);
+impl_mul_vector_for_type!(i32);
+impl_mul_vector_for_type!(i64);
+impl_mul_vector_for_type!(i128);
+impl_mul_vector_for_type!(u8);
+impl_mul_vector_for_type!(u16);
+impl_mul_vector_for_type!(u32);
+impl_mul_vector_for_type!(u64);
+impl_mul_vector_for_type!(u128);
+impl_mul_vector_for_type!(f32);
+impl_mul_vector_for_type!(f64);
 
-    fn mul(self, rhs: Vector<i32>) -> Vector<i32> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
-        }
-    }
-}
+// TODO: implement exponent operator
+// TODO: implement all operators https://www.tutorialspoint.com/numpy/numpy_arithmetic_operations.htm
 
-impl ops::Mul<Vector<i64>> for i64 {
-    type Output = Vector<i64>;
-
-    fn mul(self, rhs: Vector<i64>) -> Vector<i64> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
-        }
-    }
-}
-
-impl ops::Mul<Vector<i128>> for i128 {
-    type Output = Vector<i128>;
-
-    fn mul(self, rhs: Vector<i128>) -> Vector<i128> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
-        }
-    }
-}
-
-impl ops::Mul<Vector<u8>> for u8 {
-    type Output = Vector<u8>;
-
-    fn mul(self, rhs: Vector<u8>) -> Vector<u8> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
-        }
-    }
-}
-
-impl ops::Mul<Vector<u16>> for u16 {
-    type Output = Vector<u16>;
-
-    fn mul(self, rhs: Vector<u16>) -> Vector<u16> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
-        }
-    }
-}
-
-impl ops::Mul<Vector<u32>> for u32 {
-    type Output = Vector<u32>;
-
-    fn mul(self, rhs: Vector<u32>) -> Vector<u32> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
-        }
-    }
-}
-
-impl ops::Mul<Vector<u64>> for u64 {
-    type Output = Vector<u64>;
-
-    fn mul(self, rhs: Vector<u64>) -> Vector<u64> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
-        }
-    }
-}
-
-impl ops::Mul<Vector<u128>> for u128 {
-    type Output = Vector<u128>;
-
-    fn mul(self, rhs: Vector<u128>) -> Vector<u128> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
-        }
-    }
-}
-
-impl ops::Mul<Vector<f32>> for f32 {
-    type Output = Vector<f32>;
-
-    fn mul(self, rhs: Vector<f32>) -> Vector<f32> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
-        }
-    }
-}
-
-impl ops::Mul<Vector<f64>> for f64 {
-    type Output = Vector<f64>;
-
-    fn mul(self, rhs: Vector<f64>) -> Vector<f64> {
-        Vector {
-            elements: rhs.elements.iter().map(|v| *v * self).collect(),
-        }
-    }
-}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -756,30 +847,72 @@ mod tests {
 
     #[test]
     fn test_add() {
-        let a = vector![3, 1, 4, 1, 5];
-        let b = vector![3, 1, 4, 1, 5];
-        let c = a + b;
-        assert_eq!(c, vector![6, 2, 8, 2, 10]);
+        let a = vector![3, 1, 4, 1, 5] + vector![3, 1, 4, 1, 5];
+        assert_eq!(a, vector![6, 2, 8, 2, 10]);
 
-        let d = vector![3.0, 1.0, 4.0, 1.0, 5.5];
-        let e = vector![3.7, 1.7, 4.4, 1.2, 5.5];
-        let f = d + e;
-        assert_eq!(f, vector![6.7, 2.7, 8.4, 2.2, 11.0]);
+        let b = vector![3.0, 1.0, 4.0, 1.0, 5.5]
+            + vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        assert_eq!(b, vector![6.7, 2.7, 8.4, 2.2, 11.0]);
+
+        let c = vector![3, 1, 4, 1, 5] + 2;
+        assert_eq!(c, vector![5, 3, 6, 3, 7]);
+
+        let d = vector![3.7, 1.7, 4.4, 1.2, 5.5] + 2.0;
+        assert_eq!(d, vector![5.7, 3.7, 6.4, 3.2, 7.5]);
+
+        let e = 2 + vector![3, 1, 4, 1, 5];
+        assert_eq!(e, vector![5, 3, 6, 3, 7]);
+
+        let f = 2.0 + vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        assert_eq!(f, vector![5.7, 3.7, 6.4, 3.2, 7.5]);
     }
 
     #[test]
     fn test_sub() {
-        let a = vector![3, 1, 4, 1, 5];
-        let b = vector![3, 1, 4, 1, 5];
-        let c = a - b;
-        assert_eq!(c, vector![0, 0, 0, 0, 0]);
+        let a = vector![3, 1, 4, 1, 5] - vector![3, 1, 4, 1, 5];
+        assert_eq!(a, vector![0, 0, 0, 0, 00]);
 
-        let d: Vector<f32> = vector![3.0, 1.0, 4.0, 1.0, 5.5];
-        let e: Vector<f32> = vector![3.7, 1.7, 4.4, 1.2, 5.5];
-        let f: Vector<f32> = d - e;
+        let b = vector![3.0, 1.0, 4.0, 1.0, 5.5]
+            - vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        assert_eq!(
+            b,
+            vector![
+                -0.7000000000000002,
+                -0.7,
+                -0.40000000000000036,
+                -0.19999999999999996,
+                0.0
+            ]
+        );
+
+        let c = vector![3, 1, 4, 1, 5] - 2;
+        assert_eq!(c, vector![1, -1, 2, -1, 3]);
+
+        let d = vector![3.7, 1.7, 4.4, 1.2, 5.5] - 2.0;
+        assert_eq!(
+            d,
+            vector![
+                1.7000000000000002,
+                -0.30000000000000004,
+                2.4000000000000004,
+                -0.8,
+                3.5
+            ]
+        );
+
+        let e = 2 - vector![3, 1, 4, 1, 5];
+        assert_eq!(e, vector![1, -1, 2, -1, 3]);
+
+        let f = 2.0 - vector![3.7, 1.7, 4.4, 1.2, 5.5];
         assert_eq!(
             f,
-            vector![-0.70000005, -0.70000005, -0.4000001, -0.20000005, 0.0]
+            vector![
+                1.7000000000000002,
+                -0.30000000000000004,
+                2.4000000000000004,
+                -0.8,
+                3.5
+            ]
         );
     }
 
@@ -793,18 +926,55 @@ mod tests {
 
     #[test]
     fn test_mul() {
-        let a = 5 * vector![1, 1, 1, 1];
-        assert_eq!(a, vector![5, 5, 5, 5]);
+        let a = vector![3, 1, 4, 1, 5] * vector![3, 1, 4, 1, 5];
+        assert_eq!(a, vector![9, 1, 16, 1, 25]);
 
-        let b = 5.0 * vector![1.0, 1.0, 1.0, 1.0];
-        assert_eq!(b, vector![5.0, 5.0, 5.0, 5.0]);
+        let b = vector![3.0, 1.0, 4.0, 1.0, 5.5]
+            * vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        assert_eq!(b, vector![11.100000000000001, 1.7, 17.6, 1.2, 30.25]);
 
-        let c = vector![2, 3, 4, 5];
-        let d = vector![1, 1, 1, 1];
-        let f = c * d;
-        assert_eq!(f, vector![2, 3, 4, 5]);
+        let c = vector![3, 1, 4, 1, 5] * 2;
+        assert_eq!(c, vector![6, 2, 8, 2, 10]);
 
-        let g = vector![2.0, 3.0, 4.0, 5.0] * vector![1.0, 1.0, 1.0, 1.0];
-        assert_eq!(g, vector![2.0, 3.0, 4.0, 5.0]);
+        let d = vector![3.7, 1.7, 4.4, 1.2, 5.5] * 2.0;
+        assert_eq!(d, vector![7.4, 3.4, 8.8, 2.4, 11.0]);
+
+        let e = 2 * vector![3, 1, 4, 1, 5];
+        assert_eq!(e, vector![6, 2, 8, 2, 10]);
+
+        let f = 2.0 * vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        assert_eq!(f, vector![7.4, 3.4, 8.8, 2.4, 11.0]);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_invalid_add() {
+        let _x = vector![1, 2] + vector![2];
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_invalid_sub() {
+        let _x = vector![1, 2] - vector![2];
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_invalid_mul() {
+        let _x = vector![1, 2] * vector![2];
+    }
+
+    #[test]
+    fn test_power() {
+        let x = vector![3, 1, 4, 1];
+        let y = x.power(2);
+        assert_eq!(y, vector![9, 1, 16, 1]);
+    }
+
+    #[test]
+    fn test_filter() {
+        let x = vector![3, 1, 4, 1];
+        let y = x.filter(|x| x >= 2);
+        assert_eq!(y, vector![3, 4]);
     }
 }
