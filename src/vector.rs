@@ -194,6 +194,15 @@ where
 }
 
 impl Vector<f64> {
+    /// Create a new vector of the given length `len` and populate it with
+    /// random samples from a normal distribution `N(mean, std_dev**2)`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use crabsformer::prelude::*;
+    /// let v = Vector::normal(5, 0.0, 1.0); // Gaussian mean=0.0 std_dev=1.0
+    /// ```
     pub fn normal(len: usize, mean: f64, std_dev: f64) -> Vector<f64> {
         let mut elements = Vec::with_capacity(len);
         let normal_distribution = Normal::new(mean, std_dev);
