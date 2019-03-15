@@ -3,8 +3,8 @@
   <p align="center" style="font-size:32px;"><b>Crabsformer</b></p>
   <p align="center">
     <i>
-    Crabsformer is an easy-to-use fundamental library for 
-    scientific computing with Rust, highly inspired by 
+    Crabsformer is an easy-to-use fundamental library for
+    scientific computing with Rust, highly inspired by
     <a href="http://www.numpy.org/">NumPy</a>.
     </i>
   </p>
@@ -28,9 +28,7 @@ crabsformer = "2019.3.8"
 and this to your crate root:
 
 ```rust
-extern crate crabsformer;
-
-// Import all required traits
+#[macro_use] extern crate crabsformer;
 use crabsformer::prelude::*;
 ```
 
