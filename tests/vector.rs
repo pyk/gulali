@@ -19,5 +19,5 @@ use crabsformer::Vector;
 #[test]
 fn test_vector_size() {
     let a = Vector::full(12, 5.0);
-    assert_eq!(a.size(), 12);
+    assert_eq!(a.len(), 12);
 }
