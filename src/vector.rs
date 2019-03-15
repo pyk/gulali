@@ -15,7 +15,7 @@ use num::{Float, FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
 use rand::distributions::{Distribution, Normal, Uniform};
 use std::fmt;
-use std::ops::AddAssign;
+use std::ops;
 
 #[macro_export]
 macro_rules! vector {
@@ -218,7 +218,12 @@ impl Vector<f64> {
 
 impl<T> Vector<T>
 where
-    T: Num + FromPrimitive + Copy + PartialOrd + AddAssign + fmt::Display,
+    T: Num
+        + FromPrimitive
+        + Copy
+        + PartialOrd
+        + ops::AddAssign
+        + fmt::Display,
 {
     /// Create a new vector of evenly spaced values within a given half-open
     /// interval `[start, stop)` and spacing value `step`. Values are generated
@@ -251,7 +256,12 @@ where
 
 impl<F> Vector<F>
 where
-    F: Float + FromPrimitive + Copy + PartialOrd + AddAssign + fmt::Display,
+    F: Float
+        + FromPrimitive
+        + Copy
+        + PartialOrd
+        + ops::AddAssign
+        + fmt::Display,
 {
     /// Create a new vector of the given length `len` and populate it with
     /// linearly spaced values within a given closed interval `[start, stop]`.
@@ -300,6 +310,219 @@ where
     }
 }
 
+impl<T> ops::Index<usize> for Vector<T> {
+    type Output = T;
+
+    fn index(&self, i: usize) -> &T {
+        &self.elements[i]
+    }
+}
+
+impl<T: ops::Add<Output = T>> ops::Add for Vector<T>
+where
+    T: Copy,
+{
+    type Output = Vector<T>;
+
+    fn add(self, other: Vector<T>) -> Vector<T> {
+        if self.len() != other.len() {
+            panic!("Invalid length: {} != {}", self.len(), other.len());
+        }
+
+        // Add the vectors
+        let elements = self
+            .elements
+            .iter()
+            .enumerate()
+            .map(|(i, x)| *x + other[i])
+            .collect();
+        Vector { elements }
+    }
+}
+
+impl<T: ops::Sub<Output = T>> ops::Sub for Vector<T>
+where
+    T: Copy,
+{
+    type Output = Vector<T>;
+
+    fn sub(self, other: Vector<T>) -> Vector<T> {
+        if self.len() != other.len() {
+            panic!("Invalid length: {} != {}", self.len(), other.len());
+        }
+
+        // Add the vectors
+        let elements = self
+            .elements
+            .iter()
+            .enumerate()
+            .map(|(i, x)| *x - other[i])
+            .collect();
+        Vector { elements }
+    }
+}
+
+impl<T> Clone for Vector<T>
+where
+    T: Copy,
+{
+    fn clone(&self) -> Vector<T> {
+        Vector {
+            elements: self.elements.clone(),
+        }
+    }
+}
+
+impl<T> ops::Mul<T> for Vector<T>
+where
+    T: Num + Copy,
+{
+    type Output = Vector<T>;
+
+    fn mul(self, rhs: T) -> Vector<T> {
+        Vector {
+            elements: self.elements.iter().map(|v| *v * rhs).collect(),
+        }
+    }
+}
+
+impl<T> ops::Mul<Vector<T>> for Vector<T>
+where
+    T: Num + Copy,
+{
+    type Output = Vector<T>;
+
+    fn mul(self, rhs: Vector<T>) -> Vector<T> {
+        Vector {
+            elements: self
+                .elements
+                .iter()
+                .enumerate()
+                .map(|(i, v)| *v * rhs[i])
+                .collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<i8>> for i8 {
+    type Output = Vector<i8>;
+
+    fn mul(self, rhs: Vector<i8>) -> Vector<i8> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<i16>> for i16 {
+    type Output = Vector<i16>;
+
+    fn mul(self, rhs: Vector<i16>) -> Vector<i16> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<i32>> for i32 {
+    type Output = Vector<i32>;
+
+    fn mul(self, rhs: Vector<i32>) -> Vector<i32> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<i64>> for i64 {
+    type Output = Vector<i64>;
+
+    fn mul(self, rhs: Vector<i64>) -> Vector<i64> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<i128>> for i128 {
+    type Output = Vector<i128>;
+
+    fn mul(self, rhs: Vector<i128>) -> Vector<i128> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<u8>> for u8 {
+    type Output = Vector<u8>;
+
+    fn mul(self, rhs: Vector<u8>) -> Vector<u8> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<u16>> for u16 {
+    type Output = Vector<u16>;
+
+    fn mul(self, rhs: Vector<u16>) -> Vector<u16> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<u32>> for u32 {
+    type Output = Vector<u32>;
+
+    fn mul(self, rhs: Vector<u32>) -> Vector<u32> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<u64>> for u64 {
+    type Output = Vector<u64>;
+
+    fn mul(self, rhs: Vector<u64>) -> Vector<u64> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<u128>> for u128 {
+    type Output = Vector<u128>;
+
+    fn mul(self, rhs: Vector<u128>) -> Vector<u128> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<f32>> for f32 {
+    type Output = Vector<f32>;
+
+    fn mul(self, rhs: Vector<f32>) -> Vector<f32> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
+
+impl ops::Mul<Vector<f64>> for f64 {
+    type Output = Vector<f64>;
+
+    fn mul(self, rhs: Vector<f64>) -> Vector<f64> {
+        Vector {
+            elements: rhs.elements.iter().map(|v| *v * self).collect(),
+        }
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -519,5 +742,69 @@ mod tests {
     fn test_linspace() {
         let a = Vector::linspace(5, 1.0, 10.0);
         assert_eq!(a.elements, [1.0, 3.25, 5.5, 7.75, 10.0]);
+    }
+
+    #[test]
+    fn test_indexing() {
+        let a = vector![3, 1, 4, 1, 5];
+        assert_eq!(a[0], 3);
+        assert_eq!(a[1], 1);
+        assert_eq!(a[2], 4);
+        assert_eq!(a[3], 1);
+        assert_eq!(a[4], 5);
+    }
+
+    #[test]
+    fn test_add() {
+        let a = vector![3, 1, 4, 1, 5];
+        let b = vector![3, 1, 4, 1, 5];
+        let c = a + b;
+        assert_eq!(c, vector![6, 2, 8, 2, 10]);
+
+        let d = vector![3.0, 1.0, 4.0, 1.0, 5.5];
+        let e = vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        let f = d + e;
+        assert_eq!(f, vector![6.7, 2.7, 8.4, 2.2, 11.0]);
+    }
+
+    #[test]
+    fn test_sub() {
+        let a = vector![3, 1, 4, 1, 5];
+        let b = vector![3, 1, 4, 1, 5];
+        let c = a - b;
+        assert_eq!(c, vector![0, 0, 0, 0, 0]);
+
+        let d: Vector<f32> = vector![3.0, 1.0, 4.0, 1.0, 5.5];
+        let e: Vector<f32> = vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        let f: Vector<f32> = d - e;
+        assert_eq!(
+            f,
+            vector![-0.70000005, -0.70000005, -0.4000001, -0.20000005, 0.0]
+        );
+    }
+
+    #[test]
+    fn test_clone() {
+        // Test clone
+        let a = vector![3, 1, 4];
+        let b = a.clone();
+        assert_eq!(a, b);
+    }
+
+    #[test]
+    fn test_mul() {
+        let a = 5 * vector![1, 1, 1, 1];
+        assert_eq!(a, vector![5, 5, 5, 5]);
+
+        let b = 5.0 * vector![1.0, 1.0, 1.0, 1.0];
+        assert_eq!(b, vector![5.0, 5.0, 5.0, 5.0]);
+
+        let c = vector![2, 3, 4, 5];
+        let d = vector![1, 1, 1, 1];
+        let f = c * d;
+        assert_eq!(f, vector![2, 3, 4, 5]);
+
+        let g = vector![2.0, 3.0, 4.0, 5.0] * vector![1.0, 1.0, 1.0, 1.0];
+        assert_eq!(g, vector![2.0, 3.0, 4.0, 5.0]);
     }
 }

@@ -90,21 +90,38 @@
 //! [`range(start, stop, step)`]: struct.Vector.html#method.range
 //! [`linspace(len, start, stop)`]: struct.Vector.html#method.linspace
 //!
-//!
-//! `Vector<T>` can be added and subtracted like the following:
+//! `Vector<T>` support basic operation with scalar like the following:
 //!
 //! ```rust
 //! # #[macro_use] extern crate crabsformer;
 //! # use crabsformer::prelude::*;
 //! # fn main() {
-//! let a = vector![0.5, 0.6, 0.9, 1.7];
-//! let b = vector![1.0, 0.4, 0.2, 0.1];
+//! let a = vector![1.0, 0.4, 0.2, 0.1] + 2.0;
+//! assert_eq!(a, vector![3.0, 2.4, 2.2, 2.1]);
 //!
-//! let c = a + b;
-//! assert_eq!(c, vector![1.5, 1.0, 1.1, 1.8]);
+//! let b = vector![4, 4, 3, 1] - 2;
+//! assert_eq!(b, vector![2, 2, 1, -1]);
 //!
-//! let d = a - b;
-//! assert_eq!(d, vector![-0.5, 0.2, 0.7, 1.6]);
+//! let c = vector![2.0, 1.0, 3.5, 1.1] * 5.0;
+//! assert_eq!(c, vector![10.0, 5.0, 17.50, 5.5]);
+//!
+//! let d = vector![2.0, 1.0, 3.5, 0.0 ** 2.0;
+//! assert_eq!(d, vector![4.0, 1.0, 12.25, 0.0]);
+//! # }
+//! ```
+//!
+//! ```rust
+//! # #[macro_use] extern crate crabsformer;
+//! # use crabsformer::prelude::*;
+//! # fn main() {
+//! let a = vector![0.5, 0.6, 0.9, 1.7] + vector![1.0, 0.4, 0.2, 0.1];
+//! assert_eq!(a, vector![1.5, 1.0, 1.1, 1.8]);
+//!
+//! let b = 2.0 + vector![1.0, 0.4, 0.2, 0.1];
+//! assert_eq!(b, vector![3.0, 2.4, 2.2, 2.1]);
+//!
+//! let c = vector![1, 3, 0, 0] - vector![2, 1, -3, 6];
+//! assert_eq!(b, vector![-1, 2, 3, -6]);
 //! # }
 //! ```
 //!
@@ -115,10 +132,10 @@
 //! # #[macro_use] extern crate crabsformer;
 //! # use crabsformer::prelude::*;
 //! # fn main() {
-//! # let a = vector![0.5, 0.6, 0.9, 1.7];
+//! # let a = ;
 //! # let b = vector![1.0, 0.4, 0.2, 0.1];
 //! // Multiply vector by scalar
-//! let e = 2 * a;
+//! let e = vector![0.5, 0.6, 0.9, 1.7] * a;
 //! assert_eq!(e, vector![1.0, 1.2, 1.8, 3.4]);
 //!
 //! // Dot product
