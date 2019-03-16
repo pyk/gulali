@@ -17,12 +17,44 @@ use rand::distributions::{Distribution, Normal, Uniform};
 use std::fmt;
 use std::ops;
 
+/// Creates a [numeric vector] containing the arguments.
+///
+/// `vector!` allows numeric vector to be defined with
+/// the same syntax as array expressions.
+///
+/// There are two forms of this macro:
+///
+/// 1. Create a numeric vector containing a given list of elements:
+///
+/// ```
+/// # #[macro_use] extern crate crabsformer;
+/// # use crabsformer::prelude::*;
+/// # fn main() {
+/// let x = vector![1, 2, 3];
+/// assert_eq!(x[0], 1);
+/// assert_eq!(x[1], 2);
+/// assert_eq!(x[2], 3);
+/// # }
+/// ```
+///
+/// 2. Create a numeric vector from a given element and length:
+///
+/// ```
+/// # #[macro_use] extern crate crabsformer;
+/// # use crabsformer::prelude::*;
+/// # fn main() {
+/// let x = vector![1; 3];
+/// assert_eq!(x, vector![1, 1, 1]);
+/// # }
+/// ```
+///
+/// [numeric vector]: ../struct.Vector.html
 #[macro_export]
 macro_rules! vector {
     ($elem:expr; $len:expr) => (Vector::full($len, $elem));
     ($($x:expr),*) => {{
         let elements = vec![$($x),*];
-        Vector::from_vec(elements)
+        Vector::from(elements)
     }};
 }
 
@@ -36,7 +68,29 @@ pub struct Vector<T> {
     elements: Vec<T>,
 }
 
+// Conversion from other data type
+impl<T> From<Vec<T>> for Vector<T>
+where
+    T: Num + Copy,
+{
+    fn from(elements: Vec<T>) -> Self {
+        Vector { elements }
+    }
+}
+
 impl<T> Vector<T> {
+    /// The total number of elements of the numeric vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[macro_use] extern crate crabsformer;
+    /// # use crabsformer::prelude::*;
+    /// # fn main() {
+    /// let v = vector![3.0, 1.0, 4.0, 1.0, 5.0];
+    /// assert_eq!(v.len(), 5);
+    /// # }
+    /// ```
     pub fn len(&self) -> usize {
         self.elements.len()
     }
@@ -65,7 +119,7 @@ impl<T> Vector<T>
 where
     T: FromPrimitive + Num + Copy,
 {
-    /// Create a new vector of given length `len` and type `T`,
+    /// Create a new numeric vector of given length `len` and type `T`,
     /// filled with `value`.
     ///
     /// # Examples
@@ -80,7 +134,7 @@ where
         Vector { elements }
     }
 
-    /// Create a new vector that have the same length and type
+    /// Create a new numeric vector that have the same length and type
     /// as vector `v`, filled with `value`.
     ///
     /// # Examples
@@ -99,7 +153,7 @@ where
         Vector { elements }
     }
 
-    /// Create a new vector of given length `len` and type `T`,
+    /// Create a new numeric vector of given length `len` and type `T`,
     /// filled with zeros. You need to explicitly annotate the
     /// numeric type.
     ///
@@ -113,7 +167,7 @@ where
         Self::full(len, T::from_i32(0).unwrap())
     }
 
-    /// Create a new vector that have the same length and type
+    /// Create a new numeric vector that have the same length and type
     /// as vector `v`, filled with zeros.
     ///
     /// # Examples
@@ -130,7 +184,7 @@ where
         Self::full(v.elements.len(), T::from_i32(0).unwrap())
     }
 
-    /// Create a new vector of given length `len` and type `T`,
+    /// Create a new numeric vector of given length `len` and type `T`,
     /// filled with ones. You need to explicitly annotate the
     /// numeric type.
     ///
@@ -144,7 +198,7 @@ where
         Self::full(len, T::from_i32(1).unwrap())
     }
 
-    /// Create a new vector that have the same length and type
+    /// Create a new numeric vector that have the same length and type
     /// as vector `v`, filled with ones.
     ///
     /// # Examples
@@ -159,11 +213,6 @@ where
     /// ```
     pub fn ones_like(v: &Vector<T>) -> Vector<T> {
         Self::full(v.elements.len(), T::from_i32(1).unwrap())
-    }
-
-    // TODO: implement trait From
-    pub fn from_vec(elements: Vec<T>) -> Vector<T> {
-        Vector { elements }
     }
 
     /// Raises each elements of vector to the power of `exp`,
@@ -214,9 +263,10 @@ impl<U> Vector<U>
 where
     U: SampleUniform,
 {
-    /// Create a new vector of the given length `len` and populate it with
-    /// random samples from a uniform distribution over the half-open interval
-    /// `[low, high)` (includes `low`, but excludes `high`).
+    /// Create a new numeric vector of the given length `len` and
+    /// populate it with random samples from a uniform distribution
+    /// over the half-open interval `[low, high)` (includes `low`,
+    /// but excludes `high`).
     ///
     /// # Examples
     ///
@@ -237,8 +287,9 @@ where
 }
 
 impl Vector<f64> {
-    /// Create a new vector of the given length `len` and populate it with
-    /// random samples from a normal distribution `N(mean, std_dev**2)`.
+    /// Create a new numeric vector of the given length `len` and
+    /// populate it with random samples from a normal distribution
+    /// `N(mean, std_dev**2)`.
     ///
     /// # Examples
     ///
@@ -268,16 +319,18 @@ where
         + ops::AddAssign
         + fmt::Display,
 {
-    /// Create a new vector of evenly spaced values within a given half-open
-    /// interval `[start, stop)` and spacing value `step`. Values are generated
-    /// within the half-open interval `[start, stop)` (in other words, the
+    /// Create a new numeric vector of evenly spaced values
+    /// within a given half-open interval `[start, stop)` and
+    /// spacing value `step`. Values are generated within the
+    /// half-open interval `[start, stop)` (in other words, the
     /// interval including `start` but excluding `stop`).
     ///
     /// # Examples
     ///
     /// ```
     /// # use crabsformer::prelude::*;
-    /// let v = Vector::range(0.0, 3.0, 0.5); // vector![0.0, 0.5, 1.0, 1.5, 2.0, 2.5]
+    /// let v = Vector::range(0.0, 3.0, 0.5);
+    /// // v = vector![0.0, 0.5, 1.0, 1.5, 2.0, 2.5]
     /// ```
     ///
     /// # Panics
@@ -306,8 +359,9 @@ where
         + ops::AddAssign
         + fmt::Display,
 {
-    /// Create a new vector of the given length `len` and populate it with
-    /// linearly spaced values within a given closed interval `[start, stop]`.
+    /// Create a new numeric vector of the given length `len`
+    /// and populate it with linearly spaced values within a
+    /// given closed interval `[start, stop]`.
     ///
     /// # Examples
     ///
@@ -617,6 +671,13 @@ impl_mul_vector_for_type!(f64);
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_from() {
+        let a = vec![1, 2, 3];
+        let b = Vector::from(a);
+        assert_eq!(b.elements, vec![1, 2, 3]);
+    }
 
     #[test]
     fn test_macro() {
