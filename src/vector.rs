@@ -257,6 +257,67 @@ where
             .collect();
         Vector { elements }
     }
+
+    /// Sum of numeric vector elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use crabsformer::prelude::*;
+    /// let x = Vector::uniform(5, -1.0, 1.0);
+    /// let sum = x.sum();
+    /// println!("sum = {}", sum);
+    /// ```
+    pub fn sum(&self) -> T {
+        self.elements
+            .iter()
+            .fold(T::from_f32(0.0).unwrap(), |acc, x| acc + *x)
+    }
+}
+
+impl<T> Vector<T>
+where
+    T: num::Integer + Copy,
+{
+    /// Returns the maximum element of a numeric vector.
+    ///
+    /// Note that, it's only work for numeric vector
+    /// of integer due too the trait `std::cmp::Ord` is
+    /// not implemented for `f32` and `f64` in Rust
+    /// standard library. This may change in the future.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use crabsformer::prelude::*;
+    /// let x = Vector::uniform(5, -10, 10);
+    /// let max = x.max();
+    /// println!("max = {}", max);
+    /// ```
+    pub fn max(&self) -> T {
+        let max = self.elements.iter().max().unwrap();
+        *max
+    }
+
+    /// Returns the minimum element of a numeric vector.
+    ///
+    /// Note that, it's only work for numeric vector
+    /// of integer due too the trait `std::cmp::Ord` is
+    /// not implemented for `f32` and `f64` in Rust
+    /// standard library. This may change in the future.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use crabsformer::prelude::*;
+    /// let x = Vector::uniform(5, -10, 10);
+    /// let min = x.min();
+    /// println!("min = {}", min);
+    /// ```
+    pub fn min(&self) -> T {
+        let min = self.elements.iter().min().unwrap();
+        *min
+    }
 }
 
 impl<U> Vector<U>
@@ -1230,5 +1291,32 @@ mod tests {
         let x = vector![3, 1, 4, 1];
         let y = x.filter(|x| x >= 2);
         assert_eq!(y, vector![3, 4]);
+    }
+
+    #[test]
+    fn test_sum() {
+        let x = vector![3, 1, 4, 1];
+        assert_eq!(x.sum(), 9);
+
+        let y = vector![3.0, 1.0, 4.0, 1.0];
+        assert_eq!(y.sum(), 9.0);
+    }
+
+    #[test]
+    fn test_max() {
+        let x = vector![3, 1, 4, 1];
+        assert_eq!(x.max(), 4);
+
+        // let y = vector![3.0, 1.0, 4.0, 1.0];
+        // assert_eq!(y.max(), 4.0);
+    }
+
+    #[test]
+    fn test_min() {
+        let x = vector![3, 1, 4, 1];
+        assert_eq!(x.min(), 1);
+
+        // let y = vector![3.0, 1.0, 4.0, 1.0];
+        // assert_eq!(y.min(), 1.0);
     }
 }

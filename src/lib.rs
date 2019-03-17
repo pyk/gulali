@@ -227,23 +227,45 @@
 //!
 //! [`power`]: struct.Vector.html#method.power
 //!
-//! You can use [`filter`] to find the elements that match your criteria.
+//! When operating with numeric vectors of different types,
+//! the Rust compiler will raise error like the following:
+//!
+//! ```text
+//! cannot add `vector::Vector<{integer}>` to `vector::Vector<{float}>`
+//! ```
+//!
+//! Many unary operations, such as computing the sum of all the elements in the
+//! numeric vector, are implemented as methods.
 //!
 //! ```
 //! # #[macro_use] extern crate crabsformer;
 //! # use crabsformer::prelude::*;
 //! # fn main() {
-//! let x = vector![3, 1, 4, 1];
-//! let y = x.filter(|x| x >= 2);
-//! assert_eq!(y, vector![3, 4]);
+//! let x = vector![3, 1, 4];
+//! let sum = x.sum();
+//! assert_eq!(sum, 8);
+//!
+//! let max = x.max();
+//! assert_eq!(max, 4);
+//!
+//! let min = x.min();
+//! assert_eq!(min, 1);
 //! # }
 //! ```
 //!
-//! [`filter`]: struct.Vector.html#method.filter
+//! See also: [`power`], [`filter`], [`sum`], [`max`], [`min`].
 //!
+//! [`power`]: struct.Vector.html#method.power
+//! [`filter`]: struct.Vector.html#method.filter
+//! [`sum`]: struct.Vector.html#method.sum
+//! [`max`]: struct.Vector.html#method.max
+//! [`min`]: struct.Vector.html#method.min
+//!
+//! TODO([pyk]): Continue here, numeric vector indexing, slicing and iterating
 //!
 //! [numeric type]: https://doc.rust-lang.org/reference/types/numeric.html
 //! [`vector!`]: macro.vector.html
+//! [pyk]: https://github.com/pyk
 //!
 //! ## Getting help
 //! Feel free to start discussion at [GitHub issues].
