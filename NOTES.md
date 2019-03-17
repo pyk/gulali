@@ -1122,3 +1122,8 @@ instance method -> vector ops
 https://www.tutorialspoint.com/numpy/numpy_arithmetic_operations.htm
 
 Use this guide as an example https://www.pluralsight.com/guides/overview-basic-numpy-operations
+
+# What to do
+still follow this https://docs.scipy.org/doc/numpy/user/quickstart.html
+
+lanjut matrix operations, guidenya di numpy yg "Basic Operations"

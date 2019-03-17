@@ -415,7 +415,7 @@ impl<T> ops::Index<usize> for Vector<T> {
     }
 }
 
-// This trait is implemented to support for vector addition
+// This trait is implemented to support for numeric vector addition
 // operator
 impl<T> ops::Add<Vector<T>> for Vector<T>
 where
@@ -443,7 +443,7 @@ where
     }
 }
 
-// This trait is implemented to support for vector addition
+// This trait is implemented to support for numeric vector addition
 // operator with scalar on the right side,
 // for example:
 //
@@ -462,7 +462,7 @@ where
     }
 }
 
-// This macro is to generate support for vector addition
+// This macro is to generate support for numeric vector addition
 // operator with scalar on the left side,
 // for example:
 //
@@ -496,7 +496,47 @@ impl_add_vector_for_type!(u128);
 impl_add_vector_for_type!(f32);
 impl_add_vector_for_type!(f64);
 
-// This trait is implemented to support for vector substraction operator
+// This trait is implemented to support for numeric vector addition
+// and assignment operator (+=)
+impl<T> ops::AddAssign<Vector<T>> for Vector<T>
+where
+    T: Num + Copy + ops::AddAssign,
+{
+    fn add_assign(&mut self, other: Vector<T>) {
+        if self.len() != other.len() {
+            panic!(
+                "Vector addition with invalid length: {} != {}",
+                self.len(),
+                other.len()
+            );
+        }
+
+        for (i, x) in self.elements.iter_mut().enumerate() {
+            *x += other[i];
+        }
+    }
+}
+
+// This trait is implemented to support for numeric vector addition
+// assignment operator (+=) with scalar on the right side,
+// for example:
+//
+// let a = vector![5, 5, 5, 5];
+// a += 6;
+//
+impl<T> ops::AddAssign<T> for Vector<T>
+where
+    T: Num + Copy + ops::AddAssign,
+{
+    fn add_assign(&mut self, value: T) {
+        for x in self.elements.iter_mut() {
+            *x += value
+        }
+    }
+}
+
+// This trait is implemented to support for numeric vector
+// substraction operator
 impl<T> ops::Sub<Vector<T>> for Vector<T>
 where
     T: Num + Copy,
@@ -523,7 +563,7 @@ where
     }
 }
 
-// This trait is implemented to support for vector addition
+// This trait is implemented to support for numeric vector addition
 // operator with scalar on the right side,
 // for example:
 //
@@ -541,7 +581,7 @@ where
     }
 }
 
-// This macro is to generate support for vector substraction
+// This macro is to generate support for numeric vector substraction
 // operator with scalar on the left side,
 // for example:
 //
@@ -575,6 +615,45 @@ impl_sub_vector_for_type!(u128);
 impl_sub_vector_for_type!(f32);
 impl_sub_vector_for_type!(f64);
 
+// This trait is implemented to support for numeric vector substraction
+// assignment operator (-=)
+impl<T> ops::SubAssign<Vector<T>> for Vector<T>
+where
+    T: Num + Copy + ops::SubAssign,
+{
+    fn sub_assign(&mut self, other: Vector<T>) {
+        if self.len() != other.len() {
+            panic!(
+                "Vector addition with invalid length: {} != {}",
+                self.len(),
+                other.len()
+            );
+        }
+
+        for (i, x) in self.elements.iter_mut().enumerate() {
+            *x -= other[i];
+        }
+    }
+}
+
+// This trait is implemented to support for numeric vector substraction
+// assignment operator (-=) with scalar on the right side,
+// for example:
+//
+// let a = vector![5, 5, 5, 5];
+// a -= 6;
+//
+impl<T> ops::SubAssign<T> for Vector<T>
+where
+    T: Num + Copy + ops::SubAssign,
+{
+    fn sub_assign(&mut self, value: T) {
+        for x in self.elements.iter_mut() {
+            *x -= value
+        }
+    }
+}
+
 impl<T> Clone for Vector<T>
 where
     T: Copy,
@@ -586,7 +665,7 @@ where
     }
 }
 
-// This trait is implemented to support for vector multiplication operator
+// This trait is implemented to support for numeric vector multiplication operator
 impl<T> ops::Mul<Vector<T>> for Vector<T>
 where
     T: Num + Copy,
@@ -613,7 +692,7 @@ where
     }
 }
 
-// This trait is implemented to support for vector multiplication
+// This trait is implemented to support for numeric vector multiplication
 // operator with scalar on the right side,
 // for example:
 //
@@ -631,7 +710,7 @@ where
     }
 }
 
-// This macro is to generate support for vector multiplication
+// This macro is to generate support for numeric vector multiplication
 // operator with scalar on the left side,
 // for example:
 //
@@ -664,6 +743,45 @@ impl_mul_vector_for_type!(u64);
 impl_mul_vector_for_type!(u128);
 impl_mul_vector_for_type!(f32);
 impl_mul_vector_for_type!(f64);
+
+// This trait is implemented to support for numeric vector mul
+// assignment operator (*=)
+impl<T> ops::MulAssign<Vector<T>> for Vector<T>
+where
+    T: Num + Copy + ops::MulAssign,
+{
+    fn mul_assign(&mut self, other: Vector<T>) {
+        if self.len() != other.len() {
+            panic!(
+                "Vector addition with invalid length: {} != {}",
+                self.len(),
+                other.len()
+            );
+        }
+
+        for (i, x) in self.elements.iter_mut().enumerate() {
+            *x *= other[i];
+        }
+    }
+}
+
+// This trait is implemented to support for numeric vector mul
+// assignment operator (-=) with scalar on the right side,
+// for example:
+//
+// let a = vector![5, 5, 5, 5];
+// a *= 6;
+//
+impl<T> ops::MulAssign<T> for Vector<T>
+where
+    T: Num + Copy + ops::MulAssign,
+{
+    fn mul_assign(&mut self, value: T) {
+        for x in self.elements.iter_mut() {
+            *x *= value
+        }
+    }
+}
 
 // TODO: implement exponent operator
 // TODO: implement all operators https://www.tutorialspoint.com/numpy/numpy_arithmetic_operations.htm
@@ -929,6 +1047,25 @@ mod tests {
     }
 
     #[test]
+    fn test_add_assign() {
+        let mut a = vector![3, 1, 4, 1, 5];
+        a += vector![3, 1, 4, 1, 5];
+        assert_eq!(a, vector![6, 2, 8, 2, 10]);
+
+        let mut b = vector![3.0, 1.0, 4.0, 1.0, 5.5];
+        b += vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        assert_eq!(b, vector![6.7, 2.7, 8.4, 2.2, 11.0]);
+
+        let mut c = vector![3, 1, 4, 1, 5];
+        c += 2;
+        assert_eq!(c, vector![5, 3, 6, 3, 7]);
+
+        let mut d = vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        d += 2.0;
+        assert_eq!(d, vector![5.7, 3.7, 6.4, 3.2, 7.5]);
+    }
+
+    #[test]
     fn test_sub() {
         let a = vector![3, 1, 4, 1, 5] - vector![3, 1, 4, 1, 5];
         assert_eq!(a, vector![0, 0, 0, 0, 00]);
@@ -978,6 +1115,43 @@ mod tests {
     }
 
     #[test]
+    fn test_sub_assign() {
+        let mut a = vector![3, 1, 4, 1, 5];
+        a -= vector![3, 1, 4, 1, 5];
+        assert_eq!(a, vector![0, 0, 0, 0, 00]);
+
+        let mut b = vector![3.0, 1.0, 4.0, 1.0, 5.5];
+        b -= vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        assert_eq!(
+            b,
+            vector![
+                -0.7000000000000002,
+                -0.7,
+                -0.40000000000000036,
+                -0.19999999999999996,
+                0.0
+            ]
+        );
+
+        let mut c = vector![3, 1, 4, 1, 5];
+        c -= 2;
+        assert_eq!(c, vector![1, -1, 2, -1, 3]);
+
+        let mut d = vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        d -= 2.0;
+        assert_eq!(
+            d,
+            vector![
+                1.7000000000000002,
+                -0.30000000000000004,
+                2.4000000000000004,
+                -0.8,
+                3.5
+            ]
+        );
+    }
+
+    #[test]
     fn test_clone() {
         // Test clone
         let a = vector![3, 1, 4];
@@ -1005,6 +1179,25 @@ mod tests {
 
         let f = 2.0 * vector![3.7, 1.7, 4.4, 1.2, 5.5];
         assert_eq!(f, vector![7.4, 3.4, 8.8, 2.4, 11.0]);
+    }
+
+    #[test]
+    fn test_mul_assign() {
+        let mut a = vector![3, 1, 4, 1, 5];
+        a *= vector![3, 1, 4, 1, 5];
+        assert_eq!(a, vector![9, 1, 16, 1, 25]);
+
+        let mut b = vector![3.0, 1.0, 4.0, 1.0, 5.5];
+        b *= vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        assert_eq!(b, vector![11.100000000000001, 1.7, 17.6, 1.2, 30.25]);
+
+        let mut c = vector![3, 1, 4, 1, 5];
+        c *= 2;
+        assert_eq!(c, vector![6, 2, 8, 2, 10]);
+
+        let mut d = vector![3.7, 1.7, 4.4, 1.2, 5.5];
+        d *= 2.0;
+        assert_eq!(d, vector![7.4, 3.4, 8.8, 2.4, 11.0]);
     }
 
     #[test]

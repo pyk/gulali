@@ -97,9 +97,8 @@
 //! ```
 //!
 //! The function [`uniform`] creates a numeric vector of the given
-//! length `len` and populate it with random samples from a uniform
-//! distribution over the half-open interval `[low, high)` (includes
-//! `low`, but excludes `high`).
+//! length and populate it with random samples from a uniform
+//! distribution over the half-open interval.
 //!
 //! ```
 //! # use crabsformer::prelude::*;
@@ -119,9 +118,6 @@
 //! # }
 //! ```
 //!
-//! Values are generated within the half-open interval `[start, stop)`
-//! (in other words, the interval including `start` but excluding `stop`).
-//!
 //! See also: [`vector!`], [`zeros`], [`zeros_like`], [`ones`], [`ones_like`],
 //! [`full`], [`full_like`], [`range`], [`linspace`], [`uniform`], [`normal`].
 //!
@@ -137,25 +133,74 @@
 //! [`normal`]: struct.Vector.html#method.normal
 //!
 //!
-//! ## Numeric Vector Operation
-//! You can perform arithmetic operations on a `Vector<T>`.
-//! For example, if you add the `Vector<T>`, the arithmetic operator
-//! will work element-wise. The output will be a `Vector<T>` of the same
+//! ## Numeric Vector Basic Operations
+//! You can perform arithmetic operations on a numeric vector.
+//! Arithmetic operators on numeric vectors apply elementwise.
+//! A new numeric vector is created and filled with the result.
+//! For example, if you add the numeric vector, the arithmetic operator
+//! will work element-wise. The output will be a numeric vector of the same
 //! length.
+//!
 //!
 //! ```rust
 //! # #[macro_use] extern crate crabsformer;
 //! # use crabsformer::prelude::*;
 //! # fn main() {
-//! let x = vector![0.5, 0.6, 0.9, 1.7];
-//! let y = vector![1.0, 0.4, 0.2, 0.1];
-//! let z = x + y;
-//! assert_eq!(z, vector![1.5, 1.0, 1.1, 1.8]);
+//! let x = vector![2, 4, 6] + vector![1, 3, 5];
+//! assert_eq!(x, vector![3, 7, 11]);
 //! # }
 //! ```
 //!
-//! If you try to add `Vector<T>` with a different number of elements,
-//! you will get an error. For example:
+//! Numeric vector substraction and multiplication also works the same:
+//!
+//! ```rust
+//! # #[macro_use] extern crate crabsformer;
+//! # use crabsformer::prelude::*;
+//! # fn main() {
+//! let x = vector![3, 1, 5] - vector![1, 3, 5];
+//! assert_eq!(x, vector![2, -2, 0]);
+//!
+//! let y = vector![5, 4, 1] * vector![2, 1, 4];
+//! assert_eq!(y, vector![10, 4, 4]);
+//! # }
+//! ```
+//!
+//!
+//! You can run an arithmetic operation on the numeric vector with
+//! a scalar value too. For example, this code multiplies each element
+//! of the numeric vector by 2.
+//!
+//! ```
+//! # #[macro_use] extern crate crabsformer;
+//! # use crabsformer::prelude::*;
+//! # fn main() {
+//! let x = vector![3, 1, 4] * 2;
+//! assert_eq!(x, vector![6, 2, 8]);
+//! # }
+//! ```
+//!
+//! Some operations, such as `+=` and `*=`, act in place to modify an
+//! existing numeric vector rather than create a new one.
+//!
+//! ```
+//! # #[macro_use] extern crate crabsformer;
+//! # use crabsformer::prelude::*;
+//! # fn main() {
+//! let mut x = vector![3, 1, 4];
+//!
+//! x += 3;
+//! assert_eq!(x, vector![6, 4, 7]);
+//!
+//! x -= 1;
+//! assert_eq!(x, vector![5, 3, 6]);
+//!
+//! x *= 2;
+//! assert_eq!(x, vector![10, 6, 12]);
+//! # }
+//! ```
+//!
+//! If you try to add, substract or multiply numeric vector with a
+//! different number of elements, you will get an error. For example:
 //!
 //! ```should_panic
 //! # #[macro_use] extern crate crabsformer;
@@ -163,26 +208,12 @@
 //! # fn main() {
 //! let x = vector![3, 1, 4, 1, 5] + vector![2, 10, 9];
 //! # }
-//! ```
-//! ```text
-//! thread 'guide::example::main' panicked at 'Vector addition with invalid length: 5 != 3' src/main.rs:12:13
+//! // thread 'main' panicked at 'Vector addition with invalid length: 5 != 3' src/main.rs:12:13
 //! ```
 //!
-//! You can run an arithmetic operation on the `Vector<T>` with a scalar value.
-//! For example, this code multiplies each element of the `Vector<T>` by 2.
-//!
-//! ```
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
-//! # fn main() {
-//! let x = vector![3, 1, 4, 1] * 2;
-//! assert_eq!(x, vector![6, 2, 8, 2]);
-//! # }
-//! ```
-//!
-//! If you would like to square of the individual elements of the `Vector<T>`,
-//! or even higher up, use the [`power`] method. Here, each element of the
-//! `Vector<T>` is raised to the power 2.
+//! If you would like to square of the individual elements of the numeric
+//! vector, or even higher up, use the [`power`] method. Here, each element of the
+//! numeric vector is raised to the power 2.
 //!
 //! ```
 //! # #[macro_use] extern crate crabsformer;
