@@ -165,7 +165,6 @@
 //! # }
 //! ```
 //!
-//!
 //! You can run an arithmetic operation on the numeric vector with
 //! a scalar value too. For example, this code multiplies each element
 //! of the numeric vector by 2.
@@ -261,7 +260,11 @@
 //! [`max`]: struct.Vector.html#method.max
 //! [`min`]: struct.Vector.html#method.min
 //!
-//! TODO([pyk]): Continue here, numeric vector indexing, slicing and iterating
+//! ---
+//!
+//! **TODO([pyk])**: Continue here, numeric vector indexing, slicing and iterating
+//!
+//! ---
 //!
 //! [numeric type]: https://doc.rust-lang.org/reference/types/numeric.html
 //! [`vector!`]: macro.vector.html
