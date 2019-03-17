@@ -1127,3 +1127,6 @@ Use this guide as an example https://www.pluralsight.com/guides/overview-basic-n
 still follow this https://docs.scipy.org/doc/numpy/user/quickstart.html
 
 lanjut matrix operations, guidenya di numpy yg "Basic Operations"
+
+List of unary operations
+https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.ndarray.html#numpy.ndarray
