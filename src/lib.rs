@@ -22,7 +22,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! crabsformer = "2019.3.11"
+//! crabsformer = "2019.3.12"
 //! ```
 //!
 //! and this to your crate root:
