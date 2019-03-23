@@ -1130,3 +1130,135 @@ lanjut matrix operations, guidenya di numpy yg "Basic Operations"
 
 List of unary operations
 https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.ndarray.html#numpy.ndarray
+
+# Numeric Vector Slice
+I want to support slicing in vector, like the following:
+
+```rust
+let x = vector![3, 1, 4, 1];
+
+// Indexing
+assert_eq!(x[0], 3);
+assert_eq!(x[2], 4);
+
+// Slicing
+assert_eq!(x[0..2], vector![3, 1, 4]);
+assert_eq!(x[2..], vector![4, 1]);
+assert_eq!(x[..1], vector![3, 1]);
+```
+
+In order to support that, I need to implement `ops::Index<ops::Range<usize>>`
+for `Vector<T>`.
+
+# Slice
+So, any other sequence-like data type have a data type conterpart
+that represents a borrowed value. For example:
+
+```
+owned: String -> borrowed: str
+owned: CString -> borrowed: CStr
+owned: Vec<T> -> borrowed: &[T]
+owned: PathBuf -> borrowed: path
+```
+
+nah bagaimana cara buat borrowed version dari `Vector<T>` ?
+
+Wait we should look at how `Vec<T>` implement the Index trait
+first.
+
+Ok, the borrowed counterpart is only a struct.
+
+But how? We can't return created struct as reference right?
+
+Ok, this is work:
+
+```rust
+use std::ops;
+
+// Owned & Borrowed value
+#[derive(Debug)]
+struct Vector<T> {
+    elements: Vec<T>
+}
+
+impl<T> ops::Index<ops::Range<usize>> for Vector<T>
+where
+    T: Copy,
+{
+    type Output = [T];
+
+    fn index(&self, index: ops::Range<usize>) -> &[T] {
+        &self.elements[index]
+    }
+}
+
+fn main() {
+    let a = Vector{elements: vec![1, 2, 3, 4] };
+    println!("a = {:?}", &a[1..4])
+}
+```
+
+but, we can't perform operation on them?
+should we create a `SubVector` ?
+yes.
+
+Anw, let's just use `&[T]` numeric slice.
+Oke.
+
+No no, we can't use `&[T]` as numeric slice.
+we can't do like the following:
+
+```rust
+impl<T> ops::Add<&[T]> for &[T] {
+    type Output = [T];
+}
+```
+
+it will raise an error like the following:
+
+```
+type parameter `T` must be used as the type parameter
+for some local type (e.g. `MyStruct<T>`)
+
+type parameter `T` must be used as the type
+parameter for some local type
+
+note: only traits defined in the current crate can be
+ implemented for a type parameter rustc(E0210)
+vector.rs(231, 1): type parameter `T` must be used as the
+type parameter for some local type
+```
+
+We need to create some kind of `VectorSlice` or
+`SubVector`.
+
+Do we need to do arithmetic operation on slice?
+
+We can create trait called slice and implement it.
+Fak, this is easy. Keyh.
+
+So we can do like the following:
+
+```rust
+let x = vector![3, 1, 2, 3];
+
+// Range
+assert_eq!(x.slice(0..1), vector![3]);
+
+// RangeTo
+assert_eq!(x.slice(..2), vector![3, 1]);
+
+// RangeFrom
+assert_eq!(x.slice(2..), vector![2, 3]);
+
+// RangeFull
+assert_eq!(x.slice(..), vector![3, 1, 2, 3]);
+
+// RangeInclusive
+assert_eq!(x.slice(0..=1), vector![3, 1]);
+
+// RangeToInclusive
+assert_eq!(x.slice(..=2), vector![3, 1, 2]);
+```
+
+keyh.

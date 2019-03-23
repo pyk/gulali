@@ -68,6 +68,14 @@ pub struct Vector<T> {
     elements: Vec<T>,
 }
 
+// /// The slice of numeric vector.
+// ///
+// /// The borrowed counterpart to owned
+// /// numeric vector `Vector<T>`.
+// pub struct VectorSlice<'a, T> {
+//     elements: &'a [T],
+// }
+
 // Conversion from other data type
 impl<T> From<Vec<T>> for Vector<T>
 where
@@ -534,6 +542,98 @@ impl<T> ops::Index<usize> for Vector<T> {
     }
 }
 
+/// Implements sub-numeric vector slicing with syntax
+/// `x[begin .. end]`.
+///
+/// Returns a slice of the given numeric vector from
+/// the range [`begin`..`end`).
+///
+/// This operation is `O(1)`.
+///
+/// # Panics
+/// Requires that `begin <= end` and `end <= len` where `len` is the
+/// length of the numeric vector. Otherwise it will panic.
+///
+/// # Examples
+///
+/// ```
+/// # #[macro_use] extern crate crabsformer;
+/// # use crabsformer::prelude::*;
+/// # fn main() {
+/// let x = vector![1, 2, 3];
+/// assert_eq!(x[0..1],  vector![1]);
+///
+/// // these will panic:
+/// // index 100 is outside the numeric vector
+/// // x[1 .. 100];
+/// # }
+/// ```
+impl<T> ops::Index<ops::Range<usize>> for Vector<T>
+where
+    T: Copy,
+{
+    type Output = [T];
+
+    fn index(&self, index: ops::Range<usize>) -> &[T] {
+        &self.elements[index]
+    }
+}
+
+impl<T> ops::Index<ops::RangeFrom<usize>> for Vector<T>
+where
+    T: Copy,
+{
+    type Output = [T];
+
+    fn index(&self, index: ops::RangeFrom<usize>) -> &[T] {
+        &self.elements[index]
+    }
+}
+
+impl<T> ops::Index<ops::RangeTo<usize>> for Vector<T>
+where
+    T: Copy,
+{
+    type Output = [T];
+
+    fn index(&self, index: ops::RangeTo<usize>) -> &[T] {
+        &self.elements[index]
+    }
+}
+
+impl<T> ops::Index<ops::RangeFull> for Vector<T>
+where
+    T: Copy,
+{
+    type Output = [T];
+
+    fn index(&self, index: ops::RangeFull) -> &[T] {
+        &self.elements[index]
+    }
+}
+
+impl<T> ops::Index<ops::RangeInclusive<usize>> for Vector<T>
+where
+    T: Copy,
+{
+    type Output = [T];
+
+    fn index(&self, index: ops::RangeInclusive<usize>) -> &[T] {
+        &self.elements[index]
+    }
+}
+
+impl<T> ops::Index<ops::RangeToInclusive<usize>> for Vector<T>
+where
+    T: Copy,
+{
+    type Output = [T];
+
+    fn index(&self, index: ops::RangeToInclusive<usize>) -> &[T] {
+        &self.elements[index]
+    }
+}
+
 // This trait is implemented to support for numeric vector addition
 // operator
 impl<T> ops::Add<Vector<T>> for Vector<T>
@@ -899,114 +999,6 @@ where
         for x in self.elements.iter_mut() {
             *x *= value
         }
-    }
-}
-
-/// Numeric vector slice operation
-pub trait Slice<Idx: ?Sized> {
-    /// The returned type after indexing.
-    type Output: ?Sized;
-
-    /// Performs the slicing (`container.slice[index]`) operation.
-    /// It returns new numeric vector with the sliced elements.
-    fn slice(&self, index: Idx) -> Self::Output;
-}
-
-/// Implements sub-numeric vector slicing with syntax
-/// `x.slice(begin .. end)`.
-///
-/// Returns a new numeric content that have elements of
-/// the given numeric vector from the range [`begin`..`end`).
-///
-/// This operation is `O(1)`.
-///
-/// # Panics
-/// Requires that `begin <= end` and `end <= len` where `len` is the
-/// length of the numeric vector. Otherwise it will panic.
-///
-/// # Examples
-/// ```
-/// # #[macro_use] extern crate crabsformer;
-/// # use crabsformer::prelude::*;
-/// # fn main() {
-/// let x = vector![3, 1, 2, 3];
-/// // Range
-/// assert_eq!(x.slice(0..1), vector![3]);
-/// // RangeTo
-/// assert_eq!(x.slice(..2), vector![3, 1]);
-/// // RangeFrom
-/// assert_eq!(x.slice(2..), vector![2, 3]);
-/// // RangeFull
-/// assert_eq!(x.slice(..), vector![3, 1, 2, 3]);
-/// // RangeInclusive
-/// assert_eq!(x.slice(0..=1), vector![3, 1]);
-/// // RangeToInclusive
-/// assert_eq!(x.slice(..=2), vector![3, 1, 2]);
-/// # }
-/// ```
-impl<T> Slice<ops::Range<usize>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::Range<usize>) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
-}
-
-impl<T> Slice<ops::RangeFrom<usize>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::RangeFrom<usize>) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
-}
-
-impl<T> Slice<ops::RangeTo<usize>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::RangeTo<usize>) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
-}
-
-impl<T> Slice<ops::RangeFull> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::RangeFull) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
-}
-
-impl<T> Slice<ops::RangeInclusive<usize>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::RangeInclusive<usize>) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
-}
-
-impl<T> Slice<ops::RangeToInclusive<usize>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::RangeToInclusive<usize>) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
     }
 }
 
@@ -1507,36 +1499,36 @@ mod tests {
         let x = vector![3, 1, 2, 3];
 
         // Range
-        assert_eq!(x.slice(0..1), vector![3]);
+        assert_eq!(x[0..1], [3]);
 
         // RangeTo
-        assert_eq!(x.slice(..2), vector![3, 1]);
+        assert_eq!(x[..2], [3, 1]);
 
         // RangeFrom
-        assert_eq!(x.slice(2..), vector![2, 3]);
+        assert_eq!(x[2..], [2, 3]);
 
         // RangeFull
-        assert_eq!(x.slice(..), vector![3, 1, 2, 3]);
+        assert_eq!(x[..], [3, 1, 2, 3]);
 
         // RangeInclusive
-        assert_eq!(x.slice(0..=1), vector![3, 1]);
+        assert_eq!(x[0..=1], [3, 1]);
 
         // RangeToInclusive
-        assert_eq!(x.slice(..=2), vector![3, 1, 2]);
+        assert_eq!(x[..=2], [3, 1, 2]);
     }
 
     #[test]
     #[should_panic]
     fn test_invalid_slice() {
         let x = vector![3, 1, 2, 3];
-        x.slice(1..100);
+        &x[1..100];
     }
 
-    // #[test]
-    // fn test_iteration() {
-    //     let x = vector![1, 2, 3, 5];
-    //     for value in &x {
-    //         let _a = value;
-    //     }
-    // }
+    #[test]
+    fn test_iteration() {
+        let x = vector![1, 2, 3, 5];
+        for value in &x {
+            let _a = value;
+        }
+    }
 }

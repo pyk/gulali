@@ -61,7 +61,7 @@
 //! [`shape`]: struct.Matrix.html#method.shape
 //! [`Vec<T>`]: https://doc.rust-lang.org/std/vec/struct.Vec.html
 //!
-//! ## Numeric Vector Creation
+//! ### Numeric Vector Creation
 //! There are several ways to create numeric vector.
 //!
 //! For example, you can create a numeric vector from a Rust vector using
@@ -133,7 +133,7 @@
 //! [`normal`]: struct.Vector.html#method.normal
 //!
 //!
-//! ## Numeric Vector Basic Operations
+//! ### Numeric Vector Basic Operations
 //! You can perform arithmetic operations on a numeric vector.
 //! Arithmetic operators on numeric vectors apply elementwise.
 //! A new numeric vector is created and filled with the result.
@@ -259,6 +259,28 @@
 //! [`sum`]: struct.Vector.html#method.sum
 //! [`max`]: struct.Vector.html#method.max
 //! [`min`]: struct.Vector.html#method.min
+//!
+//! ### Indexing, Slicing and Iterating Numeric Vector
+//! Numeric vectors can be indexed, sliced and iterated over, much like
+//! Rust's vector.
+//!
+//! ```
+//! # #[macro_use] extern crate crabsformer;
+//! # use crabsformer::prelude::*;
+//! # fn main() {
+//! let x = vector![3, 1, 4, 1];
+//!
+//! // Indexing
+//! assert_eq!(x[0], 3);
+//! assert_eq!(x[2], 4);
+//!
+//! // Slicing
+//! assert_eq!(x.slice(0..2), vector![3, 1]);
+//! assert_eq!(x.slice(2..), vector![4, 1]);
+//! assert_eq!(x.slice(..2), vector![3, 1]);
+//!
+//! # }
+//! ```
 //!
 //! ---
 //!
