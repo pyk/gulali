@@ -10,6 +10,8 @@
   </p>
 </p>
 
+**Notice!** This project is in early phase. Expect bugs and missing features.
+
 ## Documentation
 - [Quickstart Tutorial][quickstart tutorial]
 - [API Reference]
