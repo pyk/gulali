@@ -1010,6 +1010,16 @@ where
     }
 }
 
+// Implement iterator for numeric vector
+impl<T> IntoIterator for Vector<T> {
+    type Item = T;
+    type IntoIter = ::std::vec::IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.elements.into_iter()
+    }
+}
+
 // TODO: implement exponent operator
 // TODO: implement all operators https://www.tutorialspoint.com/numpy/numpy_arithmetic_operations.htm
 
@@ -1532,11 +1542,11 @@ mod tests {
         x.slice(1..100);
     }
 
-    // #[test]
-    // fn test_iteration() {
-    //     let x = vector![1, 2, 3, 5];
-    //     for value in &x {
-    //         let _a = value;
-    //     }
-    // }
+    #[test]
+    fn test_iteration() {
+        let x = vector![1, 2, 3, 5];
+        for value in x.into_iter() {
+            let _a = value;
+        }
+    }
 }
