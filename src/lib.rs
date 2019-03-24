@@ -78,18 +78,14 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! # fn main() {
 //! let v = vector![1, 10, 11, 314];
-//! # }
 //! ```
 //!
 //! It can also initialize each element of a numeric vector with a given value.
 //!
 //! ```
 //! # use crabsformer::*;
-//! # fn main() {
 //! let v = vector![0; 5]; // vector![0, 0, 0, 0, 0]
-//! # }
 //! ```
 //!
 //! The function [`uniform`] creates a numeric vector of the given
@@ -107,10 +103,8 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! # fn main() {
 //! let x = Vector::range(0, 10, 1);
 //! assert_eq!(x, vector![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-//! # }
 //! ```
 //!
 //! See also: [`vector!`], [`zeros`], [`zeros_like`], [`ones`], [`ones_like`],
@@ -140,23 +134,19 @@
 //!
 //! ```rust
 //! # use crabsformer::*;
-//! # fn main() {
 //! let x = vector![2, 4, 6] + vector![1, 3, 5];
 //! assert_eq!(x, vector![3, 7, 11]);
-//! # }
 //! ```
 //!
 //! Numeric vector substraction and multiplication also works the same:
 //!
 //! ```rust
 //! # use crabsformer::*;
-//! # fn main() {
 //! let x = vector![3, 1, 5] - vector![1, 3, 5];
 //! assert_eq!(x, vector![2, -2, 0]);
 //!
 //! let y = vector![5, 4, 1] * vector![2, 1, 4];
 //! assert_eq!(y, vector![10, 4, 4]);
-//! # }
 //! ```
 //!
 //! You can run an arithmetic operation on the numeric vector with
@@ -165,10 +155,8 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! # fn main() {
 //! let x = vector![3, 1, 4] * 2;
 //! assert_eq!(x, vector![6, 2, 8]);
-//! # }
 //! ```
 //!
 //! Some operations, such as `+=` and `*=`, act in place to modify an
@@ -176,7 +164,6 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! # fn main() {
 //! let mut x = vector![3, 1, 4];
 //!
 //! x += 3;
@@ -187,7 +174,6 @@
 //!
 //! x *= 2;
 //! assert_eq!(x, vector![10, 6, 12]);
-//! # }
 //! ```
 //!
 //! If you try to add, substract or multiply numeric vector with a
@@ -195,9 +181,7 @@
 //!
 //! ```should_panic
 //! # use crabsformer::*;
-//! # fn main() {
 //! let x = vector![3, 1, 4, 1, 5] + vector![2, 10, 9];
-//! # }
 //! // thread 'main' panicked at 'Vector addition with invalid length: 5 != 3' src/main.rs:12:13
 //! ```
 //!
@@ -207,11 +191,9 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! # fn main() {
 //! let x = vector![3, 1, 4, 1];
 //! let y = x.power(2);
 //! assert_eq!(y, vector![9, 1, 16, 1]);
-//! # }
 //! ```
 //!
 //! [`power`]: struct.Vector.html#method.power
@@ -228,7 +210,6 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! # fn main() {
 //! let x = vector![3, 1, 4];
 //! let sum = x.sum();
 //! assert_eq!(sum, 8);
@@ -238,7 +219,6 @@
 //!
 //! let min = x.min();
 //! assert_eq!(min, 1);
-//! # }
 //! ```
 //!
 //! See also: [`power`], [`filter`], [`sum`], [`max`], [`min`].
@@ -255,7 +235,6 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! # fn main() {
 //! let x = vector![3, 1, 4, 1];
 //!
 //! // Indexing numeric vector
@@ -271,7 +250,6 @@
 //! for element in x.into_iter() {
 //!     println!("element = {:?}", element);
 //! }
-//! # }
 //! ```
 //!
 //! ### Matrix Creation
@@ -310,12 +288,10 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! # fn main() {
 //! let W = matrix![
 //!     3.0, 1.0, 4.0;
 //!     1.0, 5.0, 9.0;
 //! ];
-//! # }
 //! ```
 //!
 //! It can also initialize each element of a matrix with a given value
@@ -323,10 +299,7 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! # fn main() {
-//! # use crabsformer::*;
 //! let W = matrix![0; [3, 3]]; // matrix![0, 0, 0; 0, 0, 0; 0, 0, 0]
-//! # }
 //! ```
 //!
 //! The function [`uniform`][m.uniform] creates a matrix of the given

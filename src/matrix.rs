@@ -28,9 +28,7 @@ use std::ops;
 /// 1. Create a matrix containing a given list of elements:
 ///
 /// ```
-/// # #[macro_use] extern crate crabsformer;
 /// # use crabsformer::*;
-/// # fn main() {
 /// let w = matrix![
 ///     3, 1, 4;
 ///     1, 5, 9;
@@ -41,22 +39,18 @@ use std::ops;
 /// assert_eq!(w[1][0], 1);
 /// assert_eq!(w[1][1], 5);
 /// assert_eq!(w[1][2], 9);
-/// # }
 /// ```
 ///
 /// 2. Create a matrix from a given element and shape:
 ///
 /// ```
-/// # #[macro_use] extern crate crabsformer;
 /// # use crabsformer::*;
-/// # fn main() {
 /// let w = matrix![1; [3, 3]];
 /// assert_eq!(w, matrix![
 ///     1, 1, 1;
 ///     1, 1, 1;
 ///     1, 1, 1;
 /// ]);
-/// # }
 /// ```
 ///
 /// [matrix]: struct.Matrix.html
@@ -122,16 +116,13 @@ impl<T> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
     /// # use crabsformer::*;
-    /// # fn main() {
     /// let W = matrix![
     ///     3.0, 1.0;
     ///     4.0, 1.0;
     ///     5.0, 9.0;
     /// ];
     /// assert_eq!(W.shape(), [3, 2]);
-    /// # }
     /// ```
     pub fn shape(&self) -> [usize; 2] {
         [self.nrows, self.ncols]
@@ -167,12 +158,12 @@ impl<T> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
     /// # use crabsformer::*;
-    /// # fn main() {
-    /// let w1 = matrix![3.0, 1.0; 4.0, 1.0];
+    /// let w1 = matrix![
+    ///     3.0, 1.0;
+    ///     4.0, 1.0;
+    /// ];
     /// let w2 = Matrix::full_like(&w1, 3.1415);
-    /// # }
     /// ```
     pub fn full_like(m: &Matrix<T>, value: T) -> Matrix<T>
     where
@@ -212,12 +203,9 @@ impl<T> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
     /// # use crabsformer::*;
-    /// # fn main() {
     /// let W1 = matrix![3.0, 1.0; 4.0, 1.0];
     /// let W2 = Matrix::zeros_like(&W1);
-    /// # }
     /// ```
     pub fn zeros_like(m: &Matrix<T>) -> Matrix<T>
     where
@@ -249,12 +237,9 @@ impl<T> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
     /// # use crabsformer::*;
-    /// # fn main() {
     /// let W1 = matrix![3, 1; 4, 1; 5, 9];
     /// let W2 = Matrix::ones_like(&W1);
-    /// # }
     /// ```
     pub fn ones_like(m: &Matrix<T>) -> Matrix<T>
     where
@@ -269,13 +254,10 @@ impl<T> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
     /// # use crabsformer::*;
-    /// # fn main() {
     /// let W1 = matrix![3, 1, 4; 1, 5, 9];
     /// let W2 = W1.power(2);
     /// assert_eq!(W2, matrix![9, 1, 16; 1, 25, 81]);
-    /// # }
     /// ```
     pub fn power(&self, exp: usize) -> Matrix<T>
     where
