@@ -24,7 +24,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-crabsformer = "2019.3.14"
+crabsformer = "2019.3.15"
 ```
 
 and this to your crate root:
