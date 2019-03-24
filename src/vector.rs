@@ -28,25 +28,19 @@ use std::ops;
 /// 1. Create a numeric vector containing a given list of elements:
 ///
 /// ```
-/// # #[macro_use] extern crate crabsformer;
 /// # use crabsformer::*;
-/// # fn main() {
 /// let x = vector![1, 2, 3];
 /// assert_eq!(x[0], 1);
 /// assert_eq!(x[1], 2);
 /// assert_eq!(x[2], 3);
-/// # }
 /// ```
 ///
 /// 2. Create a numeric vector from a given element and length:
 ///
 /// ```
-/// # #[macro_use] extern crate crabsformer;
 /// # use crabsformer::*;
-/// # fn main() {
 /// let x = vector![1; 3];
 /// assert_eq!(x, vector![1, 1, 1]);
-/// # }
 /// ```
 ///
 /// [numeric vector]: struct.Vector.html
@@ -75,12 +69,9 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
     /// # use crabsformer::*;
-    /// # fn main() {
     /// let v = vector![3.0, 1.0, 4.0, 1.0, 5.0];
     /// assert_eq!(v.len(), 5);
-    /// # }
     /// ```
     pub fn len(&self) -> usize {
         self.elements.len()
@@ -110,12 +101,9 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] use crabsformer::vector;
     /// # use crabsformer::*;
-    /// # fn main() {
     /// let v1 = vector![3.0, 1.0, 4.0, 1.0, 5.0];
     /// let v2 = Vector::full_like(&v1, 3.1415);
-    /// # }
     /// ```
     pub fn full_like(v: &Vector<T>, value: T) -> Vector<T>
     where
@@ -150,10 +138,8 @@ impl<T> Vector<T> {
     ///
     /// ```
     /// # use crabsformer::*;
-    /// # fn main() {
     /// let v1 = vector![3, 1, 4, 1, 5];
     /// let v2 = Vector::zeros_like(&v1);
-    /// # }
     /// ```
     pub fn zeros_like(v: &Vector<T>) -> Vector<T>
     where
@@ -185,12 +171,9 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
     /// # use crabsformer::*;
-    /// # fn main() {
     /// let v1 = vector![3, 1, 4, 1, 5];
     /// let v2 = Vector::ones_like(&v1);
-    /// # }
     /// ```
     pub fn ones_like(v: &Vector<T>) -> Vector<T>
     where
@@ -206,11 +189,9 @@ impl<T> Vector<T> {
     ///
     /// ```
     /// # use crabsformer::*;
-    /// # fn main() {
     /// let x = vector![3, 1, 4, 1];
     /// let y = x.power(2);
     /// assert_eq!(y, vector![9, 1, 16, 1]);
-    /// # }
     /// ```
     pub fn power(&self, exp: usize) -> Vector<T>
     where
@@ -226,13 +207,10 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
     /// # use crabsformer::*;
-    /// # fn main() {
     /// let x = vector![3, 1, 4, 1];
     /// let y = x.filter(|x| x >= 2);
     /// assert_eq!(y, vector![3, 4]);
-    /// # }
     /// ```
     pub fn filter(&self, criteria: impl Fn(T) -> bool) -> Vector<T>
     where
@@ -925,9 +903,7 @@ pub trait Slice<Idx: ?Sized> {
 ///
 /// # Examples
 /// ```
-/// # #[macro_use] extern crate crabsformer;
 /// # use crabsformer::*;
-/// # fn main() {
 /// let x = vector![3, 1, 2, 3];
 /// // Range
 /// assert_eq!(x.slice(0..1), vector![3]);
@@ -941,7 +917,6 @@ pub trait Slice<Idx: ?Sized> {
 /// assert_eq!(x.slice(0..=1), vector![3, 1]);
 /// // RangeToInclusive
 /// assert_eq!(x.slice(..=2), vector![3, 1, 2]);
-/// # }
 /// ```
 impl<T> Slice<ops::Range<usize>> for Vector<T>
 where
