@@ -28,8 +28,7 @@
 //! and this to your crate root:
 //!
 //! ```rust
-//! #[macro_use] extern crate crabsformer;
-//! use crabsformer::prelude::*;
+//! use crabsformer::*;
 //! ```
 //!
 //! To get started using Crabsformer, read the quickstart tutorial below.
@@ -69,7 +68,7 @@
 //! deduced from the type of the elements in the sequences.
 //!
 //! ```
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! let x = vec![3, 1, 4, 1, 5];
 //! let y = Vector::from(x);
 //! ```
@@ -78,8 +77,7 @@
 //! numeric vector more convenient.
 //!
 //! ```
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
 //! let v = vector![1, 10, 11, 314];
 //! # }
@@ -88,10 +86,8 @@
 //! It can also initialize each element of a numeric vector with a given value.
 //!
 //! ```
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
-//! # use crabsformer::prelude::*;
 //! let v = vector![0; 5]; // vector![0, 0, 0, 0, 0]
 //! # }
 //! ```
@@ -101,7 +97,7 @@
 //! distribution over the half-open interval.
 //!
 //! ```
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! let v = Vector::uniform(5, 0.0, 1.0);
 //! // Vector([0.054709196, 0.86043775, 0.21187294, 0.6413728, 0.14186311]) (Random)
 //! ```
@@ -110,8 +106,7 @@
 //! function.
 //!
 //! ```
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
 //! let x = Vector::range(0, 10, 1);
 //! assert_eq!(x, vector![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
@@ -121,6 +116,7 @@
 //! See also: [`vector!`], [`zeros`], [`zeros_like`], [`ones`], [`ones_like`],
 //! [`full`], [`full_like`], [`range`], [`linspace`], [`uniform`], [`normal`].
 //!
+//! [`vector!`]: macro.vector.html
 //! [`zeros`]: struct.Vector.html#method.zeros
 //! [`zeros_like`]: struct.Vector.html#method.zeros_like
 //! [`ones`]: struct.Vector.html#method.ones
@@ -143,8 +139,7 @@
 //!
 //!
 //! ```rust
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
 //! let x = vector![2, 4, 6] + vector![1, 3, 5];
 //! assert_eq!(x, vector![3, 7, 11]);
@@ -154,8 +149,7 @@
 //! Numeric vector substraction and multiplication also works the same:
 //!
 //! ```rust
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
 //! let x = vector![3, 1, 5] - vector![1, 3, 5];
 //! assert_eq!(x, vector![2, -2, 0]);
@@ -170,8 +164,7 @@
 //! of the numeric vector by 2.
 //!
 //! ```
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
 //! let x = vector![3, 1, 4] * 2;
 //! assert_eq!(x, vector![6, 2, 8]);
@@ -182,8 +175,7 @@
 //! existing numeric vector rather than create a new one.
 //!
 //! ```
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
 //! let mut x = vector![3, 1, 4];
 //!
@@ -202,8 +194,7 @@
 //! different number of elements, you will get an error. For example:
 //!
 //! ```should_panic
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
 //! let x = vector![3, 1, 4, 1, 5] + vector![2, 10, 9];
 //! # }
@@ -215,8 +206,7 @@
 //! numeric vector is raised to the power 2.
 //!
 //! ```
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
 //! let x = vector![3, 1, 4, 1];
 //! let y = x.power(2);
@@ -237,8 +227,7 @@
 //! numeric vector, are implemented as methods.
 //!
 //! ```
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
 //! let x = vector![3, 1, 4];
 //! let sum = x.sum();
@@ -265,8 +254,7 @@
 //! Rust's vector.
 //!
 //! ```
-//! # #[macro_use] extern crate crabsformer;
-//! # use crabsformer::prelude::*;
+//! # use crabsformer::*;
 //! # fn main() {
 //! let x = vector![3, 1, 4, 1];
 //!
@@ -286,14 +274,86 @@
 //! # }
 //! ```
 //!
-//! ---
+//! ### Matrix Creation
+//! There are several ways to create matrix too.
 //!
-//! **TODO([pyk])**: Continue here, numeric vector indexing, slicing and iterating
+//! For example, you can create a matrix from a Rust's vector using
+//! `Matrix::from` static method. The type of the resulting matrix is
+//! deduced from the type of the elements in the sequences.
 //!
-//! ---
+//! ```
+//! # use crabsformer::*;
+//! let x = vec![
+//!     vec![3, 1, 4],
+//!     vec![1, 5, 9],
+//!     vec![0, 1, 2],
+//! ];
+//! let W = Matrix::from(x);
+//! ```
+//!
+//! The number of the columns should be consistent
+//! otherwise it will panic. For example:
+//!
+//! ```should_panic
+//! # use crabsformer::*;
+//! let x = vec![
+//!     vec![3, 1, 4],
+//!     vec![1, 5],
+//! ];
+//! let W = Matrix::from(x);
+//! // thread 'main' panicked at 'Invalid matrix: the number of columns is inconsistent',
+//! ```
+//!
+//!
+//! The [`matrix!`] macro is provided to make initialization of the
+//! matrix more convenient.
+//!
+//! ```
+//! # use crabsformer::*;
+//! # fn main() {
+//! let W = matrix![
+//!     3.0, 1.0, 4.0;
+//!     1.0, 5.0, 9.0;
+//! ];
+//! # }
+//! ```
+//!
+//! It can also initialize each element of a matrix with a given value
+//! and shape.
+//!
+//! ```
+//! # use crabsformer::*;
+//! # fn main() {
+//! # use crabsformer::*;
+//! let W = matrix![0; [3, 3]]; // matrix![0, 0, 0; 0, 0, 0; 0, 0, 0]
+//! # }
+//! ```
+//!
+//! The function [`uniform`][m.uniform] creates a matrix of the given
+//! shape and populate it with random samples from a uniform
+//! distribution over the half-open interval.
+//!
+//! ```
+//! # use crabsformer::*;
+//! let W = Matrix::uniform([2, 2], 0.0, 1.0);
+//! ```
+//!
+//! See also: [`matrix!`], [`zeros`][m.zeros], [`zeros_like`][m.zeros_like],
+//! [`ones`][m.ones], [`ones_like`][m.ones_like], [`full`][m.full],
+//! [`full_like`][m.full_like], [`uniform`][m.uniform], [`normal`][m.normal].
+//!
+//! [`matrix!`]: macro.matrix.html
+//! [m.zeros]: struct.Matrix.html#method.zeros
+//! [m.zeros_like]: struct.Matrix.html#method.zeros_like
+//! [m.ones]: struct.Matrix.html#method.ones
+//! [m.ones_like]: struct.Matrix.html#method.ones_like
+//! [m.full]: struct.Matrix.html#method.full
+//! [m.full_like]: struct.Matrix.html#method.full_like
+//! [m.uniform]: struct.Matrix.html#method.uniform
+//! [m.normal]: struct.Matrix.html#method.normal
+//!
 //!
 //! [numeric type]: https://doc.rust-lang.org/reference/types/numeric.html
-//! [`vector!`]: macro.vector.html
 //! [pyk]: https://github.com/pyk
 //!
 //! ## Getting help
@@ -311,11 +371,10 @@
 //!
 //! [Apache-2.0]: https://github.com/pyk/crabsformer/blob/master/LICENSE
 //!
-extern crate num;
-extern crate rand;
 
+#[macro_use]
 mod matrix;
-pub mod prelude;
+#[macro_use]
 mod vector;
 
 pub use matrix::*;

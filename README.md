@@ -30,8 +30,7 @@ crabsformer = "2019.3.14"
 and this to your crate root:
 
 ```rust
-#[macro_use] extern crate crabsformer;
-use crabsformer::prelude::*;
+use crabsformer::*;
 ```
 
 To get started using Crabsformer, read the [quickstart tutorial].

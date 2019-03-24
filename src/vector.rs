@@ -15,6 +15,7 @@ use num::{Float, FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
 use rand::distributions::{Distribution, Normal, Uniform};
 use std::fmt;
+use std::iter;
 use std::ops;
 
 /// Creates a [numeric vector] containing the arguments.
@@ -28,7 +29,7 @@ use std::ops;
 ///
 /// ```
 /// # #[macro_use] extern crate crabsformer;
-/// # use crabsformer::prelude::*;
+/// # use crabsformer::*;
 /// # fn main() {
 /// let x = vector![1, 2, 3];
 /// assert_eq!(x[0], 1);
@@ -41,20 +42,20 @@ use std::ops;
 ///
 /// ```
 /// # #[macro_use] extern crate crabsformer;
-/// # use crabsformer::prelude::*;
+/// # use crabsformer::*;
 /// # fn main() {
 /// let x = vector![1; 3];
 /// assert_eq!(x, vector![1, 1, 1]);
 /// # }
 /// ```
 ///
-/// [numeric vector]: ../struct.Vector.html
+/// [numeric vector]: struct.Vector.html
 #[macro_export]
 macro_rules! vector {
-    ($elem:expr; $len:expr) => (Vector::full($len, $elem));
+    ($elem:expr; $len:expr) => ($crate::Vector::full($len, $elem));
     ($($x:expr),*) => {{
         let elements = vec![$($x),*];
-        Vector::from(elements)
+        $crate::Vector::from(elements)
     }};
 }
 
@@ -68,16 +69,6 @@ pub struct Vector<T> {
     elements: Vec<T>,
 }
 
-// Conversion from other data type
-impl<T> From<Vec<T>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    fn from(elements: Vec<T>) -> Self {
-        Vector { elements }
-    }
-}
-
 impl<T> Vector<T> {
     /// The total number of elements of the numeric vector.
     ///
@@ -85,7 +76,7 @@ impl<T> Vector<T> {
     ///
     /// ```
     /// # #[macro_use] extern crate crabsformer;
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// # fn main() {
     /// let v = vector![3.0, 1.0, 4.0, 1.0, 5.0];
     /// assert_eq!(v.len(), 5);
@@ -101,7 +92,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// let v = Vector::full(5, 2.5);
     /// ```
     pub fn full(len: usize, value: T) -> Vector<T>
@@ -119,8 +110,8 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
-    /// # use crabsformer::prelude::*;
+    /// # #[macro_use] use crabsformer::vector;
+    /// # use crabsformer::*;
     /// # fn main() {
     /// let v1 = vector![3.0, 1.0, 4.0, 1.0, 5.0];
     /// let v2 = Vector::full_like(&v1, 3.1415);
@@ -142,7 +133,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// let v: Vector<i32> = Vector::zeros(5);
     /// ```
     pub fn zeros(len: usize) -> Vector<T>
@@ -158,8 +149,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// # fn main() {
     /// let v1 = vector![3, 1, 4, 1, 5];
     /// let v2 = Vector::zeros_like(&v1);
@@ -179,7 +169,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// let v: Vector<i32> = Vector::ones(10);
     /// ```
     pub fn ones(len: usize) -> Vector<T>
@@ -196,7 +186,7 @@ impl<T> Vector<T> {
     ///
     /// ```
     /// # #[macro_use] extern crate crabsformer;
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// # fn main() {
     /// let v1 = vector![3, 1, 4, 1, 5];
     /// let v2 = Vector::ones_like(&v1);
@@ -215,8 +205,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # #[macro_use] extern crate crabsformer;
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// # fn main() {
     /// let x = vector![3, 1, 4, 1];
     /// let y = x.power(2);
@@ -238,7 +227,7 @@ impl<T> Vector<T> {
     ///
     /// ```
     /// # #[macro_use] extern crate crabsformer;
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// # fn main() {
     /// let x = vector![3, 1, 4, 1];
     /// let y = x.filter(|x| x >= 2);
@@ -263,7 +252,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// let x = Vector::uniform(5, -1.0, 1.0);
     /// let sum = x.sum();
     /// println!("sum = {}", sum);
@@ -287,7 +276,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// let x = Vector::uniform(5, -10, 10);
     /// let max = x.max();
     /// println!("max = {}", max);
@@ -310,7 +299,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// let x = Vector::uniform(5, -10, 10);
     /// let min = x.min();
     /// println!("min = {}", min);
@@ -331,7 +320,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// let v = Vector::uniform(5, 0.0, 1.0);
     /// ```
     pub fn uniform(len: usize, low: T, high: T) -> Vector<T>
@@ -357,7 +346,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// let v = Vector::range(0.0, 3.0, 0.5);
     /// // v = vector![0.0, 0.5, 1.0, 1.5, 2.0, 2.5]
     /// ```
@@ -393,7 +382,7 @@ impl<T> Vector<T> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// let a = Vector::linspace(5, 1.0, 10.0); // vector![1.0, 3.25, 5.5, 7.75, 10.0]
     /// ```
     ///
@@ -441,7 +430,7 @@ impl Vector<f64> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::prelude::*;
+    /// # use crabsformer::*;
     /// let v = Vector::normal(5, 0.0, 1.0); // Gaussian mean=0.0 std_dev=1.0
     /// ```
     pub fn normal(len: usize, mean: f64, std_dev: f64) -> Vector<f64> {
@@ -453,6 +442,16 @@ impl Vector<f64> {
             elements.push(normal_distribution.sample(&mut rng));
         }
 
+        Vector { elements }
+    }
+}
+
+// Conversion from Vec<T>
+impl<T> From<Vec<T>> for Vector<T>
+where
+    T: Num + Copy,
+{
+    fn from(elements: Vec<T>) -> Self {
         Vector { elements }
     }
 }
@@ -927,7 +926,7 @@ pub trait Slice<Idx: ?Sized> {
 /// # Examples
 /// ```
 /// # #[macro_use] extern crate crabsformer;
-/// # use crabsformer::prelude::*;
+/// # use crabsformer::*;
 /// # fn main() {
 /// let x = vector![3, 1, 2, 3];
 /// // Range
@@ -1017,6 +1016,22 @@ impl<T> IntoIterator for Vector<T> {
 
     fn into_iter(self) -> Self::IntoIter {
         self.elements.into_iter()
+    }
+}
+
+// and we'll implement FromIterator
+impl<T> iter::FromIterator<T> for Vector<T>
+where
+    T: Num + Copy,
+{
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let mut v = Vec::new();
+
+        for i in iter {
+            v.push(i);
+        }
+
+        Vector::from(v)
     }
 }
 
@@ -1158,6 +1173,47 @@ mod tests {
         let vi1: Vector<i32> = Vector::ones(10);
         let vi2 = Vector::ones_like(&vi1);
         assert_eq!(vi1.len(), vi2.len());
+    }
+
+    #[test]
+    fn test_power() {
+        let x = vector![3, 1, 4, 1];
+        let y = x.power(2);
+        assert_eq!(y, vector![9, 1, 16, 1]);
+    }
+
+    #[test]
+    fn test_filter() {
+        let x = vector![3, 1, 4, 1];
+        let y = x.filter(|x| x >= 2);
+        assert_eq!(y, vector![3, 4]);
+    }
+
+    #[test]
+    fn test_sum() {
+        let x = vector![3, 1, 4, 1];
+        assert_eq!(x.sum(), 9);
+
+        let y = vector![3.0, 1.0, 4.0, 1.0];
+        assert_eq!(y.sum(), 9.0);
+    }
+
+    #[test]
+    fn test_max() {
+        let x = vector![3, 1, 4, 1];
+        assert_eq!(x.max(), 4);
+
+        // let y = vector![3.0, 1.0, 4.0, 1.0];
+        // assert_eq!(y.max(), 4.0);
+    }
+
+    #[test]
+    fn test_min() {
+        let x = vector![3, 1, 4, 1];
+        assert_eq!(x.min(), 1);
+
+        // let y = vector![3.0, 1.0, 4.0, 1.0];
+        // assert_eq!(y.min(), 1.0);
     }
 
     #[test]
@@ -1453,47 +1509,6 @@ mod tests {
     #[should_panic]
     fn test_invalid_mul() {
         let _x = vector![1, 2] * vector![2];
-    }
-
-    #[test]
-    fn test_power() {
-        let x = vector![3, 1, 4, 1];
-        let y = x.power(2);
-        assert_eq!(y, vector![9, 1, 16, 1]);
-    }
-
-    #[test]
-    fn test_filter() {
-        let x = vector![3, 1, 4, 1];
-        let y = x.filter(|x| x >= 2);
-        assert_eq!(y, vector![3, 4]);
-    }
-
-    #[test]
-    fn test_sum() {
-        let x = vector![3, 1, 4, 1];
-        assert_eq!(x.sum(), 9);
-
-        let y = vector![3.0, 1.0, 4.0, 1.0];
-        assert_eq!(y.sum(), 9.0);
-    }
-
-    #[test]
-    fn test_max() {
-        let x = vector![3, 1, 4, 1];
-        assert_eq!(x.max(), 4);
-
-        // let y = vector![3.0, 1.0, 4.0, 1.0];
-        // assert_eq!(y.max(), 4.0);
-    }
-
-    #[test]
-    fn test_min() {
-        let x = vector![3, 1, 4, 1];
-        assert_eq!(x.min(), 1);
-
-        // let y = vector![3.0, 1.0, 4.0, 1.0];
-        // assert_eq!(y.min(), 1.0);
     }
 
     #[test]
