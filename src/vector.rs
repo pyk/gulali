@@ -60,7 +60,7 @@ macro_rules! vector {
 /// 2. Vector operation
 /// 3. Indexing, etc.
 pub struct Vector<T> {
-    elements: Vec<T>,
+    pub(crate) elements: Vec<T>,
 }
 
 impl<T> Vector<T> {
@@ -690,7 +690,7 @@ macro_rules! impl_sub_vector_for_type {
 
             fn sub(self, v: Vector<$t>) -> Vector<$t> {
                 // Add the vectors
-                let elements = v.elements.iter().map(|x| *x - self).collect();
+                let elements = v.elements.iter().map(|x| self - *x).collect();
                 Vector { elements }
             }
         }
@@ -1334,6 +1334,12 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
+    fn test_add_invalid() {
+        let _a = vector![3, 1, 4, 1, 5] + vector![3, 1, 4, 1];
+    }
+
+    #[test]
     fn test_sub() {
         let a = vector![3, 1, 4, 1, 5] - vector![3, 1, 4, 1, 5];
         assert_eq!(a, vector![0, 0, 0, 0, 00]);
@@ -1367,17 +1373,17 @@ mod tests {
         );
 
         let e = 2 - vector![3, 1, 4, 1, 5];
-        assert_eq!(e, vector![1, -1, 2, -1, 3]);
+        assert_eq!(e, vector![-1, 1, -2, 1, -3]);
 
         let f = 2.0 - vector![3.7, 1.7, 4.4, 1.2, 5.5];
         assert_eq!(
             f,
             vector![
-                1.7000000000000002,
-                -0.30000000000000004,
-                2.4000000000000004,
-                -0.8,
-                3.5
+                -1.7000000000000002,
+                0.30000000000000004,
+                -2.4000000000000004,
+                0.8,
+                -3.5
             ]
         );
     }
@@ -1417,6 +1423,12 @@ mod tests {
                 3.5
             ]
         );
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_sub_invalid() {
+        let _a = vector![3, 1, 4, 1, 5] - vector![3, 1, 4, 1];
     }
 
     #[test]
@@ -1470,19 +1482,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_invalid_add() {
-        let _x = vector![1, 2] + vector![2];
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_invalid_sub() {
-        let _x = vector![1, 2] - vector![2];
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_invalid_mul() {
+    fn test_mul_invalid() {
         let _x = vector![1, 2] * vector![2];
     }
 

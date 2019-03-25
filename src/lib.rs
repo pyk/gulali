@@ -122,7 +122,6 @@
 //! [`uniform`]: struct.Vector.html#method.uniform
 //! [`normal`]: struct.Vector.html#method.normal
 //!
-//!
 //! ### Numeric Vector Basic Operations
 //! You can perform arithmetic operations on a numeric vector.
 //! Arithmetic operators on numeric vectors apply elementwise.
@@ -325,6 +324,116 @@
 //! [m.uniform]: struct.Matrix.html#method.uniform
 //! [m.normal]: struct.Matrix.html#method.normal
 //!
+//! ### Matrix Basic Operations
+//! You can perform arithmetic operations on a matrix.
+//! Arithmetic operators on matrices apply elementwise.
+//! A new matrix is created and filled with the result.
+//! For example, if you add the matrix, the arithmetic operator
+//! will work element-wise. The output will be a matrix of the same
+//! shape.
+//!
+//!
+//! ```rust
+//! # use crabsformer::*;
+//! let w1 = matrix![
+//!     2, 4, 6;
+//!     3, 1, 1;
+//!     4, 5, 6;
+//! ];
+//!
+//! let w2 = matrix![
+//!     1, 3, 5;
+//!     3, 1, 3;
+//!     1, 1, 1;
+//! ];
+//!
+//! let w3 = w1 + w2;
+//!
+//! assert_eq!(w3, matrix![
+//!     3, 7, 11;
+//!     6, 2, 4;
+//!     5, 6, 7;
+//! ]);
+//! ```
+//!
+//! Matrix substraction and multiplication also works the same:
+//!
+//! ```rust
+//! # use crabsformer::*;
+//! let w1 = matrix![2, 4; 3, 1] - matrix![1, 3; 3, 1];
+//! assert_eq!(w1, matrix![
+//!     1, 1;
+//!     0, 0;
+//! ]);
+//!
+//! let w2 = matrix![0, 1; 2, 0] - matrix![1, 1; 0, 1];
+//! assert_eq!(w2, matrix![
+//!     -1, 0;
+//!     2, -1;
+//! ]);
+//!
+//! let w3 = matrix![0, 1; 1, 0] * matrix![1, 1; 1, 1];
+//! assert_eq!(w3, matrix![
+//!     0, 1;
+//!     1, 0;
+//! ]);
+//! ```
+//!
+//! You can run an arithmetic operation on the matrix with
+//! a scalar value too. For example, this code multiplies each element
+//! of the matrix by 2.
+//!
+//! ```
+//! # use crabsformer::*;
+//! let w = matrix![3, 1; 4, 1] * 2;
+//! assert_eq!(w, matrix![6, 2; 8, 2]);
+//! ```
+//!
+//! Some operations, such as `+=` and `*=`, act in place to modify an
+//! existing matrix rather than create a new one.
+//!
+//! ```
+//! # use crabsformer::*;
+//! let mut w = matrix![3, 1; 4, 1];
+//!
+//! w += 3;
+//! assert_eq!(w, matrix![6, 4; 7, 4]);
+//!
+//! w -= 1;
+//! assert_eq!(w, matrix![5, 3; 6, 3]);
+//!
+//! w *= 2;
+//! assert_eq!(w, matrix![10, 6; 12, 6]);
+//! ```
+//!
+//! If you try to add, substract or multiply matrix with a
+//! different shape, you will get an error. For example:
+//!
+//! ```should_panic
+//! # use crabsformer::*;
+//! let x = matrix![3, 1; 4, 1] + matrix![2, 10, 9; 1, 4, 7];
+//! // thread 'main' panicked at 'Matrix addition with invalid shape: [2, 2] != [3, 3]' src/main.rs:12:13
+//! ```
+//!
+//! If you would like to square of the individual elements of the matrix
+//! , or even higher up, use the [`power`][m.power] method. Here, each element
+//! of the matrix is raised to the power 2.
+//!
+//! ```
+//! # use crabsformer::*;
+//! let w1 = matrix![3, 1; 4, 1];
+//! let w2 = w1.power(2);
+//! assert_eq!(w2, matrix![9, 1; 16, 1]);
+//! ```
+//!
+//! [m.power]: struct.Matrix.html#method.power
+//!
+//! When operating with matrices of different types,
+//! the Rust compiler will raise error like the following:
+//!
+//! ```text
+//! cannot add `matrix::Matrix<{integer}>` to `matrix::Matrix<{float}>`
+//! ```
 //!
 //! [numeric type]: https://doc.rust-lang.org/reference/types/numeric.html
 //! [pyk]: https://github.com/pyk

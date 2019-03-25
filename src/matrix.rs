@@ -419,6 +419,464 @@ impl<T> IntoIterator for Matrix<T> {
     }
 }
 
+// This trait is implemented to support for matrix addition operator
+impl<T> ops::Add<Matrix<T>> for Matrix<T>
+where
+    T: Num + Copy,
+{
+    type Output = Matrix<T>;
+
+    fn add(self, other: Matrix<T>) -> Matrix<T> {
+        if self.shape() != other.shape() {
+            panic!(
+                "Matrix addition with invalid shape: {:?} != {:?}",
+                self.shape(),
+                other.shape()
+            );
+        }
+
+        // Add the matrix
+        let elements = self
+            .elements
+            .iter()
+            .enumerate()
+            .map(|(i, row)| {
+                row.elements
+                    .iter()
+                    .enumerate()
+                    .map(|(j, value)| *value + other[i][j])
+                    .collect()
+            })
+            .collect();
+        Matrix {
+            nrows: self.nrows,
+            ncols: self.ncols,
+            elements,
+        }
+    }
+}
+
+// This trait is implemented to support for matrix addition
+// operator with scalar on the right side,
+// for example:
+//
+// let a = matrix![5, 5; 5, 5] + 6;
+//
+impl<T> ops::Add<T> for Matrix<T>
+where
+    T: Num + Copy,
+{
+    type Output = Matrix<T>;
+
+    fn add(self, value: T) -> Matrix<T> {
+        // Add the vectors
+        let elements = self
+            .elements
+            .iter()
+            .map(|row| {
+                row.elements.iter().map(|elem| *elem + value).collect()
+            })
+            .collect();
+        Matrix {
+            nrows: self.nrows,
+            ncols: self.ncols,
+            elements,
+        }
+    }
+}
+
+// This macro is to generate support for matrix addition
+// operator with scalar on the left side,
+// for example:
+//
+// let a = 6 + matrix![5, 5; 5, 5];
+//
+macro_rules! impl_add_matrix_for_type {
+    ($t: ty) => {
+        impl ops::Add<Matrix<$t>> for $t {
+            type Output = Matrix<$t>;
+
+            fn add(self, m: Matrix<$t>) -> Matrix<$t> {
+                // Add the matrices
+                let elements = m
+                    .elements
+                    .iter()
+                    .map(|row| {
+                        row.elements.iter().map(|elem| elem + self).collect()
+                    })
+                    .collect();
+                Matrix {
+                    nrows: m.nrows,
+                    ncols: m.ncols,
+                    elements,
+                }
+            }
+        }
+    };
+}
+
+impl_add_matrix_for_type!(usize);
+impl_add_matrix_for_type!(i8);
+impl_add_matrix_for_type!(i16);
+impl_add_matrix_for_type!(i32);
+impl_add_matrix_for_type!(i64);
+impl_add_matrix_for_type!(i128);
+impl_add_matrix_for_type!(u8);
+impl_add_matrix_for_type!(u16);
+impl_add_matrix_for_type!(u32);
+impl_add_matrix_for_type!(u64);
+impl_add_matrix_for_type!(u128);
+impl_add_matrix_for_type!(f32);
+impl_add_matrix_for_type!(f64);
+
+// This trait is implemented to support for matrix addition
+// and assignment operator (+=)
+impl<T> ops::AddAssign<Matrix<T>> for Matrix<T>
+where
+    T: Num + Copy + ops::AddAssign,
+{
+    fn add_assign(&mut self, other: Matrix<T>) {
+        if self.shape() != other.shape() {
+            panic!(
+                "Matrix addition with invalid length: {:?} != {:?}",
+                self.shape(),
+                other.shape()
+            );
+        }
+
+        self.elements.iter_mut().enumerate().for_each(|(i, row)| {
+            row.elements
+                .iter_mut()
+                .enumerate()
+                .for_each(|(j, value)| *value += other[i][j])
+        })
+    }
+}
+
+// This trait is implemented to support for matrix addition
+// assignment operator (+=) with scalar on the right side,
+// for example:
+//
+// let a = matrix![5, 5; 5, 5];
+// a += 6;
+//
+impl<T> ops::AddAssign<T> for Matrix<T>
+where
+    T: Num + Copy + ops::AddAssign,
+{
+    fn add_assign(&mut self, value: T) {
+        self.elements.iter_mut().for_each(|row| {
+            row.elements.iter_mut().for_each(|elem| *elem += value)
+        })
+    }
+}
+
+// This trait is implemented to support for matrix
+// substraction operator
+impl<T> ops::Sub<Matrix<T>> for Matrix<T>
+where
+    T: Num + Copy,
+{
+    type Output = Matrix<T>;
+
+    fn sub(self, other: Matrix<T>) -> Matrix<T> {
+        if self.shape() != other.shape() {
+            panic!(
+                "Matrix substraction with invalid shape: {:?} != {:?}",
+                self.shape(),
+                other.shape()
+            );
+        }
+
+        // Substract the matrix
+        let elements = self
+            .elements
+            .iter()
+            .enumerate()
+            .map(|(i, row)| {
+                row.elements
+                    .iter()
+                    .enumerate()
+                    .map(|(j, value)| *value - other[i][j])
+                    .collect()
+            })
+            .collect();
+        Matrix {
+            nrows: self.nrows,
+            ncols: self.ncols,
+            elements,
+        }
+    }
+}
+
+// This trait is implemented to support for matrix substraction
+// operator with scalar on the right side,
+// for example:
+//
+// let a = matrix![5, 5; 5, 5] - 6;
+//
+impl<T> ops::Sub<T> for Matrix<T>
+where
+    T: Num + Copy,
+{
+    type Output = Matrix<T>;
+
+    fn sub(self, value: T) -> Matrix<T> {
+        // Substract the matrix
+        let elements = self
+            .elements
+            .iter()
+            .map(|row| {
+                row.elements.iter().map(|elem| *elem - value).collect()
+            })
+            .collect();
+        Matrix {
+            nrows: self.nrows,
+            ncols: self.ncols,
+            elements,
+        }
+    }
+}
+
+// This macro is to generate support for matrix substraction
+// operator with scalar on the left side,
+// for example:
+//
+// let a = 6 - matrix![5, 5; 5, 5];
+//
+macro_rules! impl_sub_matrix_for_type {
+    ($t: ty) => {
+        impl ops::Sub<Matrix<$t>> for $t {
+            type Output = Matrix<$t>;
+
+            fn sub(self, m: Matrix<$t>) -> Matrix<$t> {
+                // Substract the matrices
+                let elements = m
+                    .elements
+                    .iter()
+                    .map(|row| {
+                        row.elements.iter().map(|elem| self - elem).collect()
+                    })
+                    .collect();
+                Matrix {
+                    nrows: m.nrows,
+                    ncols: m.ncols,
+                    elements,
+                }
+            }
+        }
+    };
+}
+
+impl_sub_matrix_for_type!(usize);
+impl_sub_matrix_for_type!(i8);
+impl_sub_matrix_for_type!(i16);
+impl_sub_matrix_for_type!(i32);
+impl_sub_matrix_for_type!(i64);
+impl_sub_matrix_for_type!(i128);
+impl_sub_matrix_for_type!(u8);
+impl_sub_matrix_for_type!(u16);
+impl_sub_matrix_for_type!(u32);
+impl_sub_matrix_for_type!(u64);
+impl_sub_matrix_for_type!(u128);
+impl_sub_matrix_for_type!(f32);
+impl_sub_matrix_for_type!(f64);
+
+// This trait is implemented to support for matrix substraction
+// and assignment operator (-=)
+impl<T> ops::SubAssign<Matrix<T>> for Matrix<T>
+where
+    T: Num + Copy + ops::SubAssign,
+{
+    fn sub_assign(&mut self, other: Matrix<T>) {
+        if self.shape() != other.shape() {
+            panic!(
+                "Matrix substraction with invalid length: {:?} != {:?}",
+                self.shape(),
+                other.shape()
+            );
+        }
+
+        self.elements.iter_mut().enumerate().for_each(|(i, row)| {
+            row.elements
+                .iter_mut()
+                .enumerate()
+                .for_each(|(j, value)| *value -= other[i][j])
+        })
+    }
+}
+
+// This trait is implemented to support for matrix substraction
+// assignment operator (-=) with scalar on the right side,
+// for example:
+//
+// let a = matrix![5, 5; 5, 5];
+// a -= 6;
+//
+impl<T> ops::SubAssign<T> for Matrix<T>
+where
+    T: Num + Copy + ops::SubAssign,
+{
+    fn sub_assign(&mut self, value: T) {
+        self.elements.iter_mut().for_each(|row| {
+            row.elements.iter_mut().for_each(|elem| *elem -= value)
+        })
+    }
+}
+
+// This trait is implemented to support for matrix
+// multiplication operator
+impl<T> ops::Mul<Matrix<T>> for Matrix<T>
+where
+    T: Num + Copy,
+{
+    type Output = Matrix<T>;
+
+    fn mul(self, other: Matrix<T>) -> Matrix<T> {
+        if self.shape() != other.shape() {
+            panic!(
+                "Matrix multiplication with invalid shape: {:?} != {:?}",
+                self.shape(),
+                other.shape()
+            );
+        }
+
+        // Multiply the matrix
+        let elements = self
+            .elements
+            .iter()
+            .enumerate()
+            .map(|(i, row)| {
+                row.elements
+                    .iter()
+                    .enumerate()
+                    .map(|(j, value)| *value * other[i][j])
+                    .collect()
+            })
+            .collect();
+        Matrix {
+            nrows: self.nrows,
+            ncols: self.ncols,
+            elements,
+        }
+    }
+}
+
+// This trait is implemented to support for matrix multiplication
+// operator with scalar on the right side,
+// for example:
+//
+// let a = matrix![5, 5; 5, 5] * 6;
+//
+impl<T> ops::Mul<T> for Matrix<T>
+where
+    T: Num + Copy,
+{
+    type Output = Matrix<T>;
+
+    fn mul(self, value: T) -> Matrix<T> {
+        // Substract the matrix
+        let elements = self
+            .elements
+            .iter()
+            .map(|row| {
+                row.elements.iter().map(|elem| *elem * value).collect()
+            })
+            .collect();
+        Matrix {
+            nrows: self.nrows,
+            ncols: self.ncols,
+            elements,
+        }
+    }
+}
+
+// This macro is to generate support for matrix multiplication
+// operator with scalar on the left side,
+// for example:
+//
+// let a = 6 * matrix![5, 5; 5, 5];
+//
+macro_rules! impl_sub_matrix_for_type {
+    ($t: ty) => {
+        impl ops::Mul<Matrix<$t>> for $t {
+            type Output = Matrix<$t>;
+
+            fn mul(self, m: Matrix<$t>) -> Matrix<$t> {
+                // Multiply the matrices
+                let elements = m
+                    .elements
+                    .iter()
+                    .map(|row| {
+                        row.elements.iter().map(|elem| self * elem).collect()
+                    })
+                    .collect();
+                Matrix {
+                    nrows: m.nrows,
+                    ncols: m.ncols,
+                    elements,
+                }
+            }
+        }
+    };
+}
+
+impl_sub_matrix_for_type!(usize);
+impl_sub_matrix_for_type!(i8);
+impl_sub_matrix_for_type!(i16);
+impl_sub_matrix_for_type!(i32);
+impl_sub_matrix_for_type!(i64);
+impl_sub_matrix_for_type!(i128);
+impl_sub_matrix_for_type!(u8);
+impl_sub_matrix_for_type!(u16);
+impl_sub_matrix_for_type!(u32);
+impl_sub_matrix_for_type!(u64);
+impl_sub_matrix_for_type!(u128);
+impl_sub_matrix_for_type!(f32);
+impl_sub_matrix_for_type!(f64);
+
+// This trait is implemented to support for matrix substraction
+// and assignment operator (-=)
+impl<T> ops::MulAssign<Matrix<T>> for Matrix<T>
+where
+    T: Num + Copy + ops::MulAssign,
+{
+    fn mul_assign(&mut self, other: Matrix<T>) {
+        if self.shape() != other.shape() {
+            panic!(
+                "Matrix multiplication with invalid length: {:?} != {:?}",
+                self.shape(),
+                other.shape()
+            );
+        }
+
+        self.elements.iter_mut().enumerate().for_each(|(i, row)| {
+            row.elements
+                .iter_mut()
+                .enumerate()
+                .for_each(|(j, value)| *value *= other[i][j])
+        })
+    }
+}
+
+// This trait is implemented to support for matrix multiplication
+// assignment operator (*=) with scalar on the right side,
+// for example:
+//
+// let a = matrix![5, 5; 5, 5];
+// a *= 6;
+//
+impl<T> ops::MulAssign<T> for Matrix<T>
+where
+    T: Num + Copy + ops::MulAssign,
+{
+    fn mul_assign(&mut self, value: T) {
+        self.elements.iter_mut().for_each(|row| {
+            row.elements.iter_mut().for_each(|elem| *elem *= value)
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -697,5 +1155,173 @@ mod tests {
 
         assert_eq!(w[0], vector![3, 1, 4]);
         assert_eq!(w[1], vector![1, 5, 9]);
+    }
+
+    #[test]
+    fn test_add() {
+        let a = matrix![3, 1; 4, 1] + matrix![3, 1; 4, 1];
+        assert_eq!(a, matrix![6, 2; 8, 2]);
+
+        let b = matrix![3.0, 1.0; 4.0, 1.0] + matrix![3.7, 1.7; 4.4, 1.2];
+        assert_eq!(b, matrix![6.7, 2.7; 8.4, 2.2]);
+
+        let c = matrix![3, 1; 4, 1] + 2;
+        assert_eq!(c, matrix![5, 3; 6, 3]);
+
+        let d = matrix![3.7, 1.7; 4.4, 1.2] + 2.0;
+        assert_eq!(d, matrix![5.7, 3.7; 6.4, 3.2]);
+
+        let e = 2 + matrix![3, 1; 4, 1];
+        assert_eq!(e, matrix![5, 3; 6, 3]);
+
+        let f = 2.0 + matrix![3.7, 1.7; 4.4, 1.2];
+        assert_eq!(f, matrix![5.7, 3.7; 6.4, 3.2]);
+    }
+
+    #[test]
+    fn test_add_assign() {
+        let mut a = matrix![3, 1; 4, 1];
+        a += matrix![3, 1; 4, 1];
+        assert_eq!(a, matrix![6, 2; 8, 2]);
+
+        let mut b = matrix![3.0, 1.0; 4.0, 1.0];
+        b += matrix![3.7, 1.7; 4.4, 1.2];
+        assert_eq!(b, matrix![6.7, 2.7; 8.4, 2.2]);
+
+        let mut c = matrix![3, 1; 4, 1];
+        c += 2;
+        assert_eq!(c, matrix![5, 3; 6, 3]);
+
+        let mut d = matrix![3.7, 1.7; 4.4, 1.2];
+        d += 2.0;
+        assert_eq!(d, matrix![5.7, 3.7; 6.4, 3.2]);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_add_invalid() {
+        let _a = matrix![3, 1, 4; 1, 5, 5] + matrix![3, 1; 4, 1];
+    }
+
+    #[test]
+    fn test_sub() {
+        let a = matrix![3, 1; 4, 1] - matrix![3, 1; 4, 1];
+        assert_eq!(a, matrix![0, 0; 0, 0]);
+
+        let b = matrix![3.0, 1.0; 4.0, 1.0] - matrix![3.7, 1.7; 4.4, 1.2];
+        assert_eq!(
+            b,
+            matrix![
+                -0.7000000000000002, -0.7;
+                -0.40000000000000036, -0.19999999999999996;
+            ]
+        );
+
+        let c = matrix![3, 1; 4, 1] - 2;
+        assert_eq!(c, matrix![1, -1; 2, -1]);
+
+        let d = matrix![3.7, 1.7; 4.4, 1.2] - 2.0;
+        assert_eq!(
+            d,
+            matrix![
+                1.7000000000000002, -0.30000000000000004;
+                2.4000000000000004, -0.8;
+            ]
+        );
+
+        let e = 2 - matrix![3, 1; 4, 1];
+        assert_eq!(e, matrix![-1, 1; -2, 1]);
+
+        let f = 2.0 - matrix![3.7, 1.7; 4.4, 1.2];
+        assert_eq!(
+            f,
+            matrix![
+                -1.7000000000000002, 0.30000000000000004;
+                -2.4000000000000004, 0.8;
+            ]
+        );
+    }
+
+    #[test]
+    fn test_sub_assign() {
+        let mut a = matrix![3, 1; 4, 1];
+        a -= matrix![3, 1; 4, 1];
+        assert_eq!(a, matrix![0, 0; 0, 0]);
+
+        let mut b = matrix![3.0, 1.0; 4.0, 1.0];
+        b -= matrix![3.7, 1.7; 4.4, 1.2];
+        assert_eq!(
+            b,
+            matrix![
+                -0.7000000000000002, -0.7;
+                -0.40000000000000036, -0.19999999999999996;
+            ]
+        );
+
+        let mut c = matrix![3, 1; 4, 1];
+        c -= 2;
+        assert_eq!(c, matrix![1, -1; 2, -1]);
+
+        let mut d = matrix![3.7, 1.7; 4.4, 1.2];
+        d -= 2.0;
+        assert_eq!(
+            d,
+            matrix![
+                1.7000000000000002, -0.30000000000000004;
+                2.4000000000000004, -0.8;
+            ]
+        );
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_sub_invalid() {
+        let _a = matrix![3, 1, 4; 1, 5, 5] - matrix![3, 1; 4, 1];
+    }
+
+    #[test]
+    fn test_mul() {
+        let a = matrix![3, 1; 4, 1] * matrix![3, 1; 4, 1];
+        assert_eq!(a, matrix![9, 1; 16, 1]);
+
+        let b = matrix![3.0, 1.0; 4.0, 1.0] * matrix![3.7, 1.7; 4.4, 1.2];
+        assert_eq!(b, matrix![11.100000000000001, 1.7; 17.6, 1.2]);
+
+        let c = matrix![3, 1; 4, 1] * 2;
+        assert_eq!(c, matrix![6, 2; 8, 2]);
+
+        let d = matrix![3.7, 1.7; 4.4, 1.2] * 2.0;
+        assert_eq!(d, matrix![7.4, 3.4; 8.8, 2.4]);
+
+        let e = 2 * matrix![3, 1; 4, 1];
+        assert_eq!(e, matrix![6, 2; 8, 2]);
+
+        let f = 2.0 * matrix![3.7, 1.7; 4.4, 1.2];
+        assert_eq!(f, matrix![7.4, 3.4; 8.8, 2.4]);
+    }
+
+    #[test]
+    fn test_mul_assign() {
+        let mut a = matrix![3, 1; 4, 1];
+        a *= matrix![3, 1; 4, 1];
+        assert_eq!(a, matrix![9, 1; 16, 1]);
+
+        let mut b = matrix![3.0, 1.0; 4.0, 1.0];
+        b *= matrix![3.7, 1.7; 4.4, 1.2];
+        assert_eq!(b, matrix![11.100000000000001, 1.7; 17.6, 1.2]);
+
+        let mut c = matrix![3, 1; 4, 1];
+        c *= 2;
+        assert_eq!(c, matrix![6, 2; 8, 2]);
+
+        let mut d = matrix![3.7, 1.7; 4.4, 1.2];
+        d *= 2.0;
+        assert_eq!(d, matrix![7.4, 3.4; 8.8, 2.4]);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_mul_invalid() {
+        let _x = matrix![1; [4, 4]] * matrix![2; [3, 3]];
     }
 }
