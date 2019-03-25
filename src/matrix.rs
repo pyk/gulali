@@ -469,7 +469,7 @@ where
     type Output = Matrix<T>;
 
     fn add(self, value: T) -> Matrix<T> {
-        // Add the vectors
+        // Add the matrix
         let elements = self
             .elements
             .iter()
@@ -497,7 +497,7 @@ macro_rules! impl_add_matrix_for_type {
             type Output = Matrix<$t>;
 
             fn add(self, m: Matrix<$t>) -> Matrix<$t> {
-                // Add the matrices
+                // Add the matrix
                 let elements = m
                     .elements
                     .iter()
@@ -650,7 +650,7 @@ macro_rules! impl_sub_matrix_for_type {
             type Output = Matrix<$t>;
 
             fn sub(self, m: Matrix<$t>) -> Matrix<$t> {
-                // Substract the matrices
+                // Substract the matrix
                 let elements = m
                     .elements
                     .iter()
@@ -775,7 +775,7 @@ where
     type Output = Matrix<T>;
 
     fn mul(self, value: T) -> Matrix<T> {
-        // Substract the matrix
+        // Multiply the matrix
         let elements = self
             .elements
             .iter()
@@ -803,7 +803,7 @@ macro_rules! impl_sub_matrix_for_type {
             type Output = Matrix<$t>;
 
             fn mul(self, m: Matrix<$t>) -> Matrix<$t> {
-                // Multiply the matrices
+                // Multiply the matrix
                 let elements = m
                     .elements
                     .iter()
