@@ -10,7 +10,24 @@
   </p>
 </p>
 
+<p align="center">
+  <a href="https://crates.io/crates/crabsformer">
+    <img alt="Crabformer crates" src="https://img.shields.io/crates/v/crabsformer.svg?color=%23fdc452">
+  </a>
+  <a href="https://docs.rs/crabsformer">
+    <img alt="Crabformer docs" src="https://docs.rs/crabsformer/badge.svg?color=%233b6837">
+  </a>
+  <a href="https://crates.io/crates/crabsformer">
+    <img alt="Crabformer min rustc" src="https://img.shields.io/badge/rustc-stable-green.svg">
+  </a>
+  <a href="https://travis-ci.org/pyk/crabsformer">
+    <img alt="Crabformer min rustc" src="https://travis-ci.org/pyk/crabsformer.svg?branch=master">
+  </a>
+</p>
+ 
+
 **Notice!** This project is in early phase. Expect bugs and missing features.
+
 
 ## Documentation
 - [Quickstart Tutorial][quickstart tutorial]
@@ -41,7 +58,7 @@ To get started using Crabsformer, read the [quickstart tutorial].
 Feel free to start discussion at [GitHub issues].
 
 [Github issues]: https://github.com/pyk/crabsformer/issues/new/choose
-
+ 
 ## License
 Crabsformer is licensed under the [Apache-2.0](./LICENSE) license.
 
