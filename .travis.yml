@@ -10,3 +10,4 @@ matrix:
 cache: cargo
 script:
   - cargo test --verbose --all
+  
