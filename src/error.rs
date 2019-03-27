@@ -40,7 +40,7 @@ pub enum LoadErrorKind {
     InvalidElement,
 }
 
-/// An error which can be returned when loading `Matrix<T>` from a file.
+/// An error which can be returned when loading numeric vector or matrix from a file.
 ///
 /// # Potential causes
 /// Among other causes, `LoadError` can be thrown because of loaded file is not exists.
@@ -62,14 +62,20 @@ impl LoadError {
 
     fn description(&self) -> String {
         match self.kind {
-            LoadErrorKind::IOError => {
-                format!("Cannot load Matrix from file due to: {}", self.message)
+            LoadErrorKind::IOError => format!(
+                "Cannot load Matrix from file due to: {}",
+                self.message
+            ),
+            LoadErrorKind::CSVError => {
+                format!("Cannot load Matrix, {}", self.message)
             }
-            LoadErrorKind::CSVError => format!("Cannot load Matrix, {}", self.message),
-            LoadErrorKind::Empty => format!("Cannot load Matrix from empty file"),
-            LoadErrorKind::InvalidElement => {
-                format!("Cannot load Matrix, invalid element: {}", self.message)
+            LoadErrorKind::Empty => {
+                format!("Cannot load Matrix from empty file")
             }
+            LoadErrorKind::InvalidElement => format!(
+                "Cannot load Matrix, invalid element: {}",
+                self.message
+            ),
         }
     }
 }

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 use crate::error::{LoadError, LoadErrorKind};
-use crate::vector;
 use crate::utils;
+use crate::vector;
 use csv;
 use num::{FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
@@ -22,6 +22,7 @@ use rand::distributions::{Distribution, Normal, Uniform};
 use std::fs::File;
 use std::ops;
 use std::path::Path;
+use std::marker::PhantomData;
 
 /// Creates a [matrix] containing the arguments.
 ///
@@ -101,7 +102,7 @@ macro_rules! matrix {
 type RowMatrix<T> = vector::Vector<T>;
 // type ColMatrix<T> = vector::Vector<T>;
 
-/// Matrix
+/// Matrix.
 ///
 /// TODO: add overview about matrix here.
 /// 1. how to create a matrix
@@ -315,49 +316,25 @@ impl<T> Matrix<T> {
         }
     }
 
-    // Load Matrix from CSV file
-    pub fn from_csv<P>(
-        file_path: P,
-        has_headers: bool,
-    ) -> Result<Matrix<T>, LoadError>
+    /// Load Matrix from CSV file. You need to explicitly annotate the numeric type.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use crabsformer::*;
+    ///
+    /// let dataset: Matrix<f32> = Matrix::from("tests/weight.csv").load().unwrap();
+    /// ```
+    ///
+    pub fn from_csv<P>(file_path: P) -> MatrixLoaderForCSV<T, P>
     where
         P: AsRef<Path>,
-        T: FromPrimitive + Num + Copy + utils::TypeName,
     {
-        // Open CSV file
-        let file = File::open(file_path)?;
-        let mut rdr = csv::ReaderBuilder::new()
-            .has_headers(has_headers)
-            .from_reader(file);
-        // Collect each row
-        let mut elements = Vec::new();
-        for result in rdr.records() {
-            // Convert each row in the CSV file to RowMatrix
-            let record = result?;
-            let mut rows = Vec::with_capacity(record.len());
-            for value in record.iter() {
-                // It will return error if any
-                let element = match T::from_str_radix(value.trim(), 10) {
-                    Ok(value) => value,
-                    Err(_err) => {
-                        // Return error early
-                        return Err(LoadError::new(
-                            LoadErrorKind::InvalidElement,
-                            format!("{:?} is not valid {}", value, T::type_name()),
-                        ));
-                    }
-                };
-                rows.push(element);
-            }
-            elements.push(rows);
+        MatrixLoaderForCSV {
+            file_path,
+            has_headers: false,
+            phantom: PhantomData
         }
-        if elements.len() == 0 {
-            return Err(LoadError::new(
-                LoadErrorKind::Empty,
-                String::from("Cannot load empty file"),
-            ));
-        }
-        Ok(Matrix::from(elements))
     }
 }
 
@@ -924,5 +901,98 @@ where
         self.elements.iter_mut().for_each(|row| {
             row.elements.iter_mut().for_each(|elem| *elem *= value)
         })
+    }
+}
+
+/// Matrix loader for CSV formatted file.
+///
+/// See also: [`Matrix::from_csv`].
+///
+/// [`Matrix::from_csv`]: struct.Matrix.html#method.from_csv
+#[derive(Debug)]
+pub struct MatrixLoaderForCSV<T, P>
+where
+    P: AsRef<Path>,
+{
+    file_path: P,
+    has_headers: bool,
+    phantom: PhantomData<T>,
+}
+
+impl<T, P> MatrixLoaderForCSV<T, P>
+where
+    P: AsRef<Path>,
+{
+    /// Set to true to treat the first row as a special header row. By default, it is set
+    /// to false.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use crabsformer::*;
+    ///
+    /// let dataset: Matrix<f32> = Matrix::from_csv("tests/dataset.csv")
+    ///     .has_headers(true)
+    ///     .load()
+    ///     .unwrap();
+    /// ```
+    pub fn has_headers(self, yes: bool) -> MatrixLoaderForCSV<T, P> {
+        MatrixLoaderForCSV {
+            file_path: self.file_path,
+            has_headers: yes,
+            phantom: PhantomData
+        }
+    }
+
+    /// Load Matrix from CSV file. You need to explicitly annotate the numeric type.
+    ///
+    /// # Examples
+    /// ```
+    /// use crabsformer::*;
+    ///
+    /// let dataset: Matrix<f32> = Matrix::from_csv("tests/weight.csv").load().unwrap();
+    /// ```
+    pub fn load(self) -> Result<Matrix<T>, LoadError>
+    where
+        T: FromPrimitive + Num + Copy + utils::TypeName,
+    {
+        // Open CSV file
+        let file = File::open(self.file_path)?;
+        let mut rdr = csv::ReaderBuilder::new()
+            .has_headers(self.has_headers)
+            .from_reader(file);
+        // Collect each row
+        let mut elements = Vec::new();
+        for result in rdr.records() {
+            // Convert each row in the CSV file to RowMatrix
+            let record = result?;
+            let mut rows = Vec::with_capacity(record.len());
+            for value in record.iter() {
+                // It will return error if any
+                let element = match T::from_str_radix(value.trim(), 10) {
+                    Ok(value) => value,
+                    Err(_err) => {
+                        // Return error early
+                        return Err(LoadError::new(
+                            LoadErrorKind::InvalidElement,
+                            format!(
+                                "{:?} is not valid {}",
+                                value,
+                                T::type_name()
+                            ),
+                        ));
+                    }
+                };
+                rows.push(element);
+            }
+            elements.push(rows);
+        }
+        if elements.len() == 0 {
+            return Err(LoadError::new(
+                LoadErrorKind::Empty,
+                String::from("Cannot load empty file"),
+            ));
+        }
+        Ok(Matrix::from(elements))
     }
 }

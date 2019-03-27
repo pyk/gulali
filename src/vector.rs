@@ -53,7 +53,7 @@ macro_rules! vector {
     }};
 }
 
-/// Numeric vector
+/// Numeric vector.
 ///
 /// TODO: add overview about vector here.
 /// 1. how to create a vector

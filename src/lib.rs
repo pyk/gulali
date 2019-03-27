@@ -15,6 +15,8 @@
 //! Crabsformer is an easy-to-use fundamental library for scientific computing with
 //! Rust, highly inspired by [NumPy].
 //!
+//! **Notice!** This project is in early phase. Expect bugs and missing features.
+//!
 //! [NumPy]: http://www.numpy.org/
 //!
 //! # Usage
@@ -434,6 +436,11 @@
 //! ```text
 //! cannot add `matrix::Matrix<{integer}>` to `matrix::Matrix<{float}>`
 //! ```
+//!
+//! ---
+//! TODO(pyk): Continue quick tutorial here
+//!
+//! ---
 //!
 //! [numeric type]: https://doc.rust-lang.org/reference/types/numeric.html
 //! [pyk]: https://github.com/pyk
