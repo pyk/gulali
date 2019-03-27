@@ -1262,3 +1262,6 @@ assert_eq!(x.slice(..=2), vector![3, 1, 2]);
 ```
 
 keyh.
+
+# Guides
+1. Numerical calculations with NumPy http://kestrel.nmt.edu/~raymond/software/python_notes/paper003.html
