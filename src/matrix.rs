@@ -323,7 +323,7 @@ impl<T> Matrix<T> {
     /// ```
     /// use crabsformer::*;
     ///
-    /// let dataset: Matrix<f32> = Matrix::from("tests/weight.csv").load().unwrap();
+    /// let dataset: Matrix<f32> = Matrix::from_csv("tests/weight.csv").load().unwrap();
     /// ```
     ///
     pub fn from_csv<P>(file_path: P) -> MatrixLoaderForCSV<T, P>
