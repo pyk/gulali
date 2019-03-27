@@ -14,3 +14,4 @@ categories = ["science"]
 [dependencies]
 num = "0.2"
 rand = "0.6.5"
+csv = "1"

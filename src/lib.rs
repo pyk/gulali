@@ -458,6 +458,9 @@
 mod matrix;
 #[macro_use]
 mod vector;
+mod error;
+mod utils;
 
+pub use error::*;
 pub use matrix::*;
 pub use vector::*;

@@ -12,11 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::error::{LoadError, LoadErrorKind};
 use crate::vector;
+use crate::utils;
+use csv;
 use num::{FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
 use rand::distributions::{Distribution, Normal, Uniform};
+use std::fs::File;
 use std::ops;
+use std::path::Path;
 
 /// Creates a [matrix] containing the arguments.
 ///
@@ -308,6 +313,51 @@ impl<T> Matrix<T> {
             ncols,
             elements,
         }
+    }
+
+    // Load Matrix from CSV file
+    pub fn from_csv<P>(
+        file_path: P,
+        has_headers: bool,
+    ) -> Result<Matrix<T>, LoadError>
+    where
+        P: AsRef<Path>,
+        T: FromPrimitive + Num + Copy + utils::TypeName,
+    {
+        // Open CSV file
+        let file = File::open(file_path)?;
+        let mut rdr = csv::ReaderBuilder::new()
+            .has_headers(has_headers)
+            .from_reader(file);
+        // Collect each row
+        let mut elements = Vec::new();
+        for result in rdr.records() {
+            // Convert each row in the CSV file to RowMatrix
+            let record = result?;
+            let mut rows = Vec::with_capacity(record.len());
+            for value in record.iter() {
+                // It will return error if any
+                let element = match T::from_str_radix(value.trim(), 10) {
+                    Ok(value) => value,
+                    Err(_err) => {
+                        // Return error early
+                        return Err(LoadError::new(
+                            LoadErrorKind::InvalidElement,
+                            format!("{:?} is not valid {}", value, T::type_name()),
+                        ));
+                    }
+                };
+                rows.push(element);
+            }
+            elements.push(rows);
+        }
+        if elements.len() == 0 {
+            return Err(LoadError::new(
+                LoadErrorKind::Empty,
+                String::from("Cannot load empty file"),
+            ));
+        }
+        Ok(Matrix::from(elements))
     }
 }
 
