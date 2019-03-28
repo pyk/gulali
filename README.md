@@ -11,18 +11,10 @@
 </p>
 
 <p align="center">
-  <a href="https://crates.io/crates/crabsformer">
-    <img alt="Crabformer crates" src="https://img.shields.io/crates/v/crabsformer.svg?color=%23fdc452">
-  </a>
-  <a href="https://docs.rs/crabsformer">
-    <img alt="Crabformer docs" src="https://docs.rs/crabsformer/badge.svg?color=%233b6837">
-  </a>
-  <a href="https://crates.io/crates/crabsformer">
-    <img alt="Crabformer min rustc" src="https://img.shields.io/badge/rustc-stable-green.svg">
-  </a>
-  <a href="https://travis-ci.com/pyk/Crabsformer">
-    <img alt="Crabformer min rustc" src="https://travis-ci.com/pyk/Crabsformer.svg?branch=master">
-  </a>
+  <a href="https://travis-ci.com/pyk/Crabsformer"><img alt="Crabformer min rustc" src="https://travis-ci.com/pyk/Crabsformer.svg?branch=master"></a>
+  <a href="https://crates.io/crates/crabsformer"><img alt="Crabformer crates" src="https://img.shields.io/crates/v/crabsformer.svg?color=%23fdc452"></a>
+  <a href="https://docs.rs/crabsformer"><img alt="Crabformer docs" src="https://docs.rs/crabsformer/badge.svg?color=%233b6837"></a>
+  <a href="https://crates.io/crates/crabsformer"><img alt="Crabformer min rustc" src="https://img.shields.io/badge/rustc-stable-green.svg"></a>
 </p>
  
 
