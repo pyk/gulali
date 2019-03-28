@@ -20,8 +20,8 @@
   <a href="https://crates.io/crates/crabsformer">
     <img alt="Crabformer min rustc" src="https://img.shields.io/badge/rustc-stable-green.svg">
   </a>
-  <a href="https://travis-ci.com/pyk/crabsformer">
-    <img alt="Crabformer min rustc" src="https://travis-ci.com/pyk/crabsformer.svg?branch=master">
+  <a href="https://travis-ci.com/pyk/Crabsformer">
+    <img alt="Crabformer min rustc" src="https://travis-ci.com/pyk/Crabsformer.svg?branch=master">
   </a>
 </p>
  
