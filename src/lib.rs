@@ -214,12 +214,8 @@
 //! let x = vector![3, 1, 4];
 //! let sum = x.sum();
 //! assert_eq!(sum, 8);
-//!
-//! let max = x.max();
-//! assert_eq!(max, 4);
-//!
-//! let min = x.min();
-//! assert_eq!(min, 1);
+//! assert_eq!(x.max(), 4);
+//! assert_eq!(x.min(), 1);
 //! ```
 //!
 //! See also: [`power`], [`filter`], [`sum`], [`max`], [`min`].
@@ -295,12 +291,12 @@
 //! ];
 //! ```
 //!
-//! It can also initialize each element of a matrix with a given value
-//! and shape.
+//! It can also initialize each element of a matrix with a given shape
+//! and value.
 //!
 //! ```
 //! # use crabsformer::*;
-//! let W = matrix![0; [3, 3]]; // matrix![0, 0, 0; 0, 0, 0; 0, 0, 0]
+//! let W = matrix![[3, 3] => 0]; // matrix![0, 0, 0; 0, 0, 0; 0, 0, 0]
 //! ```
 //!
 //! The function [`uniform`][m.uniform] creates a matrix of the given
@@ -466,8 +462,10 @@ mod matrix;
 #[macro_use]
 mod vector;
 mod error;
+mod slice;
 mod utils;
 
 pub use error::*;
 pub use matrix::*;
+pub use slice::*;
 pub use vector::*;

@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+use crate::slice;
 use num::{Float, FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
 use rand::distributions::{Distribution, Normal, Uniform};
@@ -255,16 +256,15 @@ impl<T> Vector<T> {
     ///
     /// ```
     /// # use crabsformer::*;
-    /// let x = Vector::uniform(5, -10, 10);
-    /// let max = x.max();
-    /// println!("max = {}", max);
+    /// let x = vector![1, 2, 3];
+    /// assert_eq!(x.max(), 3);
     /// ```
     pub fn max(&self) -> T
     where
         T: num::Integer + Copy,
     {
-        let max = self.elements.iter().max().unwrap();
-        *max
+        let x = self.elements.iter().max().unwrap();
+        *x
     }
 
     /// Returns the minimum element of a numeric vector.
@@ -278,16 +278,15 @@ impl<T> Vector<T> {
     ///
     /// ```
     /// # use crabsformer::*;
-    /// let x = Vector::uniform(5, -10, 10);
-    /// let min = x.min();
-    /// println!("min = {}", min);
+    /// let x = vector![1, 2, 3];
+    /// assert_eq!(x.min(), 1);
     /// ```
     pub fn min(&self) -> T
     where
         T: num::Integer + Copy,
     {
-        let min = self.elements.iter().min().unwrap();
-        *min
+        let x = self.elements.iter().min().unwrap();
+        *x
     }
 
     /// Create a new numeric vector of the given length `len` and
@@ -879,16 +878,6 @@ where
     }
 }
 
-/// Numeric vector slice operation
-pub trait Slice<Idx: ?Sized> {
-    /// The returned type after indexing.
-    type Output: ?Sized;
-
-    /// Performs the slicing (`container.slice[index]`) operation.
-    /// It returns new numeric vector with the sliced elements.
-    fn slice(&self, index: Idx) -> Self::Output;
-}
-
 /// Implements sub-numeric vector slicing with syntax
 /// `x.slice(begin .. end)`.
 ///
@@ -918,71 +907,27 @@ pub trait Slice<Idx: ?Sized> {
 /// // RangeToInclusive
 /// assert_eq!(x.slice(..=2), vector![3, 1, 2]);
 /// ```
-impl<T> Slice<ops::Range<usize>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
+macro_rules! impl_slice_ops_with_range {
+    ($t:ty) => {
+        impl<T> slice::VectorSlice<$t> for Vector<T>
+        where
+            T: Num + Copy,
+        {
+            type Output = Vector<T>;
 
-    fn slice(&self, index: ops::Range<usize>) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
+            fn slice(&self, index: $t) -> Vector<T> {
+                Vector::from(self.elements[index].to_vec())
+            }
+        }
+    };
 }
 
-impl<T> Slice<ops::RangeFrom<usize>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::RangeFrom<usize>) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
-}
-
-impl<T> Slice<ops::RangeTo<usize>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::RangeTo<usize>) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
-}
-
-impl<T> Slice<ops::RangeFull> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::RangeFull) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
-}
-
-impl<T> Slice<ops::RangeInclusive<usize>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::RangeInclusive<usize>) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
-}
-
-impl<T> Slice<ops::RangeToInclusive<usize>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    type Output = Vector<T>;
-
-    fn slice(&self, index: ops::RangeToInclusive<usize>) -> Vector<T> {
-        Vector::from(self.elements[index].to_vec())
-    }
-}
+impl_slice_ops_with_range!(ops::Range<usize>);
+impl_slice_ops_with_range!(ops::RangeFrom<usize>);
+impl_slice_ops_with_range!(ops::RangeTo<usize>);
+impl_slice_ops_with_range!(ops::RangeFull);
+impl_slice_ops_with_range!(ops::RangeInclusive<usize>);
+impl_slice_ops_with_range!(ops::RangeToInclusive<usize>);
 
 // Implement iterator for numeric vector
 impl<T> IntoIterator for Vector<T> {
