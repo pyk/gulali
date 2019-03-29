@@ -60,11 +60,17 @@ macro_rules! vector {
 /// 1. how to create a vector
 /// 2. Vector operation
 /// 3. Indexing, etc.
-pub struct Vector<T> {
-    pub(crate) elements: Vec<T>,
+pub struct Vector<T>
+where
+    T: Num + Copy,
+{
+    elements: Vec<T>,
 }
 
-impl<T> Vector<T> {
+impl<T> Vector<T>
+where
+    T: Num + Copy,
+{
     /// The total number of elements of the numeric vector.
     ///
     /// # Examples
@@ -184,16 +190,19 @@ impl<T> Vector<T> {
     }
 
     /// Raises each elements of vector to the power of `exp`,
-    /// using exponentiation by squaring.
+    /// using exponentiation by squaring. A new numeric vector
+    /// is created and filled with the result. If you want to
+    /// modify existing numeric vector use [`power_mut`].
     ///
     /// # Examples
-    ///
     /// ```
     /// # use crabsformer::*;
     /// let x = vector![3, 1, 4, 1];
     /// let y = x.power(2);
     /// assert_eq!(y, vector![9, 1, 16, 1]);
     /// ```
+    ///
+    /// [`power_mut`]: #power_mut
     pub fn power(&self, exp: usize) -> Vector<T>
     where
         T: FromPrimitive + Num + Copy,
@@ -201,6 +210,29 @@ impl<T> Vector<T> {
         let elements =
             self.elements.iter().map(|x| num::pow(*x, exp)).collect();
         Vector { elements }
+    }
+
+    /// Raises each elements of vector to the power of `exp`,
+    /// using exponentiation by squaring. An existing numeric vector
+    /// is modified with the result. If you want to
+    /// create a new numeric vector use [`power`].
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::*;
+    /// let mut x = vector![3, 1, 4, 1];
+    /// x.power_mut(2);
+    /// assert_eq!(x, vector![9, 1, 16, 1]);
+    /// ```
+    ///
+    /// [`power`]: #power
+    pub fn power_mut(&mut self, exp: usize)
+    where
+        T: FromPrimitive + Num + Copy,
+    {
+        self.elements
+            .iter_mut()
+            .for_each(|x| *x = num::pow(*x, exp))
     }
 
     /// Filter out the elements that doesn't match the criteria.
@@ -257,14 +289,13 @@ impl<T> Vector<T> {
     /// ```
     /// # use crabsformer::*;
     /// let x = vector![1, 2, 3];
-    /// assert_eq!(x.max(), 3);
+    /// assert_eq!(*x.max(), 3);
     /// ```
-    pub fn max(&self) -> T
+    pub fn max(&self) -> &T
     where
         T: num::Integer + Copy,
     {
-        let x = self.elements.iter().max().unwrap();
-        *x
+        self.elements.iter().max().unwrap()
     }
 
     /// Returns the minimum element of a numeric vector.
@@ -279,14 +310,13 @@ impl<T> Vector<T> {
     /// ```
     /// # use crabsformer::*;
     /// let x = vector![1, 2, 3];
-    /// assert_eq!(x.min(), 1);
+    /// assert_eq!(*x.min(), 1);
     /// ```
-    pub fn min(&self) -> T
+    pub fn min(&self) -> &T
     where
         T: num::Integer + Copy,
     {
-        let x = self.elements.iter().min().unwrap();
-        *x
+        self.elements.iter().min().unwrap()
     }
 
     /// Create a new numeric vector of the given length `len` and
@@ -397,6 +427,26 @@ impl<T> Vector<T> {
 
         Vector { elements }
     }
+
+    /// Iterates over elements of the numeric vector.
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::*;
+    /// let x = vector![1, 2, 3];
+    /// let mut elements = x.elements();
+    ///
+    /// assert_eq!(elements.next(), Some(&1));
+    /// assert_eq!(elements.next(), Some(&2));
+    /// assert_eq!(elements.next(), Some(&3));
+    /// assert_eq!(elements.next(), None);
+    /// ```
+    pub fn elements<'a>(&'a self) -> VectorElementIterator<'a, T> {
+        VectorElementIterator {
+            vector: self,
+            pos: 0,
+        }
+    }
 }
 
 impl Vector<f64> {
@@ -423,6 +473,16 @@ impl Vector<f64> {
     }
 }
 
+// Conversion from &[T] to RowMatrix<T>
+impl<T> From<&[T]> for Vector<T>
+where
+    T: Num + Copy,
+{
+    fn from(elements: &[T]) -> Self {
+        Vector::from(elements.to_vec())
+    }
+}
+
 // Conversion from Vec<T>
 impl<T> From<Vec<T>> for Vector<T>
 where
@@ -433,7 +493,19 @@ where
     }
 }
 
-// Vector comparison
+// Conversion from SubVector<'a, T> to Vector<T>
+impl<'a, T> From<SubVector<'a, T>> for Vector<T>
+where
+    T: Num + Copy,
+{
+    fn from(subvec: SubVector<'a, T>) -> Self {
+        Vector {
+            elements: subvec.inner.to_vec(),
+        }
+    }
+}
+
+// Numeric vector comparison
 impl<T> PartialEq for Vector<T>
 where
     T: Num + Copy,
@@ -494,7 +566,7 @@ impl_partial_eq_slice_for_type!(f64);
 
 impl<T> fmt::Debug for Vector<T>
 where
-    T: fmt::Debug,
+    T: Num + Copy + fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         return write!(f, "Vector({:?})", self.elements);
@@ -502,7 +574,10 @@ where
 }
 
 // Implement vector indexing
-impl<T> ops::Index<usize> for Vector<T> {
+impl<T> ops::Index<usize> for Vector<T>
+where
+    T: Num + Copy,
+{
     type Output = T;
 
     fn index(&self, i: usize) -> &T {
@@ -751,7 +826,7 @@ where
 
 impl<T> Clone for Vector<T>
 where
-    T: Copy,
+    T: Num + Copy,
 {
     fn clone(&self) -> Vector<T> {
         Vector {
@@ -878,13 +953,12 @@ where
     }
 }
 
+/// Numeric vector slice operation
 /// Implements sub-numeric vector slicing with syntax
 /// `x.slice(begin .. end)`.
 ///
-/// Returns a new numeric content that have elements of
-/// the given numeric vector from the range [`begin`..`end`).
-///
-/// This operation is `O(1)`.
+/// Returns a reference to elements in numeric vector
+/// from the range [`begin`..`end`). This operation is `O(1)`.
 ///
 /// # Panics
 /// Requires that `begin <= end` and `end <= len` where `len` is the
@@ -907,16 +981,139 @@ where
 /// // RangeToInclusive
 /// assert_eq!(x.slice(..=2), vector![3, 1, 2]);
 /// ```
+pub trait VectorSlice<'a, Idx>
+where
+    Idx: ?Sized,
+{
+    /// The returned type after indexing.
+    type Output: ?Sized;
+
+    /// Performs the slicing (`container.slice(index)`) operation.
+    /// It returns sub numeric vector, a reference of elements
+    /// in the numeric vector.
+    fn slice(&'a self, index: Idx) -> Self::Output;
+}
+
+/// Sub numeric vector is a reference to elements in the numeric vector.
+pub struct SubVector<'a, T>
+where
+    T: Num + Copy,
+{
+    inner: &'a [T],
+}
+
+impl<'a, T> SubVector<'a, T>
+where
+    T: Num + Copy,
+{
+    /// Create new sub numeric vector
+    pub fn new(inner: &'a [T]) -> SubVector<'a, T> {
+        SubVector { inner }
+    }
+
+    /// Convert sub numeric vector to numeric vector
+    pub fn to_vector(&self) -> Vector<T> {
+        Vector {
+            elements: self.inner.to_vec(),
+        }
+    }
+}
+
+impl<'a, T> fmt::Debug for SubVector<'a, T>
+where
+    T: Num + Copy + fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return write!(f, "SubVector({:?})", self.inner);
+    }
+}
+
+// Sub numeric vector comparison
+impl<'a, T> PartialEq for SubVector<'a, T>
+where
+    T: Num + Copy,
+{
+    fn eq(&self, other: &SubVector<'a, T>) -> bool {
+        if self.inner != other.inner {
+            return false;
+        }
+        true
+    }
+    fn ne(&self, other: &SubVector<'a, T>) -> bool {
+        if self.inner == other.inner {
+            return false;
+        }
+        true
+    }
+}
+
+// Sub numeric vector VS numeric vector comparison
+impl<'a, T> PartialEq<Vector<T>> for SubVector<'a, T>
+where
+    T: Num + Copy,
+{
+    fn eq(&self, other: &Vector<T>) -> bool {
+        if self.inner != &other.elements[..] {
+            return false;
+        }
+        true
+    }
+    fn ne(&self, other: &Vector<T>) -> bool {
+        if self.inner == &other.elements[..] {
+            return false;
+        }
+        true
+    }
+}
+
+// This macro is used to generate support for sub numeric vector
+// and numeric slice comparison.
+macro_rules! impl_partial_eq_sub_vector_for_slice_of {
+    ($t: ty) => {
+        // Sub numeric vector to numeric slice comparison
+        impl<'a> PartialEq<[$t]> for SubVector<'a, $t> {
+            fn eq(&self, other: &[$t]) -> bool {
+                if other == self.inner {
+                    true
+                } else {
+                    false
+                }
+            }
+            fn ne(&self, other: &[$t]) -> bool {
+                if other != self.inner {
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+    };
+}
+
+impl_partial_eq_sub_vector_for_slice_of!(usize);
+impl_partial_eq_sub_vector_for_slice_of!(i8);
+impl_partial_eq_sub_vector_for_slice_of!(i16);
+impl_partial_eq_sub_vector_for_slice_of!(i32);
+impl_partial_eq_sub_vector_for_slice_of!(i64);
+impl_partial_eq_sub_vector_for_slice_of!(i128);
+impl_partial_eq_sub_vector_for_slice_of!(u8);
+impl_partial_eq_sub_vector_for_slice_of!(u16);
+impl_partial_eq_sub_vector_for_slice_of!(u32);
+impl_partial_eq_sub_vector_for_slice_of!(u64);
+impl_partial_eq_sub_vector_for_slice_of!(u128);
+impl_partial_eq_sub_vector_for_slice_of!(f32);
+impl_partial_eq_sub_vector_for_slice_of!(f64);
+
 macro_rules! impl_slice_ops_with_range {
     ($t:ty) => {
-        impl<T> slice::VectorSlice<$t> for Vector<T>
+        impl<'a, T: 'a> VectorSlice<'a, $t> for Vector<T>
         where
             T: Num + Copy,
         {
-            type Output = Vector<T>;
+            type Output = SubVector<'a, T>;
 
-            fn slice(&self, index: $t) -> Vector<T> {
-                Vector::from(self.elements[index].to_vec())
+            fn slice(&'a self, index: $t) -> SubVector<'a, T> {
+                SubVector::new(&self.elements[index])
             }
         }
     };
@@ -929,17 +1126,33 @@ impl_slice_ops_with_range!(ops::RangeFull);
 impl_slice_ops_with_range!(ops::RangeInclusive<usize>);
 impl_slice_ops_with_range!(ops::RangeToInclusive<usize>);
 
-// Implement iterator for numeric vector
-impl<T> IntoIterator for Vector<T> {
-    type Item = T;
-    type IntoIter = ::std::vec::IntoIter<T>;
+// Implement row iterator for matrix
+pub struct VectorElementIterator<'a, T: 'a>
+where
+    T: Num + Copy,
+{
+    vector: &'a Vector<T>,
+    pos: usize,
+}
 
-    fn into_iter(self) -> Self::IntoIter {
-        self.elements.into_iter()
+impl<'a, T> Iterator for VectorElementIterator<'a, T>
+where
+    T: Num + Copy,
+{
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.pos >= self.vector.len() {
+            return None;
+        }
+        // Increment the position of the row iterator.
+        self.pos += 1;
+        // Return the reference to the element
+        Some(&self.vector[self.pos - 1])
     }
 }
 
-// and we'll implement FromIterator
+// Create numerice vector from an iterator
 impl<T> iter::FromIterator<T> for Vector<T>
 where
     T: Num + Copy,
@@ -954,6 +1167,5 @@ where
         Vector::from(v)
     }
 }
-
 // TODO: implement exponent operator
 // TODO: implement all operators https://www.tutorialspoint.com/numpy/numpy_arithmetic_operations.htm

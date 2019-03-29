@@ -1265,3 +1265,14 @@ keyh.
 
 # Guides
 1. Numerical calculations with NumPy http://kestrel.nmt.edu/~raymond/software/python_notes/paper003.html
+
+# Why We Don't Need to Implement Index trait in Matrix?
+
+> In my eyes, you just gave a good reason to disallow using Index for a Matrix.
+> It's very, very unclear as to whether Index would return a row or a column.
+> Why not have row and column functions?
+
+Reddit discussion: [here](https://www.reddit.com/r/rust/comments/4as7gx/why_make_the_index_trait_so_useless/)
+
+# Get Column from Row Major Matrix
+Here link to the [playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=ff1aa666b75e5774b3e8c1f989e4f078

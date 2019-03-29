@@ -141,6 +141,13 @@ fn test_power() {
 }
 
 #[test]
+fn test_power_mut() {
+    let mut x = vector![3, 1, 4, 1];
+    x.power_mut(2);
+    assert_eq!(x, vector![9, 1, 16, 1]);
+}
+
+#[test]
 fn test_filter() {
     let x = vector![3, 1, 4, 1];
     let y = x.filter(|x| x >= 2);
@@ -159,7 +166,7 @@ fn test_sum() {
 #[test]
 fn test_max() {
     let x = vector![3, 1, 4, 1];
-    assert_eq!(x.max(), 4);
+    assert_eq!(*x.max(), 4);
 
     // let y = vector![3.0, 1.0, 4.0, 1.0];
     // assert_eq!(y.max(), 4.0);
@@ -168,7 +175,7 @@ fn test_max() {
 #[test]
 fn test_min() {
     let x = vector![3, 1, 4, 1];
-    assert_eq!(x.min(), 1);
+    assert_eq!(*x.min(), 1);
 
     // let y = vector![3.0, 1.0, 4.0, 1.0];
     // assert_eq!(y.min(), 1.0);
@@ -177,68 +184,68 @@ fn test_min() {
 #[test]
 fn test_uniform() {
     let vf1: Vector<f32> = Vector::uniform(5, 0.0, 1.0);
-    for value in vf1.into_iter() {
-        assert!((0.0 <= value) && (value < 1.0));
+    for value in vf1.elements() {
+        assert!((0.0 <= *value) && (*value < 1.0));
     }
 
     let vf2: Vector<f64> = Vector::uniform(5, 0.0, 1.0);
-    for value in vf2.into_iter() {
-        assert!((0.0 <= value) && (value < 1.0));
+    for value in vf2.elements() {
+        assert!((0.0 <= *value) && (*value < 1.0));
     }
 
     let vs1: Vector<usize> = Vector::uniform(5, 1, 10);
-    for value in vs1.into_iter() {
-        assert!((1 <= value) && (value < 10));
+    for value in vs1.elements() {
+        assert!((1 <= *value) && (*value < 10));
     }
 
     let vu1: Vector<u8> = Vector::uniform(5, 1, 10);
-    for value in vu1.into_iter() {
-        assert!((1 <= value) && (value < 10));
+    for value in vu1.elements() {
+        assert!((1 <= *value) && (*value < 10));
     }
 
     let vu2: Vector<u16> = Vector::uniform(5, 1, 10);
-    for value in vu2.into_iter() {
-        assert!((1 <= value) && (value < 10));
+    for value in vu2.elements() {
+        assert!((1 <= *value) && (*value < 10));
     }
 
     let vu3: Vector<u32> = Vector::uniform(5, 1, 10);
-    for value in vu3.into_iter() {
-        assert!((1 <= value) && (value < 10));
+    for value in vu3.elements() {
+        assert!((1 <= *value) && (*value < 10));
     }
 
     let vu4: Vector<u64> = Vector::uniform(5, 1, 10);
-    for value in vu4.into_iter() {
-        assert!((1 <= value) && (value < 10));
+    for value in vu4.elements() {
+        assert!((1 <= *value) && (*value < 10));
     }
 
     let vu5: Vector<u128> = Vector::uniform(5, 1, 10);
-    for value in vu5.into_iter() {
-        assert!((1 <= value) && (value < 10));
+    for value in vu5.elements() {
+        assert!((1 <= *value) && (*value < 10));
     }
 
     let vi1: Vector<i8> = Vector::uniform(5, -10, 10);
-    for value in vi1.into_iter() {
-        assert!((-10 <= value) && (value < 10));
+    for value in vi1.elements() {
+        assert!((-10 <= *value) && (*value < 10));
     }
 
     let vi2: Vector<i16> = Vector::uniform(5, -10, 10);
-    for value in vi2.into_iter() {
-        assert!((-10 <= value) && (value < 10));
+    for value in vi2.elements() {
+        assert!((-10 <= *value) && (*value < 10));
     }
 
     let vi3: Vector<i32> = Vector::uniform(5, -10, 10);
-    for value in vi3.into_iter() {
-        assert!((-10 <= value) && (value < 10));
+    for value in vi3.elements() {
+        assert!((-10 <= *value) && (*value < 10));
     }
 
     let vi4: Vector<i64> = Vector::uniform(5, -10, 10);
-    for value in vi4.into_iter() {
-        assert!((-10 <= value) && (value < 10));
+    for value in vi4.elements() {
+        assert!((-10 <= *value) && (*value < 10));
     }
 
     let vi5: Vector<i128> = Vector::uniform(5, -10, 10);
-    for value in vi5.into_iter() {
-        assert!((-10 <= value) && (value < 10));
+    for value in vi5.elements() {
+        assert!((-10 <= *value) && (*value < 10));
     }
 }
 
@@ -516,9 +523,12 @@ fn test_invalid_slice() {
 }
 
 #[test]
-fn test_iteration() {
-    let x = vector![1, 2, 3, 5];
-    for value in x.into_iter() {
-        let _a = value;
-    }
+fn test_elements() {
+    let x = vector![1, 2, 3];
+    let mut elements = x.elements();
+
+    assert_eq!(elements.next(), Some(&1));
+    assert_eq!(elements.next(), Some(&2));
+    assert_eq!(elements.next(), Some(&3));
+    assert_eq!(elements.next(), None);
 }

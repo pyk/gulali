@@ -214,8 +214,8 @@
 //! let x = vector![3, 1, 4];
 //! let sum = x.sum();
 //! assert_eq!(sum, 8);
-//! assert_eq!(x.max(), 4);
-//! assert_eq!(x.min(), 1);
+//! assert_eq!(*x.max(), 4);
+//! assert_eq!(*x.min(), 1);
 //! ```
 //!
 //! See also: [`power`], [`filter`], [`sum`], [`max`], [`min`].
@@ -244,7 +244,7 @@
 //! assert_eq!(x.slice(..2), vector![3, 1]);
 //!
 //! // Iterating over element of numeric vector
-//! for element in x.into_iter() {
+//! for element in x.elements() {
 //!     println!("element = {:?}", element);
 //! }
 //! ```

@@ -11,23 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-/// Numeric vector slice operation
-pub trait VectorSlice<Idx: ?Sized> {
-    /// The returned type after indexing.
-    type Output: ?Sized;
-
-    /// Performs the slicing (`container.slice[index]`) operation.
-    /// It returns new numeric vector with the sliced elements.
-    fn slice(&self, index: Idx) -> Self::Output;
-}
-
-/// Matrix slice operation
-pub trait MatrixSlice<RowIdx: ?Sized, ColIdx: ?Sized> {
-    /// The returned type after indexing.
-    type Output: ?Sized;
-
-    /// Performs the slicing (`container.slice(index1, index2)`) operation.
-    /// It returns new matrix with the sliced elements.
-    fn slice(&self, row_index: RowIdx, col_index: ColIdx) -> Self::Output;
-}

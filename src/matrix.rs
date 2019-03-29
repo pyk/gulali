@@ -13,13 +13,12 @@
 // limitations under the License.
 
 use crate::error::{LoadError, LoadErrorKind};
-use crate::slice::*;
 use crate::utils;
-use crate::vector;
+use crate::vector::*;
 use csv;
 use num::{FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
-use rand::distributions::{Distribution, Normal, Uniform};
+use std::fmt;
 use std::fs::File;
 use std::marker::PhantomData;
 use std::ops;
@@ -40,12 +39,12 @@ use std::path::Path;
 ///     3, 1, 4;
 ///     1, 5, 9;
 /// ];
-/// assert_eq!(w[0][0], 3);
-/// assert_eq!(w[0][1], 1);
-/// assert_eq!(w[0][2], 4);
-/// assert_eq!(w[1][0], 1);
-/// assert_eq!(w[1][1], 5);
-/// assert_eq!(w[1][2], 9);
+/// assert_eq!(*w.at(0,0), 3);
+/// assert_eq!(*w.at(0,1), 1);
+/// assert_eq!(*w.at(0,2), 4);
+/// assert_eq!(*w.at(1,0), 1);
+/// assert_eq!(*w.at(1,1), 5);
+/// assert_eq!(*w.at(1,2), 9);
 /// ```
 ///
 /// 2. Create a matrix from a given shape and element:
@@ -98,11 +97,6 @@ macro_rules! matrix {
     }};
 }
 
-/// Row & Column Matrix
-/// https://en.wikipedia.org/wiki/Row_and_column_vectors
-type RowMatrix<T> = vector::Vector<T>;
-// type ColMatrix<T> = vector::Vector<T>;
-
 /// Matrix.
 ///
 /// TODO: add overview about matrix here.
@@ -110,14 +104,20 @@ type RowMatrix<T> = vector::Vector<T>;
 /// 2. Matrix operation
 /// 3. Indexing, etc.
 #[derive(Debug)]
-pub struct Matrix<T> {
+pub struct Matrix<T>
+where
+    T: Num + Copy,
+{
     /// Matrix size
     nrows: usize,
     ncols: usize,
-    elements: Vec<RowMatrix<T>>,
+    vec: Vector<T>,
 }
 
-impl<T> Matrix<T> {
+impl<T> Matrix<T>
+where
+    T: Num + Copy,
+{
     /// The shape of the matrix `[nrows, ncols]`.
     ///
     /// # Examples
@@ -135,6 +135,153 @@ impl<T> Matrix<T> {
         [self.nrows, self.ncols]
     }
 
+    // Bound check
+    fn bound_check(&self, i: Option<usize>, j: Option<usize>) {
+        if i.is_some() && i.unwrap() >= self.nrows {
+            panic!(
+                "index {} out of range for matrix of number of rows {}",
+                i.unwrap(),
+                self.nrows
+            )
+        }
+        if j.is_some() && j.unwrap() >= self.ncols {
+            panic!(
+                "index {} out of range for matrix of number of columns {}",
+                j.unwrap(),
+                self.ncols
+            )
+        }
+    }
+
+    /// Get element of the matrix at row `i` and column `j`.
+    ///
+    /// # Examples
+    /// ```
+    /// let w = matrix![
+    ///     3, 1, 4;
+    ///     1, 5, 9;
+    /// ];
+    ///
+    /// assert_eq!(w.at(0, 0), 3);
+    /// assert_eq!(w.at(0, 1), 1);
+    /// assert_eq!(w.at(0, 2), 4);
+    /// assert_eq!(w.at(1, 0), 1);
+    /// assert_eq!(w.at(1, 1), 1);
+    /// assert_eq!(w.at(1, 2), 1);
+    /// ```
+    ///
+    /// # Panics
+    /// Panics if `i >= nrows` and `j >= ncols`.
+    pub fn at(&self, i: usize, j: usize) -> &T {
+        self.bound_check(Some(i), Some(j));
+        &self.vec[(self.ncols * i) + j]
+    }
+
+    /// Get the row of the matrix. It will returns a reference to a row
+    /// of the matrix.
+    ///
+    /// Because we store the the matrix element in row-major order,
+    /// this operation is `O(1)`.
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::*;
+    /// let W = matrix![
+    ///     3.0, 1.0;
+    ///     4.0, 1.0;
+    ///     5.0, 9.0;
+    /// ];
+    /// assert_eq!(W.row(0), [3.0, 1.0]);
+    /// assert_eq!(W.row(1), [4.0, 1.0]);
+    /// assert_eq!(W.row(1), [5.0, 9.0]);
+    /// ```
+    ///
+    /// # Panics
+    /// Panics if `i >= n` where `n` is number of rows.
+    pub fn row<'a>(&'a self, i: usize) -> RowMatrix<'a, T> {
+        self.bound_check(Some(i), None);
+        let begin = self.ncols * i;
+        let end = (self.ncols * i) + self.ncols;
+        let subvec = self.vec.slice(begin..end);
+        RowMatrix {
+            matrix: self,
+            vec: Vector::from(subvec),
+        }
+    }
+
+    /// Iterates over rows of the matrix.
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::*;
+    /// let w = matrix![3, 1, 4; 1, 5, 9; 2, 6, 5];
+    /// let mut rows = w.rows();
+    ///
+    /// assert_eq!(rows.next(), Some([3, 1, 4]));
+    /// assert_eq!(rows.next(), Some([1, 5, 9]));
+    /// assert_eq!(rows.next(), Some([2, 6, 5]));
+    /// assert_eq!(rows.next(), None);
+    /// ```
+    pub fn rows<'a>(&'a self) -> MatrixRowIterator<'a, T> {
+        MatrixRowIterator {
+            matrix: self,
+            pos: 0,
+        }
+    }
+
+    /// Get the column of the matrix. It will returns a reference to a column
+    /// of the matrix.
+    ///
+    /// Because we store the data in row-major order, this operation is `O(m)`
+    /// where `m` is a number of columns.
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::*;
+    /// let W = matrix![
+    ///     3.0, 1.0;
+    ///     4.0, 1.0;
+    ///     5.0, 9.0;
+    /// ];
+    /// assert_eq!(W.col(0), [3.0, 4.0, 5.0]);
+    /// ```
+    ///
+    /// # Panics
+    /// Panics if `j >= m` where `m` is number of columns.
+    pub fn col<'a>(&'a self, j: usize) -> ColMatrix<'a, T> {
+        self.bound_check(None, Some(j));
+        // Get all element from j-th column
+        let vec = (0..self.vec.len())
+            .step_by(self.ncols)
+            .map(|offset| self.vec[offset + j])
+            .collect();
+        ColMatrix { matrix: self, vec }
+    }
+
+    /// Iterates over columns of the matrix.
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::*;
+    /// let w = matrix![
+    ///     3, 1, 4;
+    ///     1, 5, 9;
+    ///     2, 6, 5
+    /// ];
+    /// let mut cols = w.cols();
+    ///
+    /// assert_eq!(cols.next(), Some([3, 1, 2]));
+    /// assert_eq!(cols.next(), Some([1, 5, 6]));
+    /// assert_eq!(cols.next(), Some([4, 9, 5]));
+    /// assert_eq!(cols.next(), None);
+    /// ```
+    pub fn cols<'a>(&'a self) -> MatrixColumnIterator<'a, T> {
+        MatrixColumnIterator {
+            matrix: self,
+            pos: 0,
+        }
+    }
+
     /// Create a new matrix of given shape `shape` and type `T`,
     /// filled with `value`.
     ///
@@ -146,17 +293,9 @@ impl<T> Matrix<T> {
     /// ```
     pub fn full(shape: [usize; 2], value: T) -> Matrix<T>
     where
-        T: FromPrimitive + Num + Copy,
+        T: FromPrimitive,
     {
-        // Initialize and populate the matrix with specified value
-        let nrows = shape[0];
-        let ncols = shape[1];
-        let elements = vec![vector![value; ncols]; nrows];
-        Matrix {
-            nrows,
-            ncols,
-            elements,
-        }
+        matrix![shape => value]
     }
 
     /// Create a new matrix that have the same shape and type
@@ -174,17 +313,9 @@ impl<T> Matrix<T> {
     /// ```
     pub fn full_like(m: &Matrix<T>, value: T) -> Matrix<T>
     where
-        T: FromPrimitive + Num + Copy,
+        T: FromPrimitive,
     {
-        // Initialize and populate the matrix with specified value
-        let nrows = m.nrows;
-        let ncols = m.ncols;
-        let elements = vec![vector![value; ncols]; nrows];
-        Matrix {
-            nrows,
-            ncols,
-            elements,
-        }
+        matrix![m.shape() => value]
     }
 
     /// Create a new matrix of given shape `shape` and type `T`,
@@ -199,9 +330,9 @@ impl<T> Matrix<T> {
     /// ```
     pub fn zeros(shape: [usize; 2]) -> Matrix<T>
     where
-        T: FromPrimitive + Num + Copy,
+        T: FromPrimitive,
     {
-        Self::full(shape, T::from_i32(0).unwrap())
+        matrix![shape => T::from_i32(0).unwrap()]
     }
 
     /// Create a new matrix that have the same shape and type
@@ -216,9 +347,9 @@ impl<T> Matrix<T> {
     /// ```
     pub fn zeros_like(m: &Matrix<T>) -> Matrix<T>
     where
-        T: FromPrimitive + Num + Copy,
+        T: FromPrimitive,
     {
-        Self::full([m.nrows, m.ncols], T::from_i32(0).unwrap())
+        matrix![m.shape() => T::from_i32(0).unwrap()]
     }
 
     /// Create a new matrix of given shaoe `shape` and type `T`,
@@ -233,9 +364,9 @@ impl<T> Matrix<T> {
     /// ```
     pub fn ones(shape: [usize; 2]) -> Matrix<T>
     where
-        T: FromPrimitive + Num + Copy,
+        T: FromPrimitive,
     {
-        Self::full(shape, T::from_i32(1).unwrap())
+        matrix![shape => T::from_i32(1).unwrap()]
     }
 
     /// Create a new matrix that have the same shape and type
@@ -250,33 +381,56 @@ impl<T> Matrix<T> {
     /// ```
     pub fn ones_like(m: &Matrix<T>) -> Matrix<T>
     where
-        T: FromPrimitive + Num + Copy,
+        T: FromPrimitive,
     {
-        Self::full([m.nrows, m.ncols], T::from_i32(1).unwrap())
+        matrix![m.shape() => T::from_i32(1).unwrap()]
     }
 
     /// Raises each elements of matrix to the power of `exp`,
-    /// using exponentiation by squaring.
+    /// using exponentiation by squaring. A new matrix is created and
+    /// filled with the result. If you want to modify existing matrix
+    /// use [`power_mut`].
     ///
     /// # Examples
-    ///
     /// ```
     /// # use crabsformer::*;
     /// let W1 = matrix![3, 1, 4; 1, 5, 9];
     /// let W2 = W1.power(2);
     /// assert_eq!(W2, matrix![9, 1, 16; 1, 25, 81]);
     /// ```
+    ///
+    /// [`power_mut`]: #power_mut
     pub fn power(&self, exp: usize) -> Matrix<T>
     where
-        T: FromPrimitive + Num + Copy,
+        T: FromPrimitive,
     {
-        let elements =
-            self.elements.iter().map(|row| row.power(exp)).collect();
+        let powered_vec = self.vec.power(exp);
         Matrix {
             nrows: self.nrows,
             ncols: self.ncols,
-            elements,
+            vec: powered_vec,
         }
+    }
+
+    /// Raises each elements of matrix to the power of `exp`,
+    /// using exponentiation by squaring. An existing matrix is modified and
+    /// filled with the result. If you want to create new matrix
+    /// use [`power`].
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::*;
+    /// let mut W1 = matrix![3, 1, 4; 1, 5, 9];
+    /// W1.power(2);
+    /// assert_eq!(W1, matrix![9, 1, 16; 1, 25, 81]);
+    /// ```
+    ///
+    /// [`power`]: #power
+    pub fn power_mut(&mut self, exp: usize)
+    where
+        T: FromPrimitive,
+    {
+        self.vec.power_mut(exp);
     }
 
     /// Create a new matrix of the given shape `shape` and
@@ -292,28 +446,15 @@ impl<T> Matrix<T> {
     /// ```
     pub fn uniform(shape: [usize; 2], low: T, high: T) -> Matrix<T>
     where
-        T: Num + SampleUniform + Copy,
+        T: SampleUniform,
     {
-        // Get the shape of the matrix
-        let nrows = shape[0];
-        let ncols = shape[1];
-
-        let mut elements = Vec::with_capacity(nrows);
-        let uniform_distribution = Uniform::new(low, high);
-        // Populate the Matrix with the default value
-        let mut rng = rand::thread_rng();
-        for _ in 0..nrows {
-            let mut cols = Vec::with_capacity(ncols);
-            for _ in 0..ncols {
-                cols.push(uniform_distribution.sample(&mut rng));
-            }
-            elements.push(RowMatrix::from(cols));
-        }
+        let total_elements = shape.iter().product();
+        let vec = Vector::uniform(total_elements, low, high);
 
         Matrix {
-            nrows,
-            ncols,
-            elements,
+            nrows: shape[0],
+            ncols: shape[1],
+            vec,
         }
     }
 
@@ -351,26 +492,12 @@ impl Matrix<f64> {
     /// let W = Matrix::normal([5, 5], 0.0, 1.0); // Gaussian mean=0.0 std_dev=1.0
     /// ```
     pub fn normal(shape: [usize; 2], mean: f64, std_dev: f64) -> Matrix<f64> {
-        // Get the shape of the matrix
-        let nrows = shape[0];
-        let ncols = shape[1];
-
-        let mut elements = Vec::with_capacity(nrows);
-        let normal_distribution = Normal::new(mean, std_dev);
-        // Populate the Matrix with the default value
-        let mut rng = rand::thread_rng();
-        for _ in 0..nrows {
-            let mut cols = Vec::with_capacity(ncols);
-            for _ in 0..ncols {
-                cols.push(normal_distribution.sample(&mut rng));
-            }
-            elements.push(RowMatrix::from(cols));
-        }
-
+        let total_elements = shape.iter().product();
+        let vec = Vector::normal(total_elements, mean, std_dev);
         Matrix {
-            nrows,
-            ncols,
-            elements,
+            nrows: shape[0],
+            ncols: shape[1],
+            vec,
         }
     }
 }
@@ -388,46 +515,10 @@ where
         if ncols_inconsistent {
             panic!("Invalid matrix: the number of columns is inconsistent")
         }
-        // Convert each row to RowMatrix
-        let elements = source
-            .iter()
-            .map(|v| {
-                // We cannot directly convert &Vec<T>
-                // to RowMatrix<T> because we cannot
-                // move out borrowed content
-                let mut row = Vec::new();
-                v.iter().for_each(|x| row.push(*x));
-                RowMatrix::from(row)
-            })
-            .collect();
+        // Flatten the vector
+        let vec = source.into_iter().flatten().collect();
 
-        Matrix {
-            nrows,
-            ncols,
-            elements,
-        }
-    }
-}
-
-// Conversion from Vec<Vector<T>>
-impl<T> From<Vec<vector::Vector<T>>> for Matrix<T>
-where
-    T: Num + Copy,
-{
-    fn from(source: Vec<vector::Vector<T>>) -> Self {
-        let nrows = source.len();
-        let ncols = source[0].len();
-        // Raise panic if number of columns on each row is inconsistent
-        let ncols_inconsistent = source.iter().any(|v| v.len() != ncols);
-        if ncols_inconsistent {
-            panic!("Invalid matrix: the number of columns is inconsistent")
-        }
-
-        Matrix {
-            nrows,
-            ncols,
-            elements: source,
-        }
+        Matrix { nrows, ncols, vec }
     }
 }
 
@@ -437,25 +528,16 @@ where
     T: Num + Copy,
 {
     fn eq(&self, other: &Matrix<T>) -> bool {
-        if self.elements != other.elements {
+        if self.vec != other.vec {
             return false;
         }
         true
     }
     fn ne(&self, other: &Matrix<T>) -> bool {
-        if self.elements == other.elements {
+        if self.vec == other.vec {
             return false;
         }
         true
-    }
-}
-
-// Implement matrix indexing
-impl<T> ops::Index<usize> for Matrix<T> {
-    type Output = RowMatrix<T>;
-
-    fn index(&self, i: usize) -> &RowMatrix<T> {
-        &self.elements[i]
     }
 }
 
@@ -590,153 +672,342 @@ impl<T> ops::Index<usize> for Matrix<T> {
 /// // (RangeToInclusive, RangeToInclusive)
 /// assert_eq!(w.slice(..=1, ..=1), matrix![3, 1; 1, 5]);
 /// ```
-macro_rules! impl_slice_ops_with_range_combination {
-    ($row_i:ty, $col_i:ty) => {
-        impl<T> MatrixSlice<$row_i, $col_i> for Matrix<T>
-        where
-            T: Num + Copy,
-        {
-            type Output = Matrix<T>;
+//macro_rules! impl_slice_ops_with_range_combination {
+//    ($row_i:ty, $col_i:ty) => {
+//        impl<T> MatrixSlice<$row_i, $col_i> for Matrix<T>
+//        where
+//            T: Num + Copy,
+//        {
+//            type Output = Matrix<T>;
+//
+//            fn slice(&self, i: $row_i, j: $col_i) -> Matrix<T> {
+//                let sliced_elements = self.elements[i]
+//                    .iter()
+//                    .map(|row| {
+//                        let sliced_column = row.vec.slice(j.clone());
+//                        RowMatrix::from(sliced_column)
+//                    })
+//                    .collect::<Vec<RowMatrix<T>>>();
+//                Matrix::from(sliced_elements)
+//            }
+//        }
+//    };
+//}
+//
+//impl_slice_ops_with_range_combination!(ops::Range<usize>, ops::Range<usize>);
+//impl_slice_ops_with_range_combination!(
+//    ops::Range<usize>,
+//    ops::RangeFrom<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::Range<usize>,
+//    ops::RangeTo<usize>
+//);
+//impl_slice_ops_with_range_combination!(ops::Range<usize>, ops::RangeFull);
+//impl_slice_ops_with_range_combination!(
+//    ops::Range<usize>,
+//    ops::RangeInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::Range<usize>,
+//    ops::RangeToInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeFrom<usize>,
+//    ops::Range<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeFrom<usize>,
+//    ops::RangeFrom<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeFrom<usize>,
+//    ops::RangeTo<usize>
+//);
+//impl_slice_ops_with_range_combination!(ops::RangeFrom<usize>, ops::RangeFull);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeFrom<usize>,
+//    ops::RangeInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeFrom<usize>,
+//    ops::RangeToInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeTo<usize>,
+//    ops::Range<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeTo<usize>,
+//    ops::RangeFrom<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeTo<usize>,
+//    ops::RangeTo<usize>
+//);
+//impl_slice_ops_with_range_combination!(ops::RangeTo<usize>, ops::RangeFull);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeTo<usize>,
+//    ops::RangeInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeTo<usize>,
+//    ops::RangeToInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(ops::RangeFull, ops::Range<usize>);
+//impl_slice_ops_with_range_combination!(ops::RangeFull, ops::RangeFrom<usize>);
+//impl_slice_ops_with_range_combination!(ops::RangeFull, ops::RangeTo<usize>);
+//impl_slice_ops_with_range_combination!(ops::RangeFull, ops::RangeFull);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeFull,
+//    ops::RangeInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeFull,
+//    ops::RangeToInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeInclusive<usize>,
+//    ops::Range<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeInclusive<usize>,
+//    ops::RangeFrom<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeInclusive<usize>,
+//    ops::RangeTo<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeInclusive<usize>,
+//    ops::RangeFull
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeInclusive<usize>,
+//    ops::RangeInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeInclusive<usize>,
+//    ops::RangeToInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeToInclusive<usize>,
+//    ops::Range<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeToInclusive<usize>,
+//    ops::RangeFrom<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeToInclusive<usize>,
+//    ops::RangeTo<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeToInclusive<usize>,
+//    ops::RangeFull
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeToInclusive<usize>,
+//    ops::RangeInclusive<usize>
+//);
+//impl_slice_ops_with_range_combination!(
+//    ops::RangeToInclusive<usize>,
+//    ops::RangeToInclusive<usize>
+//);
 
-            fn slice(&self, i: $row_i, j: $col_i) -> Matrix<T> {
-                let sliced_elements = self.elements[i]
-                    .iter()
-                    .map(|row| row.slice(j.clone()))
-                    .collect::<Vec<RowMatrix<T>>>();
-                Matrix::from(sliced_elements)
-            }
-        }
-    };
+/// Matrix slice operation
+pub trait MatrixSlice<'a, RowIdx, ColIdx>
+where
+    RowIdx: ?Sized,
+    ColIdx: ?Sized,
+{
+    /// The returned type after indexing.
+    type Output: ?Sized;
+
+    /// Performs the slicing (`container.slice(index1, index2)`) operation.
+    /// It returns new matrix with the sliced elements.
+    fn slice(&'a self, row_index: RowIdx, col_index: ColIdx) -> Self::Output;
 }
 
-impl_slice_ops_with_range_combination!(ops::Range<usize>, ops::Range<usize>);
-impl_slice_ops_with_range_combination!(
-    ops::Range<usize>,
-    ops::RangeFrom<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::Range<usize>,
-    ops::RangeTo<usize>
-);
-impl_slice_ops_with_range_combination!(ops::Range<usize>, ops::RangeFull);
-impl_slice_ops_with_range_combination!(
-    ops::Range<usize>,
-    ops::RangeInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::Range<usize>,
-    ops::RangeToInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeFrom<usize>,
-    ops::Range<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeFrom<usize>,
-    ops::RangeFrom<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeFrom<usize>,
-    ops::RangeTo<usize>
-);
-impl_slice_ops_with_range_combination!(ops::RangeFrom<usize>, ops::RangeFull);
-impl_slice_ops_with_range_combination!(
-    ops::RangeFrom<usize>,
-    ops::RangeInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeFrom<usize>,
-    ops::RangeToInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeTo<usize>,
-    ops::Range<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeTo<usize>,
-    ops::RangeFrom<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeTo<usize>,
-    ops::RangeTo<usize>
-);
-impl_slice_ops_with_range_combination!(ops::RangeTo<usize>, ops::RangeFull);
-impl_slice_ops_with_range_combination!(
-    ops::RangeTo<usize>,
-    ops::RangeInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeTo<usize>,
-    ops::RangeToInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(ops::RangeFull, ops::Range<usize>);
-impl_slice_ops_with_range_combination!(ops::RangeFull, ops::RangeFrom<usize>);
-impl_slice_ops_with_range_combination!(ops::RangeFull, ops::RangeTo<usize>);
-impl_slice_ops_with_range_combination!(ops::RangeFull, ops::RangeFull);
-impl_slice_ops_with_range_combination!(
-    ops::RangeFull,
-    ops::RangeInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeFull,
-    ops::RangeToInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeInclusive<usize>,
-    ops::Range<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeInclusive<usize>,
-    ops::RangeFrom<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeInclusive<usize>,
-    ops::RangeTo<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeInclusive<usize>,
-    ops::RangeFull
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeInclusive<usize>,
-    ops::RangeInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeInclusive<usize>,
-    ops::RangeToInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeToInclusive<usize>,
-    ops::Range<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeToInclusive<usize>,
-    ops::RangeFrom<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeToInclusive<usize>,
-    ops::RangeTo<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeToInclusive<usize>,
-    ops::RangeFull
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeToInclusive<usize>,
-    ops::RangeInclusive<usize>
-);
-impl_slice_ops_with_range_combination!(
-    ops::RangeToInclusive<usize>,
-    ops::RangeToInclusive<usize>
-);
+/// Sub matrix is a reference to elements in the matrix.
+pub struct SubMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    nrows: usize,
+    ncols: usize,
+    matrix: &'a Matrix<T>,
+    // Copy data from matrix
+    vec: Vector<T>,
+}
 
-// Implement iterator for matrix
-impl<T> IntoIterator for Matrix<T> {
-    type Item = RowMatrix<T>;
-    type IntoIter = ::std::vec::IntoIter<RowMatrix<T>>;
+impl<'a, T: 'a> SubMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    // Shape
+    pub fn shape(&self) -> [usize; 2] {
+        [self.nrows, self.ncols]
+    }
+}
 
-    fn into_iter(self) -> Self::IntoIter {
-        self.elements.into_iter()
+// TODO(pyk): Pretty print on {:?}
+impl<'a, T> fmt::Debug for SubMatrix<'a, T>
+where
+    T: Num + Copy + fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "SubMatrix({:?})", self.vec)
+    }
+}
+
+// Sub Matrix comparison
+// TODO(pyk): test this
+impl<'a, T> PartialEq for SubMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    fn eq(&self, other: &SubMatrix<'a, T>) -> bool {
+        if self.shape() == other.shape() && self.vec == other.vec {
+            true
+        } else {
+            false
+        }
+    }
+    fn ne(&self, other: &SubMatrix<'a, T>) -> bool {
+        if self.shape() != other.shape() || self.vec != other.vec {
+            true
+        } else {
+            false
+        }
+    }
+}
+
+// Sub Matrix vs Matrix comparison
+// TODO(pyk): test this
+impl<'a, T> PartialEq<Matrix<T>> for SubMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    fn eq(&self, other: &Matrix<T>) -> bool {
+        if self.shape() == other.shape() && self.vec == other.vec {
+            true
+        } else {
+            false
+        }
+    }
+    fn ne(&self, other: &Matrix<T>) -> bool {
+        if self.shape() != other.shape() || self.vec != other.vec {
+            true
+        } else {
+            false
+        }
+    }
+}
+
+impl<'a, T: 'a> MatrixSlice<'a, ops::Range<usize>, ops::Range<usize>>
+    for Matrix<T>
+where
+    T: Num + Copy,
+{
+    type Output = SubMatrix<'a, T>;
+
+    fn slice(
+        &'a self,
+        irange: ops::Range<usize>,
+        jrange: ops::Range<usize>,
+    ) -> SubMatrix<'a, T> {
+        // Check the slice index first, make sure the slice index `start < end`
+        if irange.start >= irange.end {
+            panic!(
+                "Matrix slice index row starts at {} but ends at {}",
+                irange.start, irange.end
+            )
+        }
+        if jrange.start >= jrange.end {
+            panic!(
+                "Matrix slice index column starts at {} but ends at {}",
+                jrange.start, jrange.end
+            )
+        }
+
+        // Make sure irange.end-1 < self.nrows and jrange.end-1 < self.ncols
+        // NOTE: range.end is excelusive, so we substract it by 1
+        self.bound_check(Some(irange.end - 1), Some(jrange.end - 1));
+
+        // Get the new nrows and new ncols
+        let nrows = irange.len();
+        let ncols = jrange.len();
+
+        // Collect the matrix elements
+        let vec = irange
+            .map(|i| {
+                jrange.clone().map(|j| *self.at(i, j)).collect::<Vec<T>>()
+            })
+            .flatten()
+            .collect::<Vector<T>>();
+
+        // Return a sub matrix
+        SubMatrix {
+            nrows,
+            ncols,
+            matrix: self,
+            vec,
+        }
+    }
+}
+
+/// Matrix row iterator.
+pub struct MatrixRowIterator<'a, T: 'a>
+where
+    T: Num + Copy,
+{
+    matrix: &'a Matrix<T>,
+    pos: usize,
+}
+
+impl<'a, T> Iterator for MatrixRowIterator<'a, T>
+where
+    T: Num + Copy,
+{
+    type Item = RowMatrix<'a, T>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.pos < self.matrix.nrows {
+            // Increment the position of the row iterator.
+            self.pos += 1;
+            // Return the row
+            Some(self.matrix.row(self.pos - 1))
+        } else {
+            None
+        }
+    }
+}
+
+/// Matrix column iterator.
+pub struct MatrixColumnIterator<'a, T: 'a>
+where
+    T: Num + Copy,
+{
+    matrix: &'a Matrix<T>,
+    pos: usize,
+}
+
+impl<'a, T> Iterator for MatrixColumnIterator<'a, T>
+where
+    T: Num + Copy,
+{
+    type Item = ColMatrix<'a, T>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.pos < self.matrix.ncols {
+            // Increment the position of the row iterator.
+            self.pos += 1;
+            // Return the row
+            Some(self.matrix.col(self.pos - 1))
+        } else {
+            None
+        }
     }
 }
 
@@ -756,23 +1027,12 @@ where
             );
         }
 
-        // Add the matrix
-        let elements = self
-            .elements
-            .iter()
-            .enumerate()
-            .map(|(i, row)| {
-                row.elements
-                    .iter()
-                    .enumerate()
-                    .map(|(j, value)| *value + other[i][j])
-                    .collect()
-            })
-            .collect();
+        // Add the element of the matrix
+        let vec = self.vec + other.vec;
         Matrix {
             nrows: self.nrows,
             ncols: self.ncols,
-            elements,
+            vec,
         }
     }
 }
@@ -790,18 +1050,11 @@ where
     type Output = Matrix<T>;
 
     fn add(self, value: T) -> Matrix<T> {
-        // Add the matrix
-        let elements = self
-            .elements
-            .iter()
-            .map(|row| {
-                row.elements.iter().map(|elem| *elem + value).collect()
-            })
-            .collect();
+        let vec = self.vec + value;
         Matrix {
             nrows: self.nrows,
             ncols: self.ncols,
-            elements,
+            vec,
         }
     }
 }
@@ -818,18 +1071,11 @@ macro_rules! impl_add_matrix_for_type {
             type Output = Matrix<$t>;
 
             fn add(self, m: Matrix<$t>) -> Matrix<$t> {
-                // Add the matrix
-                let elements = m
-                    .elements
-                    .iter()
-                    .map(|row| {
-                        row.elements.iter().map(|elem| elem + self).collect()
-                    })
-                    .collect();
+                let vec = self + m.vec;
                 Matrix {
                     nrows: m.nrows,
                     ncols: m.ncols,
-                    elements,
+                    vec,
                 }
             }
         }
@@ -864,13 +1110,7 @@ where
                 other.shape()
             );
         }
-
-        self.elements.iter_mut().enumerate().for_each(|(i, row)| {
-            row.elements
-                .iter_mut()
-                .enumerate()
-                .for_each(|(j, value)| *value += other[i][j])
-        })
+        self.vec += other.vec;
     }
 }
 
@@ -886,9 +1126,7 @@ where
     T: Num + Copy + ops::AddAssign,
 {
     fn add_assign(&mut self, value: T) {
-        self.elements.iter_mut().for_each(|row| {
-            row.elements.iter_mut().for_each(|elem| *elem += value)
-        })
+        self.vec += value;
     }
 }
 
@@ -910,22 +1148,11 @@ where
         }
 
         // Substract the matrix
-        let elements = self
-            .elements
-            .iter()
-            .enumerate()
-            .map(|(i, row)| {
-                row.elements
-                    .iter()
-                    .enumerate()
-                    .map(|(j, value)| *value - other[i][j])
-                    .collect()
-            })
-            .collect();
+        let vec = self.vec - other.vec;
         Matrix {
             nrows: self.nrows,
             ncols: self.ncols,
-            elements,
+            vec,
         }
     }
 }
@@ -944,17 +1171,11 @@ where
 
     fn sub(self, value: T) -> Matrix<T> {
         // Substract the matrix
-        let elements = self
-            .elements
-            .iter()
-            .map(|row| {
-                row.elements.iter().map(|elem| *elem - value).collect()
-            })
-            .collect();
+        let vec = self.vec - value;
         Matrix {
             nrows: self.nrows,
             ncols: self.ncols,
-            elements,
+            vec,
         }
     }
 }
@@ -972,17 +1193,11 @@ macro_rules! impl_sub_matrix_for_type {
 
             fn sub(self, m: Matrix<$t>) -> Matrix<$t> {
                 // Substract the matrix
-                let elements = m
-                    .elements
-                    .iter()
-                    .map(|row| {
-                        row.elements.iter().map(|elem| self - elem).collect()
-                    })
-                    .collect();
+                let vec = self - m.vec;
                 Matrix {
                     nrows: m.nrows,
                     ncols: m.ncols,
-                    elements,
+                    vec,
                 }
             }
         }
@@ -1017,13 +1232,7 @@ where
                 other.shape()
             );
         }
-
-        self.elements.iter_mut().enumerate().for_each(|(i, row)| {
-            row.elements
-                .iter_mut()
-                .enumerate()
-                .for_each(|(j, value)| *value -= other[i][j])
-        })
+        self.vec -= other.vec;
     }
 }
 
@@ -1039,9 +1248,7 @@ where
     T: Num + Copy + ops::SubAssign,
 {
     fn sub_assign(&mut self, value: T) {
-        self.elements.iter_mut().for_each(|row| {
-            row.elements.iter_mut().for_each(|elem| *elem -= value)
-        })
+        self.vec -= value;
     }
 }
 
@@ -1061,24 +1268,11 @@ where
                 other.shape()
             );
         }
-
-        // Multiply the matrix
-        let elements = self
-            .elements
-            .iter()
-            .enumerate()
-            .map(|(i, row)| {
-                row.elements
-                    .iter()
-                    .enumerate()
-                    .map(|(j, value)| *value * other[i][j])
-                    .collect()
-            })
-            .collect();
+        let vec = self.vec * other.vec;
         Matrix {
             nrows: self.nrows,
             ncols: self.ncols,
-            elements,
+            vec,
         }
     }
 }
@@ -1096,18 +1290,11 @@ where
     type Output = Matrix<T>;
 
     fn mul(self, value: T) -> Matrix<T> {
-        // Multiply the matrix
-        let elements = self
-            .elements
-            .iter()
-            .map(|row| {
-                row.elements.iter().map(|elem| *elem * value).collect()
-            })
-            .collect();
+        let vec = self.vec * value;
         Matrix {
             nrows: self.nrows,
             ncols: self.ncols,
-            elements,
+            vec,
         }
     }
 }
@@ -1124,18 +1311,11 @@ macro_rules! impl_sub_matrix_for_type {
             type Output = Matrix<$t>;
 
             fn mul(self, m: Matrix<$t>) -> Matrix<$t> {
-                // Multiply the matrix
-                let elements = m
-                    .elements
-                    .iter()
-                    .map(|row| {
-                        row.elements.iter().map(|elem| self * elem).collect()
-                    })
-                    .collect();
+                let vec = self * m.vec;
                 Matrix {
                     nrows: m.nrows,
                     ncols: m.ncols,
-                    elements,
+                    vec,
                 }
             }
         }
@@ -1171,12 +1351,7 @@ where
             );
         }
 
-        self.elements.iter_mut().enumerate().for_each(|(i, row)| {
-            row.elements
-                .iter_mut()
-                .enumerate()
-                .for_each(|(j, value)| *value *= other[i][j])
-        })
+        self.vec *= other.vec;
     }
 }
 
@@ -1192,9 +1367,7 @@ where
     T: Num + Copy + ops::MulAssign,
 {
     fn mul_assign(&mut self, value: T) {
-        self.elements.iter_mut().for_each(|row| {
-            row.elements.iter_mut().for_each(|elem| *elem *= value)
-        })
+        self.vec *= value;
     }
 }
 
@@ -1288,5 +1461,154 @@ where
             ));
         }
         Ok(Matrix::from(elements))
+    }
+}
+
+/// Row Matrix is a reference of a row in a Matrix.
+///
+/// It is a `1xm` matrix where `m` is number of columns.
+pub struct RowMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    matrix: &'a Matrix<T>,
+    vec: Vector<T>,
+}
+
+impl<'a, T> RowMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    // Row matrix is a `1xm` matrix
+    pub fn shape(&self) -> [usize; 2] {
+        [1, self.matrix.ncols]
+    }
+
+    // Iterates over row elements
+    pub fn elements(&'a self) -> VectorElementIterator<'a, T> {
+        self.vec.elements()
+    }
+}
+
+impl<'a, T> fmt::Debug for RowMatrix<'a, T>
+where
+    T: Num + Copy + fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return write!(f, "RowMatrix({:?})", self.vec);
+    }
+}
+
+// RowMatrix vs RowMatrix comparison
+impl<'a, T> PartialEq for RowMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    fn eq(&self, other: &RowMatrix<'a, T>) -> bool {
+        if self.vec == other.vec {
+            true
+        } else {
+            false
+        }
+    }
+    fn ne(&self, other: &RowMatrix<'a, T>) -> bool {
+        if self.vec != other.vec {
+            true
+        } else {
+            false
+        }
+    }
+}
+
+// RowMatrix vs Matrix comparison
+impl<'a, T> PartialEq<Matrix<T>> for RowMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    fn eq(&self, m: &Matrix<T>) -> bool {
+        if self.shape() == m.shape() && self.vec == m.vec {
+            true
+        } else {
+            false
+        }
+    }
+    fn ne(&self, m: &Matrix<T>) -> bool {
+        if self.shape() != m.shape() || self.vec != m.vec {
+            true
+        } else {
+            false
+        }
+    }
+}
+
+/// Column matrix is a reference of a column in a Matrix.
+///
+/// It is a `nx1` matrix where `n` is a number of rows.
+pub struct ColMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    matrix: &'a Matrix<T>,
+    vec: Vector<T>,
+}
+
+impl<'a, T> ColMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    // Column matrix is a `nx1` matrix
+    pub fn shape(&self) -> [usize; 2] {
+        [self.matrix.nrows, 1]
+    }
+}
+
+impl<'a, T> fmt::Debug for ColMatrix<'a, T>
+where
+    T: Num + Copy + fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return write!(f, "ColMatrix({:?})", self.vec);
+    }
+}
+
+// ColMatrix vs ColMatrix comparison
+impl<'a, T> PartialEq for ColMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    fn eq(&self, other: &ColMatrix<'a, T>) -> bool {
+        if self.vec == other.vec {
+            true
+        } else {
+            false
+        }
+    }
+    fn ne(&self, other: &ColMatrix<'a, T>) -> bool {
+        if self.vec != other.vec {
+            true
+        } else {
+            false
+        }
+    }
+}
+
+// ColMatrix vs Matrix comparison
+impl<'a, T> PartialEq<Matrix<T>> for ColMatrix<'a, T>
+where
+    T: Num + Copy,
+{
+    fn eq(&self, m: &Matrix<T>) -> bool {
+        if self.shape() == m.shape() && self.vec == m.vec {
+            true
+        } else {
+            false
+        }
+    }
+    fn ne(&self, m: &Matrix<T>) -> bool {
+        if self.shape() != m.shape() || self.vec != m.vec {
+            true
+        } else {
+            false
+        }
     }
 }
