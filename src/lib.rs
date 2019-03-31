@@ -457,15 +457,17 @@
 //! [Apache-2.0]: https://github.com/pyk/crabsformer/blob/master/LICENSE
 //!
 
-#[macro_use]
-mod matrix;
-#[macro_use]
-mod vector;
 mod error;
-mod slice;
+mod matrix;
 mod utils;
+mod vector;
 
 pub use error::*;
+pub use matrix::builders::*;
+pub use matrix::indexing::*;
+pub use matrix::iterators::*;
+pub use matrix::loaders::*;
+pub use matrix::operations::*;
+pub use matrix::slicing::*;
 pub use matrix::*;
-pub use slice::*;
 pub use vector::*;

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// Trait to print the type name of the numeric type.
 pub trait TypeName {
     fn type_name() -> &'static str;
 }
