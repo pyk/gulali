@@ -1350,3 +1350,9 @@ apakah bisa?
 
 # Sampai mana?
 Indexing Submatrix.
+
+# Submatrix, Row matrix, Column matrix
+Anw, we see submatrix, row matrix, column matrix as a way to see the data. The only contains
+index information such as position, offset, size and the reference to the original matrix.
+
+We need to treat Subvector like this as well.
