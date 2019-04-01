@@ -48,7 +48,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use crabsformer::*;
+    /// use crabsformer::prelude::*;
     ///
     /// let dataset: Matrix<f32> = Matrix::from_csv("tests/data/dataset.csv")
     ///     .has_headers(true)
@@ -67,7 +67,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// use crabsformer::*;
+    /// use crabsformer::prelude::*;
     ///
     /// let dataset: Matrix<f32> = Matrix::from_csv("tests/data/weight.csv").load().unwrap();
     /// ```
@@ -126,7 +126,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use crabsformer::*;
+    /// use crabsformer::prelude::*;
     ///
     /// let dataset: Matrix<f32> = Matrix::from_csv("tests/data/weight.csv").load().unwrap();
     /// ```

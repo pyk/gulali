@@ -35,7 +35,7 @@ use std::ops;
 ///
 /// # Examples
 /// ```
-/// # use crabsformer::*;
+/// # use crabsformer::prelude::*;
 /// let x = vector![3, 1, 2, 3];
 /// // Range
 /// x.slice(0..1); // [3]

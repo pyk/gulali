@@ -101,7 +101,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let x = vector![1, 2, 3];
     /// let mut elements = x.elements();
     ///
@@ -124,7 +124,7 @@ where
     //
     // # Examples
     // ```
-    // # use crabsformer::*;
+    // # use crabsformer::prelude::*;
     // let mut x = vector![1, 2, 3];
     // for value in x.elements_mut() {
     //     *value = 314;

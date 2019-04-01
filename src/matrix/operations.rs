@@ -30,7 +30,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w1 = matrix![3, 1, 4; 1, 5, 9];
     /// let w2 = w1.power(2);
     /// assert_eq!(w2, matrix![9, 1, 16; 1, 25, 81]);
@@ -56,7 +56,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let mut w = matrix![3, 1, 4; 1, 5, 9];
     /// w.power_mut(2);
     /// assert_eq!(w, matrix![9, 1, 16; 1, 25, 81]);

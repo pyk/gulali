@@ -54,7 +54,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w = matrix![
     ///     3.0, 1.0;
     ///     4.0, 1.0;

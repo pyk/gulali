@@ -33,7 +33,7 @@ use rand::distributions::uniform::SampleUniform;
 /// 1. Create a matrix containing a given list of elements:
 ///
 /// ```
-/// # use crabsformer::*;
+/// # use crabsformer::prelude::*;
 /// let w = matrix![
 ///     3, 1, 4;
 ///     1, 5, 9;
@@ -49,7 +49,7 @@ use rand::distributions::uniform::SampleUniform;
 /// 2. Create a matrix from a given shape and element:
 ///
 /// ```
-/// # use crabsformer::*;
+/// # use crabsformer::prelude::*;
 /// let w = matrix![[3, 3] => 1];
 /// assert_eq!(w, matrix![
 ///     1, 1, 1;
@@ -68,31 +68,31 @@ macro_rules! matrix {
         let nrows = $shape[0];
         let ncols = $shape[1];
         let elements = vec![vec![$elem; ncols]; nrows];
-        $crate::Matrix::from(elements)
+        $crate::matrix::Matrix::from(elements)
     }};
 
     // Samples: matrix![1, 3, 4]
     ($($x:expr),*) => {{
         let elements = vec![vec![$($x),*]];
-        $crate::Matrix::from(elements)
+        $crate::matrix::Matrix::from(elements)
     }};
 
     // Samples: matrix![1, 2, 3, 4,]
     ($($x:expr,)*) => {{
         let elements = vec![vec![$($x),*]];
-        $crate::Matrix::from(elements)
+        $crate::matrix::Matrix::from(elements)
     }};
 
     // Samples: matrix![2.0, 1.0, 4.0; 2.0, 4.0, 2.0;]
     ($($($x:expr),*;)*) => {{
         let elements = vec![$(vec![$($x),*]),*];
-        $crate::Matrix::from(elements)
+        $crate::matrix::Matrix::from(elements)
     }};
 
     // Samples: matrix![2.0, 1.0, 4.0; 2.0, 4.0, 2.0]
     ($($($x:expr),*);*) => {{
         let elements = vec![$(vec![$($x),*]),*];
-        $crate::Matrix::from(elements)
+        $crate::matrix::Matrix::from(elements)
     }};
 }
 
@@ -106,7 +106,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w = Matrix::full([5, 5], 2.5);
     /// ```
     pub fn full(shape: [usize; 2], value: T) -> Matrix<T>
@@ -122,7 +122,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w1 = matrix![
     ///     3.0, 1.0;
     ///     4.0, 1.0;
@@ -143,7 +143,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w: Matrix<i32> = Matrix::zeros([5, 5]);
     /// ```
     pub fn zeros(shape: [usize; 2]) -> Matrix<T>
@@ -159,7 +159,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w1 = matrix![3.0, 1.0; 4.0, 1.0];
     /// let w2 = Matrix::zeros_like(&w1);
     /// ```
@@ -177,7 +177,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w: Matrix<i32> = Matrix::ones([3, 5]);
     /// ```
     pub fn ones(shape: [usize; 2]) -> Matrix<T>
@@ -193,7 +193,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w1 = matrix![3, 1; 4, 1; 5, 9];
     /// let w2 = Matrix::ones_like(&w1);
     /// ```
@@ -212,7 +212,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w = Matrix::uniform([5, 5], 0.0, 1.0);
     /// ```
     pub fn uniform(shape: [usize; 2], low: T, high: T) -> Matrix<T>
@@ -238,7 +238,7 @@ impl Matrix<f64> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w = Matrix::normal([5, 5], 0.0, 1.0); // Gaussian mean=0.0 std_dev=1.0
     /// ```
     pub fn normal(shape: [usize; 2], mean: f64, std_dev: f64) -> Matrix<f64> {

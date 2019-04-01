@@ -82,7 +82,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w = matrix![
     ///     3, 1, 4;
     ///     1, 5, 9;
@@ -103,7 +103,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w = matrix![
     ///     3, 1, 4;
     ///     1, 5, 9;
@@ -157,7 +157,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w = matrix![
     ///     3, 1, 4;
     ///     1, 5, 9;
@@ -211,7 +211,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w = matrix![
     ///     3, 1, 4;
     ///     1, 5, 9;
@@ -292,7 +292,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w = matrix![
     ///     3, 1, 4;
     ///     1, 5, 9;
@@ -316,7 +316,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let w = matrix![
     ///     3, 1, 4;
     ///     1, 5, 9;

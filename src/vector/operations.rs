@@ -34,7 +34,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let x = vector![3, 1, 4, 1];
     /// let y = x.power(2);
     /// assert_eq!(y, vector![9, 1, 16, 1]);
@@ -52,7 +52,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let mut x = vector![3, 1, 4, 1];
     /// x.power_mut(2);
     /// assert_eq!(x, vector![9, 1, 16, 1]);
@@ -68,7 +68,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let x = vector![3, 1, 4, 1];
     /// let y = x.filter(|x| x >= 2);
     /// assert_eq!(y, vector![3, 4]);
@@ -87,7 +87,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let x = Vector::uniform(5, -1.0, 1.0);
     /// let sum = x.sum();
     /// println!("sum = {}", sum);
@@ -110,7 +110,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let x = vector![1, 2, 3];
     /// assert_eq!(*x.max(), 3);
     /// ```
@@ -131,7 +131,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let x = vector![1, 2, 3];
     /// assert_eq!(*x.min(), 1);
     /// ```

@@ -30,7 +30,7 @@
 //! and this to your crate root:
 //!
 //! ```rust
-//! use crabsformer::*;
+//! use crabsformer::prelude::*;
 //! ```
 //!
 //! To get started using Crabsformer, read the quickstart tutorial below.
@@ -70,7 +70,7 @@
 //! deduced from the type of the elements in the sequences.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = vec![3, 1, 4, 1, 5];
 //! let y = Vector::from(x);
 //! ```
@@ -79,14 +79,14 @@
 //! numeric vector more convenient.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let v = vector![1, 10, 11, 314];
 //! ```
 //!
 //! It can also initialize each element of a numeric vector with a given value.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let v = vector![0; 5]; // vector![0, 0, 0, 0, 0]
 //! ```
 //!
@@ -95,7 +95,7 @@
 //! distribution over the half-open interval.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let v = Vector::uniform(5, 0.0, 1.0);
 //! // Vector([0.054709196, 0.86043775, 0.21187294, 0.6413728, 0.14186311]) (Random)
 //! ```
@@ -104,7 +104,7 @@
 //! function.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = Vector::range(0, 10, 1);
 //! assert_eq!(x, vector![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
 //! ```
@@ -134,7 +134,7 @@
 //!
 //!
 //! ```rust
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = vector![2, 4, 6] + vector![1, 3, 5];
 //! assert_eq!(x, vector![3, 7, 11]);
 //! ```
@@ -142,7 +142,7 @@
 //! Numeric vector substraction and multiplication also works the same:
 //!
 //! ```rust
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = vector![3, 1, 5] - vector![1, 3, 5];
 //! assert_eq!(x, vector![2, -2, 0]);
 //!
@@ -155,7 +155,7 @@
 //! of the numeric vector by 2.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = vector![3, 1, 4] * 2;
 //! assert_eq!(x, vector![6, 2, 8]);
 //! ```
@@ -164,7 +164,7 @@
 //! existing numeric vector rather than create a new one.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let mut x = vector![3, 1, 4];
 //!
 //! x += 3;
@@ -181,7 +181,7 @@
 //! different number of elements, you will get an error. For example:
 //!
 //! ```should_panic
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = vector![3, 1, 4, 1, 5] + vector![2, 10, 9];
 //! // thread 'main' panicked at 'Vector addition with invalid length: 5 != 3' src/main.rs:12:13
 //! ```
@@ -191,7 +191,7 @@
 //! numeric vector is raised to the power 2.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = vector![3, 1, 4, 1];
 //! let y = x.power(2);
 //! assert_eq!(y, vector![9, 1, 16, 1]);
@@ -210,7 +210,7 @@
 //! numeric vector, are implemented as methods.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = vector![3, 1, 4];
 //! let sum = x.sum();
 //! assert_eq!(sum, 8);
@@ -231,7 +231,7 @@
 //! Rust's vector.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = vector![3, 1, 4, 1];
 //!
 //! // Indexing numeric vector
@@ -257,7 +257,7 @@
 //! deduced from the type of the elements in the sequences.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = vec![
 //!     vec![3, 1, 4],
 //!     vec![1, 5, 9],
@@ -270,7 +270,7 @@
 //! otherwise it will panic. For example:
 //!
 //! ```should_panic
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = vec![
 //!     vec![3, 1, 4],
 //!     vec![1, 5],
@@ -284,7 +284,7 @@
 //! matrix more convenient.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let w = matrix![
 //!     3.0, 1.0, 4.0;
 //!     1.0, 5.0, 9.0;
@@ -295,7 +295,7 @@
 //! and value.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let w = matrix![[3, 3] => 0]; // matrix![0, 0, 0; 0, 0, 0; 0, 0, 0]
 //! ```
 //!
@@ -304,7 +304,7 @@
 //! distribution over the half-open interval.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let w = Matrix::uniform([2, 2], 0.0, 1.0);
 //! ```
 //!
@@ -332,7 +332,7 @@
 //!
 //!
 //! ```rust
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let w1 = matrix![
 //!     2, 4, 6;
 //!     3, 1, 1;
@@ -357,7 +357,7 @@
 //! Matrix substraction and multiplication also works the same:
 //!
 //! ```rust
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let w1 = matrix![2, 4; 3, 1] - matrix![1, 3; 3, 1];
 //! assert_eq!(w1, matrix![
 //!     1, 1;
@@ -382,7 +382,7 @@
 //! of the matrix by 2.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let w = matrix![3, 1; 4, 1] * 2;
 //! assert_eq!(w, matrix![6, 2; 8, 2]);
 //! ```
@@ -391,7 +391,7 @@
 //! existing matrix rather than create a new one.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let mut w = matrix![3, 1; 4, 1];
 //!
 //! w += 3;
@@ -408,7 +408,7 @@
 //! different shape, you will get an error. For example:
 //!
 //! ```should_panic
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let x = matrix![3, 1; 4, 1] + matrix![2, 10, 9; 1, 4, 7];
 //! // thread 'main' panicked at 'Matrix addition with invalid shape: [2, 2] != [3, 3]' src/main.rs:12:13
 //! ```
@@ -418,7 +418,7 @@
 //! of the matrix is raised to the power 2.
 //!
 //! ```
-//! # use crabsformer::*;
+//! # use crabsformer::prelude::*;
 //! let w1 = matrix![3, 1; 4, 1];
 //! let w2 = w1.power(2);
 //! assert_eq!(w2, matrix![9, 1; 16, 1]);
@@ -457,23 +457,8 @@
 //! [Apache-2.0]: https://github.com/pyk/crabsformer/blob/master/LICENSE
 //!
 
-mod error;
-mod matrix;
-mod utils;
-mod vector;
-
-pub use error::*;
-pub use matrix::builders::*;
-pub use matrix::indexing::*;
-pub use matrix::iterators::*;
-pub use matrix::loaders::*;
-pub use matrix::operations::*;
-pub use matrix::slicing::*;
-pub use matrix::*;
-pub use vector::builders::*;
-pub use vector::indexing::*;
-pub use vector::iterators::*;
-pub use vector::loaders::*;
-pub use vector::operations::*;
-pub use vector::slicing::*;
-pub use vector::*;
+pub mod error;
+pub mod matrix;
+pub mod prelude;
+pub mod utils;
+pub mod vector;

@@ -16,7 +16,7 @@
   <a href="https://docs.rs/crabsformer"><img alt="Crabformer docs" src="https://docs.rs/crabsformer/badge.svg?color=%233b6837"></a>
   <a href="https://crates.io/crates/crabsformer"><img alt="Crabformer min rustc" src="https://img.shields.io/badge/rustc-stable-green.svg"></a>
 </p>
- 
+
 
 **Notice!** This project is in early phase. Expect bugs and missing features.
 
@@ -39,7 +39,7 @@ crabsformer = "2019.3.17"
 and this to your crate root:
 
 ```rust
-use crabsformer::*;
+use crabsformer::prelude::*;
 ```
 
 To get started using Crabsformer, read the [quickstart tutorial].
@@ -50,7 +50,7 @@ To get started using Crabsformer, read the [quickstart tutorial].
 Feel free to start discussion at [GitHub issues].
 
 [Github issues]: https://github.com/pyk/crabsformer/issues/new/choose
- 
+
 ## License
 Crabsformer is licensed under the [Apache-2.0](./LICENSE) license.
 

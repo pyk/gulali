@@ -44,7 +44,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let v = vector![3.0, 1.0, 4.0, 1.0, 5.0];
     /// assert_eq!(v.len(), 5);
     /// ```

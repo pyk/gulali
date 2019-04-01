@@ -35,7 +35,7 @@ use std::ops;
 /// 1. Create a numeric vector containing a given list of elements:
 ///
 /// ```
-/// # use crabsformer::*;
+/// # use crabsformer::prelude::*;
 /// let x = vector![1, 2, 3];
 /// assert_eq!(x[0], 1);
 /// assert_eq!(x[1], 2);
@@ -45,7 +45,7 @@ use std::ops;
 /// 2. Create a numeric vector from a given element and length:
 ///
 /// ```
-/// # use crabsformer::*;
+/// # use crabsformer::prelude::*;
 /// let x = vector![1; 3];
 /// assert_eq!(x, vector![1, 1, 1]);
 /// ```
@@ -56,11 +56,11 @@ macro_rules! vector {
     ($value:expr; $len:expr) => {{
         // Initialize and populate the vector with specified value
         let elements = vec![$value; $len];
-        $crate::Vector::from(elements)
+        $crate::vector::Vector::from(elements)
     }};
     ($($x:expr),*) => {{
         let elements = vec![$($x),*];
-        $crate::Vector::from(elements)
+        $crate::vector::Vector::from(elements)
     }};
 }
 
@@ -74,7 +74,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let v = Vector::full(5, 2.5);
     /// ```
     pub fn full(len: usize, value: T) -> Vector<T>
@@ -90,7 +90,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let v1 = vector![3.0, 1.0, 4.0, 1.0, 5.0];
     /// let v2 = Vector::full_like(&v1, 3.1415);
     /// ```
@@ -108,7 +108,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vector<i32> = Vector::zeros(5);
     /// ```
     pub fn zeros(len: usize) -> Vector<T>
@@ -124,7 +124,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let v1 = vector![3, 1, 4, 1, 5];
     /// let v2 = Vector::zeros_like(&v1);
     /// ```
@@ -142,7 +142,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let v: Vector<i32> = Vector::ones(10);
     /// ```
     pub fn ones(len: usize) -> Vector<T>
@@ -158,7 +158,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let v1 = vector![3, 1, 4, 1, 5];
     /// let v2 = Vector::ones_like(&v1);
     /// ```
@@ -177,7 +177,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let v = Vector::uniform(5, 0.0, 1.0);
     /// ```
     pub fn uniform(len: usize, low: T, high: T) -> Vector<T>
@@ -203,7 +203,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let v = Vector::range(0.0, 3.0, 0.5);
     /// // v = vector![0.0, 0.5, 1.0, 1.5, 2.0, 2.5]
     /// ```
@@ -239,7 +239,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let a = Vector::linspace(5, 1.0, 10.0); // vector![1.0, 3.25, 5.5, 7.75, 10.0]
     /// ```
     ///
@@ -287,7 +287,7 @@ impl Vector<f64> {
     /// # Examples
     ///
     /// ```
-    /// # use crabsformer::*;
+    /// # use crabsformer::prelude::*;
     /// let v = Vector::normal(5, 0.0, 1.0); // Gaussian mean=0.0 std_dev=1.0
     /// ```
     pub fn normal(len: usize, mean: f64, std_dev: f64) -> Vector<f64> {
