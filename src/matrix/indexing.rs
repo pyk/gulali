@@ -27,7 +27,7 @@ where
     T: Num + Copy,
 {
     // Bound check
-    pub(crate) fn bound_check(&self, i: Option<usize>, j: Option<usize>) {
+    pub(crate) fn check_bound(&self, i: Option<usize>, j: Option<usize>) {
         if i.is_some() && i.unwrap() >= self.nrows {
             panic!(
                 "Row index {} out of range for matrix with number of rows {}",
@@ -65,7 +65,7 @@ where
     /// # Panics
     /// Panics if `i >= nrows` and `j >= ncols`.
     pub fn at(&self, i: usize, j: usize) -> &T {
-        self.bound_check(Some(i), Some(j));
+        self.check_bound(Some(i), Some(j));
         &self.vec[(self.ncols * i) + j]
     }
 
@@ -76,20 +76,20 @@ where
     /// # Examples
     /// ```
     /// # use crabsformer::*;
-    /// let W = matrix![
+    /// let w = matrix![
     ///     3.0, 1.0;
     ///     4.0, 1.0;
     ///     5.0, 9.0;
     /// ];
-    /// W.row(0); // [3.0, 1.0]
-    /// W.row(1); // [4.0, 1.0]
-    /// W.row(2); // [5.0, 9.0]
+    /// w.row(0); // [3.0, 1.0]
+    /// w.row(1); // [4.0, 1.0]
+    /// w.row(2); // [5.0, 9.0]
     /// ```
     ///
     /// # Panics
     /// Panics if `i >= n` where `n` is number of rows.
     pub fn row<'a>(&'a self, i: usize) -> RowMatrix<'a, T> {
-        self.bound_check(Some(i), None);
+        self.check_bound(Some(i), None);
         RowMatrix {
             pos: i,
             offset: 0,
@@ -105,18 +105,18 @@ where
     /// # Examples
     /// ```
     /// # use crabsformer::*;
-    /// let W = matrix![
+    /// let w = matrix![
     ///     3.0, 1.0;
     ///     4.0, 1.0;
     ///     5.0, 9.0;
     /// ];
-    /// W.col(0);  // [3.0, 4.0, 5.0]
+    /// w.col(0);  // [3.0, 4.0, 5.0]
     /// ```
     ///
     /// # Panics
     /// Panics if `j >= m` where `m` is number of columns.
     pub fn col<'a>(&'a self, j: usize) -> ColumnMatrix<'a, T> {
-        self.bound_check(None, Some(j));
+        self.check_bound(None, Some(j));
         ColumnMatrix {
             pos: j,
             offset: 0,
@@ -177,12 +177,12 @@ where
     /// # Examples
     /// ```
     /// # use crabsformer::*;
-    /// let W = matrix![
+    /// let w = matrix![
     ///     3.0, 1.0, 4.0;
     ///     4.0, 1.0, 7.0;
     ///     5.0, 9.0, 3.0;
     /// ];
-    /// let sub = W.slice(1..3, ..3); // [4.0, 1.0, 7.0; 5.0, 9.0, 3.0]
+    /// let sub = w.slice(1..3, ..3); // [4.0, 1.0, 7.0; 5.0, 9.0, 3.0]
     ///
     /// sub.row(0); // [4.0, 1.0, 7.0]
     /// sub.row(1); // [5.0, 9.0, 3.0]
@@ -211,12 +211,12 @@ where
     /// # Examples
     /// ```
     /// # use crabsformer::*;
-    /// let W = matrix![
+    /// let w = matrix![
     ///     3.0, 1.0, 4.0;
     ///     4.0, 1.0, 7.0;
     ///     5.0, 9.0, 3.0;
     /// ];
-    /// let sub = W.slice(1..3, ..3); // [4.0, 1.0; 5.0, 9.0]
+    /// let sub = w.slice(1..3, ..3); // [4.0, 1.0; 5.0, 9.0]
     ///
     /// sub.col(0); // [4.0; 5.0]
     /// sub.col(1); // [1.0; 9.0]

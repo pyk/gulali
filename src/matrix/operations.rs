@@ -15,8 +15,61 @@
 // TODO(pyk): Add docs here
 
 use crate::matrix::Matrix;
-use num::Num;
+use num::{FromPrimitive, Num};
 use std::ops;
+
+// Unary operations
+impl<T> Matrix<T>
+where
+    T: Num + Copy,
+{
+    /// Raises each elements of matrix to the power of `exp`,
+    /// using exponentiation by squaring. A new matrix is created and
+    /// filled with the result. If you want to modify existing matrix
+    /// use [`power_mut`].
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::*;
+    /// let w1 = matrix![3, 1, 4; 1, 5, 9];
+    /// let w2 = w1.power(2);
+    /// assert_eq!(w2, matrix![9, 1, 16; 1, 25, 81]);
+    /// ```
+    ///
+    /// [`power_mut`]: #power_mut
+    pub fn power(&self, exp: usize) -> Matrix<T>
+    where
+        T: FromPrimitive,
+    {
+        let powered_vec = self.vec.power(exp);
+        Matrix {
+            nrows: self.nrows,
+            ncols: self.ncols,
+            vec: powered_vec,
+        }
+    }
+
+    /// Raises each elements of matrix to the power of `exp`,
+    /// using exponentiation by squaring. An existing matrix is modified and
+    /// filled with the result. If you want to create new matrix
+    /// use [`power`].
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::*;
+    /// let mut w = matrix![3, 1, 4; 1, 5, 9];
+    /// w.power_mut(2);
+    /// assert_eq!(w, matrix![9, 1, 16; 1, 25, 81]);
+    /// ```
+    ///
+    /// [`power`]: #power
+    pub fn power_mut(&mut self, exp: usize)
+    where
+        T: FromPrimitive,
+    {
+        self.vec.power_mut(exp);
+    }
+}
 
 // This trait is implemented to support for matrix addition operator
 impl<T> ops::Add<Matrix<T>> for Matrix<T>

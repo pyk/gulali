@@ -107,7 +107,7 @@ where
     ///
     /// ```
     /// # use crabsformer::*;
-    /// let W = Matrix::full([5, 5], 2.5);
+    /// let w = Matrix::full([5, 5], 2.5);
     /// ```
     pub fn full(shape: [usize; 2], value: T) -> Matrix<T>
     where
@@ -144,7 +144,7 @@ where
     ///
     /// ```
     /// # use crabsformer::*;
-    /// let W: Matrix<i32> = Matrix::zeros([5, 5]);
+    /// let w: Matrix<i32> = Matrix::zeros([5, 5]);
     /// ```
     pub fn zeros(shape: [usize; 2]) -> Matrix<T>
     where
@@ -160,8 +160,8 @@ where
     ///
     /// ```
     /// # use crabsformer::*;
-    /// let W1 = matrix![3.0, 1.0; 4.0, 1.0];
-    /// let W2 = Matrix::zeros_like(&W1);
+    /// let w1 = matrix![3.0, 1.0; 4.0, 1.0];
+    /// let w2 = Matrix::zeros_like(&w1);
     /// ```
     pub fn zeros_like(m: &Matrix<T>) -> Matrix<T>
     where
@@ -178,7 +178,7 @@ where
     ///
     /// ```
     /// # use crabsformer::*;
-    /// let W: Matrix<i32> = Matrix::ones([3, 5]);
+    /// let w: Matrix<i32> = Matrix::ones([3, 5]);
     /// ```
     pub fn ones(shape: [usize; 2]) -> Matrix<T>
     where
@@ -194,61 +194,14 @@ where
     ///
     /// ```
     /// # use crabsformer::*;
-    /// let W1 = matrix![3, 1; 4, 1; 5, 9];
-    /// let W2 = Matrix::ones_like(&W1);
+    /// let w1 = matrix![3, 1; 4, 1; 5, 9];
+    /// let w2 = Matrix::ones_like(&w1);
     /// ```
     pub fn ones_like(m: &Matrix<T>) -> Matrix<T>
     where
         T: FromPrimitive,
     {
         matrix![m.shape() => T::from_i32(1).unwrap()]
-    }
-
-    /// Raises each elements of matrix to the power of `exp`,
-    /// using exponentiation by squaring. A new matrix is created and
-    /// filled with the result. If you want to modify existing matrix
-    /// use [`power_mut`].
-    ///
-    /// # Examples
-    /// ```
-    /// # use crabsformer::*;
-    /// let W1 = matrix![3, 1, 4; 1, 5, 9];
-    /// let W2 = W1.power(2);
-    /// assert_eq!(W2, matrix![9, 1, 16; 1, 25, 81]);
-    /// ```
-    ///
-    /// [`power_mut`]: #power_mut
-    pub fn power(&self, exp: usize) -> Matrix<T>
-    where
-        T: FromPrimitive,
-    {
-        let powered_vec = self.vec.power(exp);
-        Matrix {
-            nrows: self.nrows,
-            ncols: self.ncols,
-            vec: powered_vec,
-        }
-    }
-
-    /// Raises each elements of matrix to the power of `exp`,
-    /// using exponentiation by squaring. An existing matrix is modified and
-    /// filled with the result. If you want to create new matrix
-    /// use [`power`].
-    ///
-    /// # Examples
-    /// ```
-    /// # use crabsformer::*;
-    /// let mut w = matrix![3, 1, 4; 1, 5, 9];
-    /// w.power_mut(2);
-    /// assert_eq!(w, matrix![9, 1, 16; 1, 25, 81]);
-    /// ```
-    ///
-    /// [`power`]: #power
-    pub fn power_mut(&mut self, exp: usize)
-    where
-        T: FromPrimitive,
-    {
-        self.vec.power_mut(exp);
     }
 
     /// Create a new matrix of the given shape `shape` and
@@ -260,7 +213,7 @@ where
     ///
     /// ```
     /// # use crabsformer::*;
-    /// let W = Matrix::uniform([5, 5], 0.0, 1.0);
+    /// let w = Matrix::uniform([5, 5], 0.0, 1.0);
     /// ```
     pub fn uniform(shape: [usize; 2], low: T, high: T) -> Matrix<T>
     where
@@ -286,7 +239,7 @@ impl Matrix<f64> {
     ///
     /// ```
     /// # use crabsformer::*;
-    /// let W = Matrix::normal([5, 5], 0.0, 1.0); // Gaussian mean=0.0 std_dev=1.0
+    /// let w = Matrix::normal([5, 5], 0.0, 1.0); // Gaussian mean=0.0 std_dev=1.0
     /// ```
     pub fn normal(shape: [usize; 2], mean: f64, std_dev: f64) -> Matrix<f64> {
         let total_elements = shape.iter().product();

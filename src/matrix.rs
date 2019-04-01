@@ -55,12 +55,12 @@ where
     ///
     /// ```
     /// # use crabsformer::*;
-    /// let W = matrix![
+    /// let w = matrix![
     ///     3.0, 1.0;
     ///     4.0, 1.0;
     ///     5.0, 9.0;
     /// ];
-    /// assert_eq!(W.shape(), [3, 2]);
+    /// assert_eq!(w.shape(), [3, 2]);
     /// ```
     pub fn shape(&self) -> [usize; 2] {
         [self.nrows, self.ncols]

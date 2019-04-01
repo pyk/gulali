@@ -71,7 +71,7 @@ where
 
         // Make sure irange.end-1 < self.nrows and jrange.end-1 < self.ncols
         // NOTE: range.end is excelusive, so we substract it by 1
-        self.bound_check(Some(irange.end - 1), Some(jrange.end - 1));
+        self.check_bound(Some(irange.end - 1), Some(jrange.end - 1));
 
         // Get the new nrows and new ncols
         let nrows = irange.end - irange.start;
@@ -109,7 +109,7 @@ where
 
         // Make sure irange.end-1 < self.nrows and jrange.start < self.ncols
         // NOTE: range.end is exclusive, so we substract it by 1
-        self.bound_check(Some(irange.end - 1), Some(jrange.start));
+        self.check_bound(Some(irange.end - 1), Some(jrange.start));
 
         // Get the new nrows and new ncols
         let nrows = irange.end - irange.start;
@@ -147,7 +147,7 @@ where
 
         // Make sure irange.end-1 < self.nrows and jrange.end-1 < self.ncols
         // NOTE: range.end is exclusive, so we substract it by 1
-        self.bound_check(Some(irange.end - 1), Some(jrange.end - 1));
+        self.check_bound(Some(irange.end - 1), Some(jrange.end - 1));
 
         // Get the new nrows and new ncols
         let nrows = irange.end - irange.start;
@@ -185,7 +185,7 @@ where
 
         // Make sure irange.end-1 < self.nrows
         // NOTE: range.end is exclusive, so we substract it by 1
-        self.bound_check(Some(irange.end - 1), None);
+        self.check_bound(Some(irange.end - 1), None);
 
         // Get the new nrows and new ncols
         let nrows = irange.end - irange.start;
@@ -224,7 +224,7 @@ where
 
         // Make sure irange.end-1 < self.nrows and jrange.end < self.ncols
         // NOTE: range.end is exclusive, so we substract it by 1
-        self.bound_check(Some(irange.end - 1), Some(*jrange.end()));
+        self.check_bound(Some(irange.end - 1), Some(*jrange.end()));
 
         // Get the new nrows and new ncols
         let nrows = irange.end - irange.start;
@@ -263,7 +263,7 @@ where
 
         // Make sure irange.end-1 < self.nrows and jrange.end < self.ncols
         // NOTE: range.end is exclusive, so we substract it by 1
-        self.bound_check(Some(irange.end - 1), Some(jrange.end));
+        self.check_bound(Some(irange.end - 1), Some(jrange.end));
 
         // Get the new nrows and new ncols
         let nrows = irange.end - irange.start;
@@ -301,7 +301,7 @@ where
 
         // Make sure irange.start < self.nrows and jrange.end-1 < self.ncols
         // NOTE: range.end is excelusive, so we substract it by 1
-        self.bound_check(Some(irange.start), Some(jrange.end - 1));
+        self.check_bound(Some(irange.start), Some(jrange.end - 1));
 
         // Get the new nrows and new ncols
         let nrows = self.nrows - irange.start;
@@ -335,7 +335,7 @@ where
         jrange: ops::RangeFrom<usize>,
     ) -> Submatrix<'a, T> {
         // Make sure irange.start < self.nrows and jrange.start < self.ncols
-        self.bound_check(Some(irange.start), Some(jrange.start));
+        self.check_bound(Some(irange.start), Some(jrange.start));
 
         // Get the new nrows and new ncols
         let nrows = self.nrows - irange.start;
@@ -370,7 +370,7 @@ where
     ) -> Submatrix<'a, T> {
         // Make sure irange.start < self.nrows and jrange.end-1 < self.ncols
         // NOTE: jrange.end is exlusive, so we must substract it by 1
-        self.bound_check(Some(irange.start), Some(jrange.end - 1));
+        self.check_bound(Some(irange.start), Some(jrange.end - 1));
 
         // Get the new number of rows and the new number of columns
         let nrows = self.nrows - irange.start;

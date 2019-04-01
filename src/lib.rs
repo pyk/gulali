@@ -239,9 +239,9 @@
 //! assert_eq!(x[2], 4);
 //!
 //! // Slicing numeric vector
-//! assert_eq!(x.slice(0..2), vector![3, 1]);
-//! assert_eq!(x.slice(2..), vector![4, 1]);
-//! assert_eq!(x.slice(..2), vector![3, 1]);
+//! x.slice(0..2); // [3, 1]
+//! x.slice(2..); // [4, 1]
+//! x.slice(..2); // [3, 1]
 //!
 //! // Iterating over element of numeric vector
 //! for element in x.elements() {
@@ -263,7 +263,7 @@
 //!     vec![1, 5, 9],
 //!     vec![0, 1, 2],
 //! ];
-//! let W = Matrix::from(x);
+//! let w = Matrix::from(x);
 //! ```
 //!
 //! The number of the columns should be consistent
@@ -275,7 +275,7 @@
 //!     vec![3, 1, 4],
 //!     vec![1, 5],
 //! ];
-//! let W = Matrix::from(x);
+//! let w = Matrix::from(x);
 //! // thread 'main' panicked at 'Invalid matrix: the number of columns is inconsistent',
 //! ```
 //!
@@ -285,7 +285,7 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! let W = matrix![
+//! let w = matrix![
 //!     3.0, 1.0, 4.0;
 //!     1.0, 5.0, 9.0;
 //! ];
@@ -296,7 +296,7 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! let W = matrix![[3, 3] => 0]; // matrix![0, 0, 0; 0, 0, 0; 0, 0, 0]
+//! let w = matrix![[3, 3] => 0]; // matrix![0, 0, 0; 0, 0, 0; 0, 0, 0]
 //! ```
 //!
 //! The function [`uniform`][m.uniform] creates a matrix of the given
@@ -305,7 +305,7 @@
 //!
 //! ```
 //! # use crabsformer::*;
-//! let W = Matrix::uniform([2, 2], 0.0, 1.0);
+//! let w = Matrix::uniform([2, 2], 0.0, 1.0);
 //! ```
 //!
 //! See also: [`matrix!`], [`zeros`][m.zeros], [`zeros_like`][m.zeros_like],
@@ -470,4 +470,10 @@ pub use matrix::loaders::*;
 pub use matrix::operations::*;
 pub use matrix::slicing::*;
 pub use matrix::*;
+pub use vector::builders::*;
+pub use vector::indexing::*;
+pub use vector::iterators::*;
+pub use vector::loaders::*;
+pub use vector::operations::*;
+pub use vector::slicing::*;
 pub use vector::*;
