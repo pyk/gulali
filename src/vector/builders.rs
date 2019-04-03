@@ -40,8 +40,8 @@
 //! Examples:
 //!
 //! ```
-//! # crabsformer::perelude::*;
-//! let x1 = Vector::from([1, 2, 3 4]);
+//! # use crabsformer::prelude::*;
+//! let x1 = Vector::from([1, 2, 3, 4]);
 //! let x2 = Vector::from(&[3, 1, 4, 5]);
 //! let x3 = Vector::from(vec![1, 4, 5]);
 //! ```
@@ -53,7 +53,7 @@
 //! 1. Create a numeric vector containing a given list of elements:
 //!
 //! ```
-//! # crabsformer::perelude::*;
+//! # use crabsformer::prelude::*;
 //! let x = vector![1, 2, 3];
 //! assert_eq!(x[0], 1);
 //! assert_eq!(x[1], 2);
@@ -63,7 +63,7 @@
 //! 2. Create a numeric vector from a given element and length:
 //!
 //! ```
-//! # crabsformer::perelude::*;
+//! # use crabsformer::prelude::*;
 //! let x = vector![1; 3];
 //! assert_eq!(x, vector![1, 1, 1]);
 //! ```
@@ -76,7 +76,7 @@
 //! with the specified length.
 //!
 //! ```
-//! # crabsformer::perelude::*;
+//! # use crabsformer::prelude::*;
 //! let v: Vector<i32> = Vector::zeros(5);
 //! ```
 //!
@@ -87,7 +87,7 @@
 //! values.
 //!
 //! ```
-//! # crabsformer::perelude::*;
+//! # use crabsformer::prelude::*;
 //! let v = Vector::range(0.0, 3.0, 0.5);
 //! // v = vector![0.0, 0.5, 1.0, 1.5, 2.0, 2.5]
 //! ```
@@ -97,7 +97,7 @@
 //! values. For example:
 //!
 //! ```
-//! # crabsformer::perelude::*;
+//! # use crabsformer::prelude::*;
 //! let a = Vector::linspace(5, 1.0, 10.0);
 //! // vector![1.0, 3.25, 5.5, 7.75, 10.0]
 //! ```
