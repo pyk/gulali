@@ -14,7 +14,8 @@
 
 //! Numeric vector indexing.
 //!
-//! TODO(pyk): Add docs here
+//! # Overview
+//! TODO(pyk): https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html
 //!
 //!
 

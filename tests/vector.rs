@@ -19,6 +19,16 @@ fn test_from() {
     let a = vec![1, 2, 3];
     let b = Vector::from(a);
     assert_eq!(b, vector![1, 2, 3]);
+
+    let c = Vector::from(&[1, 2, 3]);
+    assert_eq!(c, vector![1, 2, 3]);
+
+    let d = Vector::from([1, 2, 3]);
+    assert_eq!(d, vector![1, 2, 3]);
+
+    let ve = vec![1, 2 ,3, 4];
+    let c = Vector::from(&ve[..]);
+    assert_eq!(c, vector![1, 2, 3, 4]);
 }
 
 #[test]

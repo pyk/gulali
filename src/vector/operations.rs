@@ -15,6 +15,8 @@
 //! Numeric vector operations.
 //!
 //! TODO(pyk): Add docs here
+//! - https://scipy-lectures.org/intro/numpy/operations.html
+//! - https://www.tutorialspoint.com/numpy/numpy_arithmetic_operations.htm
 //!
 //!
 //!

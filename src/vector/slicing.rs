@@ -14,7 +14,7 @@
 
 //! Slice numeric vector.
 //!
-//! TODO(pyk): Add docs here
+//! TODO(pyk): Add docs here https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html
 //!
 //!
 

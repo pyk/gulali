@@ -56,10 +56,10 @@
 //! `Vector<T>` is pronounced as 'numeric vector' to avoid confussion with Rust's
 //! vector [`Vec<T>`] data structure.
 //!
-//! [`Vector<T>`]: struct.Vector.html
-//! [`Matrix<T>`]: struct.Matrix.html
-//! [`len`]: struct.Vector.html#method.len
-//! [`shape`]: struct.Matrix.html#method.shape
+//! [`Vector<T>`]: vector/struct.Vector.html
+//! [`Matrix<T>`]: matrix/struct.Matrix.html
+//! [`len`]: vector/struct.Vector.html#method.len
+//! [`shape`]: matrix/struct.Matrix.html#method.shape
 //! [`Vec<T>`]: https://doc.rust-lang.org/std/vec/struct.Vec.html
 //!
 //! ### Numeric Vector Creation

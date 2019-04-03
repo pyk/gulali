@@ -15,6 +15,7 @@
 //! Iterates over elements of the numeric vector.
 //!
 //! TODO(pyk): Add docs here
+//! - https://docs.scipy.org/doc/numpy/reference/arrays.nditer.html
 //!
 //!
 

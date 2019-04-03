@@ -11,6 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+//! Numeric vectors.
+//!
+//! For learning how to use the numeric vector, please read the
+//! [quickstart tutorial] or see the module docs below for full detail.
+//!
+//! [quickstart tutorial]: ../index.html#quickstart-tutorial
+//!
+
 use num::Num;
 use std::fmt;
 
@@ -22,12 +31,41 @@ pub mod loaders;
 pub mod operations;
 pub mod slicing;
 
-/// Numeric vector.
+/// Numeric vectors.
 ///
-/// TODO: add overview about vector here.
-/// 1. how to create a vector
-/// 2. Vector operation
-/// 3. Indexing, etc.
+/// # Overview
+/// `Vector<T>` is a fixed-length list of elements of the same [numeric type].
+/// It has one atribute called [`len`] to represent the total number of
+/// elements. It is pronounced as 'numeric vector' to avoid confussion with
+/// Rust's vector [`Vec<T>`] data structure.
+///
+/// For learning how to use the numeric vector, please read the
+/// [quickstart tutorial].
+///
+/// See also:
+/// - [Numeric vector builders], a macro and functions to create new numeric
+/// vector.
+/// - [Indexing numeric vector], get the element of a numeric
+/// vector using `vector[index]` syntax.
+/// - [Slicing numeric vector], get reference to contiguous elements in a
+/// numeric vector.
+/// - [Numeric vector operations], performs unary operations
+/// (`vector.power(x)`, etc) and binary operations
+/// (`vector + vector`, etc) on a numeric vector(s).
+/// - [Numeric vector iterators], iterates over elements of the numeric vector.
+/// - [Numeric vector loaders], load numeric vectors from disk.
+///
+/// [`len`]: #method.len
+/// [`Vec<T>`]: https://doc.rust-lang.org/std/vec/struct.Vec.html
+/// [quickstart tutorial]: ../index.html#quickstart-tutorial
+/// [numeric vector builders]: builders/index.html
+/// [indexing numeric vector]: indexing/index.html
+/// [numeric vector iterators]: iterators/index.html
+/// [numeric vector loaders]: loaders/index.html
+/// [numeric vector operations]: operations/index.html
+/// [slicing numeric vector]: slicing/index.html
+/// [numeric type]: https://doc.rust-lang.org/reference/types/numeric.html
+///
 pub struct Vector<T>
 where
     T: Num + Copy,
@@ -53,7 +91,33 @@ where
     }
 }
 
-// Conversion from &[T] to RowMatrix<T>
+macro_rules! numeric_vector_from_array_and_slices_impls {
+    ($($N:expr)+) => {
+    $(
+        // Conversion from static array to numeric vector
+        impl<T> From<[T; $N]> for Vector<T>
+        where
+            T: Num + Copy,
+        {
+            fn from(elements: [T; $N]) -> Self {
+                Vector::from(elements.to_vec())
+            }
+        }
+
+        // Conversion from slice to numeric vector
+        impl<T> From<&[T; $N]> for Vector<T>
+        where
+            T: Num + Copy,
+        {
+            fn from(elements: &[T; $N]) -> Self {
+                Vector::from(elements.to_vec())
+            }
+        }
+    )+
+    };
+}
+
+// Conversion from slice to numeric vector
 impl<T> From<&[T]> for Vector<T>
 where
     T: Num + Copy,
@@ -61,6 +125,13 @@ where
     fn from(elements: &[T]) -> Self {
         Vector::from(elements.to_vec())
     }
+}
+
+numeric_vector_from_array_and_slices_impls! {
+     0  1  2  3  4  5  6  7  8  9
+    10 11 12 13 14 15 16 17 18 19
+    20 21 22 23 24 25 26 27 28 29
+    30 31 32
 }
 
 // Conversion from Vec<T>

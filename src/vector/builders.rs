@@ -12,9 +12,138 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! A list of function to build a new Numeric Vector.
+//! A macro and functions to create new numeric vector.
 //!
-//! TODO(pyk): Add docs here
+//! # Overview
+//! There are 4 general mechanisms for creating numeric vectors:
+//!
+//! 1. Conversion from other Rust primitive data types [array] & [slice].
+//! 2. Conversion from other Rust data structure [`Vec<T>`].
+//! 3. Crabsformer numeric vector macro [`vector!`].
+//! 4. Intrinsic Crabformer numeric vector creation functions (e.g., `range`,
+//! `ones`, `zeros`, etc.)
+//!
+//! This section will not cover means of replicating, joining, or otherwise
+//! expanding or mutating existing numeric vectors. Those are covered in
+//! their own sections.
+//!
+//! [array]: https://doc.rust-lang.org/std/primitive.array.html
+//! [slice]: https://doc.rust-lang.org/std/primitive.slice.html
+//! [`Vec<T>`]: https://doc.rust-lang.org/std/vec/struct.Vec.html
+//! [`vector!`]: ../../macro.vector.html
+//!
+//! # Converting Array, Slice and Vector to Numeric Vector
+//! In general, numerical data arranged in an array-like structure in Rust can
+//! be converted to numeric vectors through the use of the `Vector::from`
+//! function. The most obvious examples are [array] and [slice].
+//!
+//! Examples:
+//!
+//! ```
+//! # crabsformer::perelude::*;
+//! let x1 = Vector::from([1, 2, 3 4]);
+//! let x2 = Vector::from(&[3, 1, 4, 5]);
+//! let x3 = Vector::from(vec![1, 4, 5]);
+//! ```
+//!
+//! # Numeric Vector Macro
+//! [`vector!`] allows numeric vector to be defined with the same syntax as
+//! array expressions. There are two forms of this macro:
+//!
+//! 1. Create a numeric vector containing a given list of elements:
+//!
+//! ```
+//! # crabsformer::perelude::*;
+//! let x = vector![1, 2, 3];
+//! assert_eq!(x[0], 1);
+//! assert_eq!(x[1], 2);
+//! assert_eq!(x[2], 3);
+//!```
+//!
+//! 2. Create a numeric vector from a given element and length:
+//!
+//! ```
+//! # crabsformer::perelude::*;
+//! let x = vector![1; 3];
+//! assert_eq!(x, vector![1, 1, 1]);
+//! ```
+//!
+//! # Intrinsic Numeric Vector Creation
+//! Crabsformer has built-in functions for creating numeric vectors from
+//! scratch:
+//!
+//! [`Vector::zeros`] will create a numeric vector filled with 0 values
+//! with the specified length.
+//!
+//! ```
+//! # crabsformer::perelude::*;
+//! let v: Vector<i32> = Vector::zeros(5);
+//! ```
+//!
+//! [`Vector::ones`] will create an array filled with 1 values. It is
+//! identical to zeros in all other respects.
+//!
+//! [`Vector::range`] will create numeric vectors with regularly incrementing
+//! values.
+//!
+//! ```
+//! # crabsformer::perelude::*;
+//! let v = Vector::range(0.0, 3.0, 0.5);
+//! // v = vector![0.0, 0.5, 1.0, 1.5, 2.0, 2.5]
+//! ```
+//!
+//! [`Vector::linspace`] will create numeric vectors with a specified number of
+//! elements, and spaced equally between the specified beginning and end
+//! values. For example:
+//!
+//! ```
+//! # crabsformer::perelude::*;
+//! let a = Vector::linspace(5, 1.0, 10.0);
+//! // vector![1.0, 3.25, 5.5, 7.75, 10.0]
+//! ```
+//! The advantage of this creation function is that one can guarantee the
+//! number of elements and the starting and end point, which [`Vector::range`]
+//! generally will not do for arbitrary `start`, `stop`, and `step` values.
+//!
+//! See all available functions below.
+//!
+//! # Functions
+//!
+//! - Ones and zeros
+//!     - [`Vector::ones`]: Create a new numeric vector of given length and
+//!         type, filled with ones.
+//!     - [`Vector::ones_like`]: Create a new numeric vector that have the same
+//!         length and type as given numeric vector, filled with ones.
+//!     - [`Vector::zeros`]: Create a new numeric vector of given length and
+//!         type, filled with zeros.
+//!     - [`Vector::zeros_like`]: Create a new numeric vector that have the same
+//!         length and type as given numeric vector, filled with zeros.
+//!     - [`Vector::full`]: Create a new numeric vector of given length and
+//!         type, filled with specified value.
+//!     - [`Vector::full_like`]: Create a new numeric vector that have the same
+//!         length and type as given numeric vector, filled with specified
+//!         value.
+//! - From existing data
+//!     - `Vector::from`: Convert array, slice and [`Vec<T>`] to numeric
+//!         vector.
+//! - Numerical ranges
+//!     - [`Vector::range`]: Create a new numeric vector of evenly spaced values
+//!         within a given half-open interval and spacing value.
+//!     - [`Vector::linspace`]: Create a new numeric vector of the given length
+//!          and populate it with linearly spaced values within a given
+//!         closed interval.
+//! - Simple random data
+//! - Permutations
+//! - Distributions
+//!
+//! [`Vector::zeros`]: ../struct.Vector.html#method.zeros
+//! [`Vector::zeros_like`]: ../struct.Vector.html#method.zeros_like
+//! [`Vector::ones`]: ../struct.Vector.html#method.ones
+//! [`Vector::ones_like`]: ../struct.Vector.html#method.ones_like
+//! [`Vector::full`]: ../struct.Vector.html#method.full
+//! [`Vector::full_like`]: ../struct.Vector.html#method.full_like
+//! [`Vector::range`]: ../struct.Vector.html#method.range
+//! [`Vector::linspace`]: ../struct.Vector.html#method.linspace
 //!
 //!
 
@@ -85,7 +214,7 @@ where
     }
 
     /// Create a new numeric vector that have the same length and type
-    /// as vector `v`, filled with `value`.
+    /// as numeric vector `v`, filled with `value`.
     ///
     /// # Examples
     ///
@@ -119,7 +248,7 @@ where
     }
 
     /// Create a new numeric vector that have the same length and type
-    /// as vector `v`, filled with zeros.
+    /// as numeric vector `v`, filled with zeros.
     ///
     /// # Examples
     ///
@@ -153,7 +282,7 @@ where
     }
 
     /// Create a new numeric vector that have the same length and type
-    /// as vector `v`, filled with ones.
+    /// as numeric vector `v`, filled with ones.
     ///
     /// # Examples
     ///

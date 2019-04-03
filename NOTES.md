@@ -1356,3 +1356,18 @@ Anw, we see submatrix, row matrix, column matrix as a way to see the data. The o
 index information such as position, offset, size and the reference to the original matrix.
 
 We need to treat Subvector like this as well.
+
+# TODO
+- Update vector::builders doc, get the content
+  from https://docs.scipy.org/doc/numpy/user/basics.creation.html#arrays-creation
+
+# Fixed list -> Constant size
+How to incorporate the constant size and the data type in a struct?
+
+```rust
+let v: Vector<i32; 4> = Vector::zeros();
+```
+
+Btw there is a related RFC for this
+
+1. https://github.com/rust-lang/rfcs/blob/master/text/2000-const-generics.md
