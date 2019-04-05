@@ -158,11 +158,11 @@
 //! [issue-21]: https://github.com/pyk/Crabsformer/issues/21
 //!
 
+use crate::vector::errors::{VectorBuilderError, VectorBuilderErrorKind};
 use crate::vector::Vector;
 use num::{Float, FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
 use rand::distributions::{Distribution, Normal, Uniform};
-use std::fmt;
 use std::ops;
 
 /// Creates a [numeric vector] containing the arguments.
@@ -369,64 +369,75 @@ where
     {
         vector![T::from_i32(1).unwrap(); v.len()]
     }
+}
 
-    /// Create a new numeric vector of the given length `len` and populate it
-    /// with random samples from a uniform distribution over the half-open
-    /// interval `[low, high)` (includes `low`, but excludes `high`).
-    ///
-    /// # Examples
-    /// ```
-    /// # use crabsformer::prelude::*;
-    /// let v = Vector::uniform(5, 0.0, 1.0);
-    /// ```
-    pub fn uniform(len: usize, low: T, high: T) -> Vector<T>
-    where
-        T: SampleUniform,
-    {
-        let mut elements = Vec::with_capacity(len);
-        let uniform_distribution = Uniform::new(low, high);
-        let mut rng = rand::thread_rng();
-        for _ in 0..len {
-            elements.push(uniform_distribution.sample(&mut rng));
-        }
-
-        Vector { data: elements }
-    }
-
+impl<T> Vector<T>
+where
+    T: Num + Copy + FromPrimitive + PartialOrd + ops::AddAssign,
+{
     /// Create a new numeric vector of evenly spaced values within a given
     /// half-open interval `[start, stop)` and spacing value `step`. Values
     /// are generated within the half-open interval `[start, stop)` (in other
     /// words, the interval including `start` but excluding `stop`).
     ///
+    /// **Note that**:
+    /// 1. If `step = 0` it will returns an error.
+    /// 2. If `start < stop`, the step value should be `step > 0`, otherwise
+    /// it will returns an error.
+    /// 3. If `start > stop`, the step value should be `step < 0`, otherwise
+    /// it will returns an error.
+    ///
     /// # Examples
     /// ```
     /// # use crabsformer::prelude::*;
     /// let v = Vector::range(0.0, 3.0, 0.5);
-    /// // v = vector![0.0, 0.5, 1.0, 1.5, 2.0, 2.5]
     /// ```
-    ///
-    /// # Panics
-    /// Panics if `start >= stop`.
-    pub fn range(start: T, stop: T, step: T) -> Vector<T>
-    where
-        T: Num
-            + FromPrimitive
-            + Copy
-            + PartialOrd
-            + ops::AddAssign
-            + fmt::Display,
-    {
-        // If interval is invalid; then panic
-        if start >= stop {
-            panic!("Invalid range interval start={} stop={}", start, stop)
+    pub fn range(
+        start: T,
+        stop: T,
+        step: T,
+    ) -> Result<Vector<T>, VectorBuilderError> {
+        let zero = T::from_i32(0).unwrap();
+        // If step = 0, returns error
+        if step == zero {
+            return Err(VectorBuilderError::new(
+                VectorBuilderErrorKind::RangeInvalidStepValue,
+                "the step value should not equal to zero".to_string(),
+            ));
         }
+        // If start > stop and step > 0, returns error
+        if start > stop && step > zero {
+            return Err(VectorBuilderError::new(
+                VectorBuilderErrorKind::RangeInvalidStepValue,
+                "the step value should be negative".to_string(),
+            ));
+        }
+        // If start < stop and step < 0, returns error
+        if start < stop && step < zero {
+            return Err(VectorBuilderError::new(
+                VectorBuilderErrorKind::RangeInvalidStepValue,
+                "the step value should be positive".to_string(),
+            ));
+        }
+
+        // Initialize the vector
         let mut elements = Vec::new();
         let mut current_step = start;
-        while current_step < stop {
+        if start > stop {
+            while current_step > stop {
+                elements.push(current_step);
+                current_step += step;
+            }
+        } else if start < stop {
+            while current_step < stop {
+                elements.push(current_step);
+                current_step += step;
+            }
+        } else {
+            // case: start == stop
             elements.push(current_step);
-            current_step += step;
         }
-        Vector { data: elements }
+        Ok(Vector::from(elements))
     }
 
     /// Create a new numeric vector of the given length `len` and populate it
@@ -440,12 +451,7 @@ where
     /// ```
     pub fn linspace(len: usize, start: T, stop: T) -> Vector<T>
     where
-        T: Float
-            + FromPrimitive
-            + Copy
-            + PartialOrd
-            + ops::AddAssign
-            + fmt::Display,
+        T: Float,
     {
         // Convert len to float type
         let divisor = T::from_usize(len).unwrap();
@@ -483,7 +489,7 @@ where
     /// ```
     pub fn logspace(_len: usize, _a: T, _b: T) -> Vector<T>
     where
-        T: FromPrimitive + Copy + PartialOrd + ops::AddAssign + fmt::Display,
+        T: Float,
     {
         unimplemented!();
     }
@@ -506,14 +512,37 @@ where
     /// ```
     pub fn geomspace(_len: usize, _start: T, _end: T) -> Vector<T>
     where
-        T: Float
-            + FromPrimitive
-            + Copy
-            + PartialOrd
-            + ops::AddAssign
-            + fmt::Display,
+        T: Float,
     {
         unimplemented!();
+    }
+}
+
+impl<T> Vector<T>
+where
+    T: Num + Copy,
+{
+    /// Create a new numeric vector of the given length `len` and populate it
+    /// with random samples from a uniform distribution over the half-open
+    /// interval `[low, high)` (includes `low`, but excludes `high`).
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::prelude::*;
+    /// let v = Vector::uniform(5, 0.0, 1.0);
+    /// ```
+    pub fn uniform(len: usize, low: T, high: T) -> Vector<T>
+    where
+        T: SampleUniform,
+    {
+        let mut elements = Vec::with_capacity(len);
+        let uniform_distribution = Uniform::new(low, high);
+        let mut rng = rand::thread_rng();
+        for _ in 0..len {
+            elements.push(uniform_distribution.sample(&mut rng));
+        }
+
+        Vector { data: elements }
     }
 }
 

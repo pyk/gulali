@@ -34,6 +34,7 @@ pub use crate::matrix::operations::*;
 pub use crate::matrix::slicing::*;
 pub use crate::matrix::*;
 pub use crate::vector::builders::*;
+pub use crate::vector::errors::*;
 pub use crate::vector::indexing::*;
 pub use crate::vector::iterators::*;
 pub use crate::vector::loaders::*;

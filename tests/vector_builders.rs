@@ -218,11 +218,29 @@ fn test_normal() {
 
 #[test]
 fn test_range() {
-    let a = Vector::range(0.0, 3.0, 0.5);
-    assert_eq!(a, vector![0.0, 0.5, 1.0, 1.5, 2.0, 2.5]);
+    // start < stop, step > 0
+    let a1 = Vector::range(0.0, 3.0, 0.5).unwrap();
+    assert_eq!(a1, vector![0.0, 0.5, 1.0, 1.5, 2.0, 2.5]);
+    // Invalid Step Value: start < stop, step = 0
+    let b1 = Vector::range(0.0, 3.0, 0.0);
+    assert_eq!(b1.is_err(), true);
+    // Invalid Step Value: start < stop, step < 0
+    let c1 = Vector::range(0.0, 3.0, -1.0);
+    assert_eq!(c1.is_err(), true);
 
-    let b = Vector::range(0, 3, 1);
-    assert_eq!(b, vector![0, 1, 2]);
+    // start > stop, step < 0
+    let a2 = Vector::range(3.0, 0.0, -0.5).unwrap();
+    assert_eq!(a2, vector![3.0, 2.5, 2.0, 1.5, 1.0, 0.5]);
+    // Invalid Step Value: start > stop, step = 0
+    let b2 = Vector::range(3.0, 0.0, 0.0);
+    assert_eq!(b2.is_err(), true);
+    // Invalid Step Value: start > stop, step > 0
+    let c2 = Vector::range(3.0, 0.0, 1.0);
+    assert_eq!(c2.is_err(), true);
+
+    // start = stop
+    let a3 = Vector::range(0.0, 0.0, 0.5).unwrap();
+    assert_eq!(a3, vector![0.0]);
 }
 
 #[test]

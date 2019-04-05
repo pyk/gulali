@@ -105,7 +105,7 @@
 //!
 //! ```
 //! # use crabsformer::prelude::*;
-//! let x = Vector::range(0, 10, 1);
+//! let x = Vector::range(0, 10, 1).unwrap();
 //! assert_eq!(x, vector![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
 //! ```
 //!
