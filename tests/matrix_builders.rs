@@ -49,6 +49,20 @@ fn test_invalid_macro() {
 }
 
 #[test]
+fn test_from() {
+    let x = vec![vec![1, 2, 3], vec![1, 2, 3]];
+    let m = Matrix::from(x);
+    assert_eq!(m.shape(), [2, 3]);
+}
+
+#[test]
+fn test_copy() {
+    let x = vector![1, 2, 3, 4];
+    let y = Vector::copy(&x);
+    assert_eq!(x, y);
+}
+
+#[test]
 fn test_full() {
     let a = Matrix::full([2, 2], 5.0);
     assert_eq!(a, matrix![5.0, 5.0; 5.0, 5.0]);

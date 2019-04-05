@@ -26,7 +26,7 @@ fn test_from() {
     let d = Vector::from([1, 2, 3]);
     assert_eq!(d, vector![1, 2, 3]);
 
-    let ve = vec![1, 2 ,3, 4];
+    let ve = vec![1, 2, 3, 4];
     let c = Vector::from(&ve[..]);
     assert_eq!(c, vector![1, 2, 3, 4]);
 }

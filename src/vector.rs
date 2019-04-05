@@ -91,59 +91,6 @@ where
     }
 }
 
-macro_rules! numeric_vector_from_array_and_slices_impls {
-    ($($N:expr)+) => {
-    $(
-        // Conversion from static array to numeric vector
-        impl<T> From<[T; $N]> for Vector<T>
-        where
-            T: Num + Copy,
-        {
-            fn from(elements: [T; $N]) -> Self {
-                Vector::from(elements.to_vec())
-            }
-        }
-
-        // Conversion from slice to numeric vector
-        impl<T> From<&[T; $N]> for Vector<T>
-        where
-            T: Num + Copy,
-        {
-            fn from(elements: &[T; $N]) -> Self {
-                Vector::from(elements.to_vec())
-            }
-        }
-    )+
-    };
-}
-
-// Conversion from slice to numeric vector
-impl<T> From<&[T]> for Vector<T>
-where
-    T: Num + Copy,
-{
-    fn from(elements: &[T]) -> Self {
-        Vector::from(elements.to_vec())
-    }
-}
-
-numeric_vector_from_array_and_slices_impls! {
-     0  1  2  3  4  5  6  7  8  9
-    10 11 12 13 14 15 16 17 18 19
-    20 21 22 23 24 25 26 27 28 29
-    30 31 32
-}
-
-// Conversion from Vec<T>
-impl<T> From<Vec<T>> for Vector<T>
-where
-    T: Num + Copy,
-{
-    fn from(elements: Vec<T>) -> Self {
-        Vector { data: elements }
-    }
-}
-
 // Numeric vector comparison
 impl<T> PartialEq for Vector<T>
 where
