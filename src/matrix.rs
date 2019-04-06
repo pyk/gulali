@@ -23,6 +23,7 @@ use std::fmt;
 
 // Import all sub modules
 pub mod builders;
+pub mod errors;
 pub mod indexing;
 pub mod iterators;
 pub mod loaders;

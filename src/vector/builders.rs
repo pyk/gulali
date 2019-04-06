@@ -163,6 +163,7 @@ use crate::vector::Vector;
 use num::{Float, FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
 use rand::distributions::{Distribution, Normal, Uniform};
+use std::fmt;
 use std::ops;
 
 /// Creates a [numeric vector] containing the arguments.
@@ -401,21 +402,21 @@ where
         // If step = 0, returns error
         if step == zero {
             return Err(VectorBuilderError::new(
-                VectorBuilderErrorKind::RangeInvalidStepValue,
+                VectorBuilderErrorKind::InvalidStepValue,
                 "the step value should not equal to zero".to_string(),
             ));
         }
         // If start > stop and step > 0, returns error
         if start > stop && step > zero {
             return Err(VectorBuilderError::new(
-                VectorBuilderErrorKind::RangeInvalidStepValue,
+                VectorBuilderErrorKind::InvalidStepValue,
                 "the step value should be negative".to_string(),
             ));
         }
         // If start < stop and step < 0, returns error
         if start < stop && step < zero {
             return Err(VectorBuilderError::new(
-                VectorBuilderErrorKind::RangeInvalidStepValue,
+                VectorBuilderErrorKind::InvalidStepValue,
                 "the step value should be positive".to_string(),
             ));
         }
@@ -526,15 +527,29 @@ where
     /// with random samples from a uniform distribution over the half-open
     /// interval `[low, high)` (includes `low`, but excludes `high`).
     ///
+    /// **Note that**: If `low >= high` it will returns an error.
+    ///
     /// # Examples
     /// ```
     /// # use crabsformer::prelude::*;
-    /// let v = Vector::uniform(5, 0.0, 1.0);
+    /// let v = Vector::uniform(5, 0.0, 1.0).unwrap();
     /// ```
-    pub fn uniform(len: usize, low: T, high: T) -> Vector<T>
+    pub fn uniform(
+        len: usize,
+        low: T,
+        high: T,
+    ) -> Result<Vector<T>, VectorBuilderError>
     where
-        T: SampleUniform,
+        T: SampleUniform + PartialOrd + fmt::Display,
     {
+        // if low >= high returns an error
+        if low >= high {
+            return Err(VectorBuilderError::new(
+                VectorBuilderErrorKind::InvalidRange,
+                format!("low={} should less than high={}", low, high),
+            ));
+        }
+
         let mut elements = Vec::with_capacity(len);
         let uniform_distribution = Uniform::new(low, high);
         let mut rng = rand::thread_rng();
@@ -542,7 +557,7 @@ where
             elements.push(uniform_distribution.sample(&mut rng));
         }
 
-        Vector { data: elements }
+        Ok(Vector::from(elements))
     }
 }
 

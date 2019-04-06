@@ -141,82 +141,6 @@ fn test_ones_like() {
 }
 
 #[test]
-fn test_uniform() {
-    let vf1: Vector<f32> = Vector::uniform(5, 0.0, 1.0);
-    for value in vf1.elements() {
-        assert!((0.0 <= *value) && (*value < 1.0));
-    }
-
-    let vf2: Vector<f64> = Vector::uniform(5, 0.0, 1.0);
-    for value in vf2.elements() {
-        assert!((0.0 <= *value) && (*value < 1.0));
-    }
-
-    let vs1: Vector<usize> = Vector::uniform(5, 1, 10);
-    for value in vs1.elements() {
-        assert!((1 <= *value) && (*value < 10));
-    }
-
-    let vu1: Vector<u8> = Vector::uniform(5, 1, 10);
-    for value in vu1.elements() {
-        assert!((1 <= *value) && (*value < 10));
-    }
-
-    let vu2: Vector<u16> = Vector::uniform(5, 1, 10);
-    for value in vu2.elements() {
-        assert!((1 <= *value) && (*value < 10));
-    }
-
-    let vu3: Vector<u32> = Vector::uniform(5, 1, 10);
-    for value in vu3.elements() {
-        assert!((1 <= *value) && (*value < 10));
-    }
-
-    let vu4: Vector<u64> = Vector::uniform(5, 1, 10);
-    for value in vu4.elements() {
-        assert!((1 <= *value) && (*value < 10));
-    }
-
-    let vu5: Vector<u128> = Vector::uniform(5, 1, 10);
-    for value in vu5.elements() {
-        assert!((1 <= *value) && (*value < 10));
-    }
-
-    let vi1: Vector<i8> = Vector::uniform(5, -10, 10);
-    for value in vi1.elements() {
-        assert!((-10 <= *value) && (*value < 10));
-    }
-
-    let vi2: Vector<i16> = Vector::uniform(5, -10, 10);
-    for value in vi2.elements() {
-        assert!((-10 <= *value) && (*value < 10));
-    }
-
-    let vi3: Vector<i32> = Vector::uniform(5, -10, 10);
-    for value in vi3.elements() {
-        assert!((-10 <= *value) && (*value < 10));
-    }
-
-    let vi4: Vector<i64> = Vector::uniform(5, -10, 10);
-    for value in vi4.elements() {
-        assert!((-10 <= *value) && (*value < 10));
-    }
-
-    let vi5: Vector<i128> = Vector::uniform(5, -10, 10);
-    for value in vi5.elements() {
-        assert!((-10 <= *value) && (*value < 10));
-    }
-}
-
-#[test]
-fn test_normal() {
-    let a = Vector::normal(5, 2.0, 4.0);
-    let b = Vector::normal(5, 2.0, 4.0);
-    assert_eq!(a.len(), b.len());
-    assert_ne!(a, b);
-}
-
-#[test]
 fn test_range() {
     // start < stop, step > 0
     let a1 = Vector::range(0.0, 3.0, 0.5).unwrap();
@@ -247,4 +171,97 @@ fn test_range() {
 fn test_linspace() {
     let a = Vector::linspace(5, 1.0, 10.0);
     assert_eq!(a, vector![1.0, 3.25, 5.5, 7.75, 10.0]);
+}
+
+#[test]
+fn test_uniform_data_types() {
+    let vf1: Vector<f32> = Vector::uniform(5, 0.0, 1.0).unwrap();
+    for value in vf1.elements() {
+        assert!((0.0 <= *value) && (*value < 1.0));
+    }
+
+    let vf2: Vector<f64> = Vector::uniform(5, 0.0, 1.0).unwrap();
+    for value in vf2.elements() {
+        assert!((0.0 <= *value) && (*value < 1.0));
+    }
+
+    let vs1: Vector<usize> = Vector::uniform(5, 1, 10).unwrap();
+    for value in vs1.elements() {
+        assert!((1 <= *value) && (*value < 10));
+    }
+
+    let vu1: Vector<u8> = Vector::uniform(5, 1, 10).unwrap();
+    for value in vu1.elements() {
+        assert!((1 <= *value) && (*value < 10));
+    }
+
+    let vu2: Vector<u16> = Vector::uniform(5, 1, 10).unwrap();
+    for value in vu2.elements() {
+        assert!((1 <= *value) && (*value < 10));
+    }
+
+    let vu3: Vector<u32> = Vector::uniform(5, 1, 10).unwrap();
+    for value in vu3.elements() {
+        assert!((1 <= *value) && (*value < 10));
+    }
+
+    let vu4: Vector<u64> = Vector::uniform(5, 1, 10).unwrap();
+    for value in vu4.elements() {
+        assert!((1 <= *value) && (*value < 10));
+    }
+
+    let vu5: Vector<u128> = Vector::uniform(5, 1, 10).unwrap();
+    for value in vu5.elements() {
+        assert!((1 <= *value) && (*value < 10));
+    }
+
+    let vi1: Vector<i8> = Vector::uniform(5, -10, 10).unwrap();
+    for value in vi1.elements() {
+        assert!((-10 <= *value) && (*value < 10));
+    }
+
+    let vi2: Vector<i16> = Vector::uniform(5, -10, 10).unwrap();
+    for value in vi2.elements() {
+        assert!((-10 <= *value) && (*value < 10));
+    }
+
+    let vi3: Vector<i32> = Vector::uniform(5, -10, 10).unwrap();
+    for value in vi3.elements() {
+        assert!((-10 <= *value) && (*value < 10));
+    }
+
+    let vi4: Vector<i64> = Vector::uniform(5, -10, 10).unwrap();
+    for value in vi4.elements() {
+        assert!((-10 <= *value) && (*value < 10));
+    }
+
+    let vi5: Vector<i128> = Vector::uniform(5, -10, 10).unwrap();
+    for value in vi5.elements() {
+        assert!((-10 <= *value) && (*value < 10));
+    }
+}
+
+#[test]
+fn test_uniform_interval() {
+    // low < high
+    let x1 = Vector::uniform(5, -10, 10).unwrap();
+    for value in x1.elements() {
+        assert!((-10 <= *value) && (*value < 10));
+    }
+
+    // low = high
+    let x2 = Vector::uniform(5, 10, 10);
+    assert_eq!(x2.is_err(), true);
+
+    // low > high
+    let x3 = Vector::uniform(5, 10, -10);
+    assert_eq!(x3.is_err(), true);
+}
+
+#[test]
+fn test_normal() {
+    let a = Vector::normal(5, 2.0, 4.0);
+    let b = Vector::normal(5, 2.0, 4.0);
+    assert_eq!(a.len(), b.len());
+    assert_ne!(a, b);
 }

@@ -25,7 +25,13 @@ pub enum VectorBuilderErrorKind {
     ///
     /// Among other causes, this variant will be constructed when creating
     /// new range vector and step value is invalid.
-    RangeInvalidStepValue,
+    InvalidStepValue,
+
+    /// Invalid range for numeric vectors input.
+    ///
+    /// Among other causes, this variant will be constructed when creating
+    /// new vector with invalid range, for example `low >= high`.
+    InvalidRange,
 }
 
 /// An error which can be returned when creating new numeric vectors.
@@ -34,8 +40,8 @@ pub enum VectorBuilderErrorKind {
 /// Among other causes, `VectorBuilderError` can be thrown because of the
 /// input when creating new numeric vector is invalid.
 pub struct VectorBuilderError {
-    kind: VectorBuilderErrorKind,
-    message: String,
+    pub(crate) kind: VectorBuilderErrorKind,
+    pub(crate) message: String,
 }
 
 impl VectorBuilderError {
@@ -45,14 +51,13 @@ impl VectorBuilderError {
         VectorBuilderError { kind, message }
     }
 
-    pub fn kind(&self) -> &VectorBuilderErrorKind {
-        &self.kind
-    }
-
     fn description(&self) -> String {
         match self.kind {
-            VectorBuilderErrorKind::RangeInvalidStepValue => {
-                format!("Cannot create new numeric vector: {}", self.message)
+            VectorBuilderErrorKind::InvalidRange => {
+                format!("Vector builder invalid range: {}", self.message)
+            }
+            VectorBuilderErrorKind::InvalidStepValue => {
+                format!("Vector builder invalid step value: {}", self.message)
             }
         }
     }

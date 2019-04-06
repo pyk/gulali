@@ -457,7 +457,6 @@
 //! [Apache-2.0]: https://github.com/pyk/crabsformer/blob/master/LICENSE
 //!
 
-pub mod error;
 pub mod matrix;
 pub mod prelude;
 pub mod utils;

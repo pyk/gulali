@@ -14,7 +14,7 @@
 
 // TODO(pyk): Add docs about how to load matrix from external file here
 
-use crate::error::*;
+use crate::matrix::errors::{MatrixLoadError, MatrixLoadErrorKind};
 use crate::matrix::Matrix;
 use crate::utils;
 use csv;
@@ -71,7 +71,7 @@ where
     ///
     /// let dataset: Matrix<f32> = Matrix::from_csv("tests/data/weight.csv").load().unwrap();
     /// ```
-    pub fn load(self) -> Result<Matrix<T>, LoadError>
+    pub fn load(self) -> Result<Matrix<T>, MatrixLoadError>
     where
         T: FromPrimitive + Num + Copy + utils::TypeName,
     {
@@ -93,8 +93,8 @@ where
                     Ok(value) => value,
                     Err(_err) => {
                         // Return error early
-                        return Err(LoadError::new(
-                            LoadErrorKind::InvalidElement,
+                        return Err(MatrixLoadError::new(
+                            MatrixLoadErrorKind::InvalidElement,
                             format!(
                                 "{:?} is not valid {}",
                                 value,
@@ -108,8 +108,8 @@ where
             elements.push(rows);
         }
         if elements.len() == 0 {
-            return Err(LoadError::new(
-                LoadErrorKind::Empty,
+            return Err(MatrixLoadError::new(
+                MatrixLoadErrorKind::Empty,
                 String::from("Cannot load empty file"),
             ));
         }

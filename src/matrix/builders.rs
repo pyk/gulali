@@ -18,10 +18,12 @@
 //!
 //!
 
+use crate::matrix::errors::MatrixBuilderError;
 use crate::matrix::Matrix;
 use crate::vector::Vector;
 use num::{FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
+use std::fmt;
 
 /// Creates a [matrix] containing the arguments.
 ///
@@ -203,30 +205,39 @@ where
     {
         matrix![m.shape() => T::from_i32(1).unwrap()]
     }
+}
 
-    /// Create a new matrix of the given shape `shape` and
-    /// populate it with random samples from a uniform distribution
-    /// over the half-open interval `[low, high)` (includes `low`,
-    /// but excludes `high`).
+impl<T> Matrix<T>
+where
+    T: Num + Copy,
+{
+    /// Create a new matrix of the given shape `shape` and populate it with
+    /// random samples from a uniform distribution over the half-open
+    /// interval `[low, high)` (includes `low`, but excludes `high`).
+    ///
+    /// **Note that**: If `low >= high` it will returns an error.
     ///
     /// # Examples
-    ///
     /// ```
     /// # use crabsformer::prelude::*;
     /// let w = Matrix::uniform([5, 5], 0.0, 1.0);
     /// ```
-    pub fn uniform(shape: [usize; 2], low: T, high: T) -> Matrix<T>
+    pub fn uniform(
+        shape: [usize; 2],
+        low: T,
+        high: T,
+    ) -> Result<Matrix<T>, MatrixBuilderError>
     where
-        T: SampleUniform,
+        T: SampleUniform + PartialOrd + fmt::Display,
     {
         let total_elements = shape.iter().product();
-        let vec = Vector::uniform(total_elements, low, high);
+        let vec = Vector::uniform(total_elements, low, high)?;
 
-        Matrix {
+        Ok(Matrix {
             nrows: shape[0],
             ncols: shape[1],
             vec,
-        }
+        })
     }
 }
 

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+pub use crate::matrix::builders::*;
 /// A prelude for crates using the `crabsformer` crate.
 ///
 /// This prelude is similar to the standard library's prelude in that you'll
@@ -25,8 +26,7 @@
 /// We may add items to this over time as they become ubiquitous as well, but
 /// otherwise this should help cut down on futures-related imports when you're
 /// working with the `crabsformer` crate!
-pub use crate::error::*;
-pub use crate::matrix::builders::*;
+pub use crate::matrix::errors::*;
 pub use crate::matrix::indexing::*;
 pub use crate::matrix::iterators::*;
 pub use crate::matrix::loaders::*;

@@ -87,10 +87,9 @@ where
     /// Sum of numeric vector elements.
     ///
     /// # Examples
-    ///
     /// ```
     /// # use crabsformer::prelude::*;
-    /// let x = Vector::uniform(5, -1.0, 1.0);
+    /// let x = Vector::uniform(5, -1.0, 1.0).unwrap();
     /// let sum = x.sum();
     /// println!("sum = {}", sum);
     /// ```

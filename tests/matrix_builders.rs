@@ -178,96 +178,111 @@ fn test_ones_like() {
 
 #[test]
 fn test_uniform() {
-    let mf1: Matrix<f32> = Matrix::uniform([5, 5], 0.0, 1.0);
+    let mf1: Matrix<f32> = Matrix::uniform([5, 5], 0.0, 1.0).unwrap();
     for rows in mf1.rows() {
         for value in rows.elements() {
             assert!((0.0 <= value) && (value < 1.0));
         }
     }
 
-    let mf2: Matrix<f64> = Matrix::uniform([5, 5], 0.0, 1.0);
+    let mf2: Matrix<f64> = Matrix::uniform([5, 5], 0.0, 1.0).unwrap();
     for rows in mf2.rows() {
         for value in rows.elements() {
             assert!((0.0 <= value) && (value < 1.0));
         }
     }
 
-    let ms1: Matrix<usize> = Matrix::uniform([5, 5], 1, 10);
+    let ms1: Matrix<usize> = Matrix::uniform([5, 5], 1, 10).unwrap();
     for rows in ms1.rows() {
         for value in rows.elements() {
             assert!((1 <= value) && (value < 10));
         }
     }
 
-    let mu1: Matrix<u8> = Matrix::uniform([5, 5], 1, 10);
+    let mu1: Matrix<u8> = Matrix::uniform([5, 5], 1, 10).unwrap();
     for rows in mu1.rows() {
         for value in rows.elements() {
             assert!((1 <= value) && (value < 10));
         }
     }
 
-    let mu2: Matrix<u16> = Matrix::uniform([5, 5], 1, 10);
+    let mu2: Matrix<u16> = Matrix::uniform([5, 5], 1, 10).unwrap();
     for rows in mu2.rows() {
         for value in rows.elements() {
             assert!((1 <= value) && (value < 10));
         }
     }
 
-    let mu3: Matrix<u32> = Matrix::uniform([5, 5], 1, 10);
+    let mu3: Matrix<u32> = Matrix::uniform([5, 5], 1, 10).unwrap();
     for rows in mu3.rows() {
         for value in rows.elements() {
             assert!((1 <= value) && (value < 10));
         }
     }
 
-    let mu4: Matrix<u64> = Matrix::uniform([5, 5], 1, 10);
+    let mu4: Matrix<u64> = Matrix::uniform([5, 5], 1, 10).unwrap();
     for rows in mu4.rows() {
         for value in rows.elements() {
             assert!((1 <= value) && (value < 10));
         }
     }
 
-    let mu5: Matrix<u128> = Matrix::uniform([5, 5], 1, 10);
+    let mu5: Matrix<u128> = Matrix::uniform([5, 5], 1, 10).unwrap();
     for rows in mu5.rows() {
         for value in rows.elements() {
             assert!((1 <= value) && (value < 10));
         }
     }
 
-    let mi1: Matrix<i8> = Matrix::uniform([5, 5], -10, 10);
+    let mi1: Matrix<i8> = Matrix::uniform([5, 5], -10, 10).unwrap();
     for rows in mi1.rows() {
         for value in rows.elements() {
             assert!((-10 <= value) && (value < 10));
         }
     }
 
-    let mi2: Matrix<i16> = Matrix::uniform([5, 5], -10, 10);
+    let mi2: Matrix<i16> = Matrix::uniform([5, 5], -10, 10).unwrap();
     for rows in mi2.rows() {
         for value in rows.elements() {
             assert!((-10 <= value) && (value < 10));
         }
     }
 
-    let mi3: Matrix<i32> = Matrix::uniform([5, 5], -10, 10);
+    let mi3: Matrix<i32> = Matrix::uniform([5, 5], -10, 10).unwrap();
     for rows in mi3.rows() {
         for value in rows.elements() {
             assert!((-10 <= value) && (value < 10));
         }
     }
 
-    let mi4: Matrix<i64> = Matrix::uniform([5, 5], -10, 10);
+    let mi4: Matrix<i64> = Matrix::uniform([5, 5], -10, 10).unwrap();
     for rows in mi4.rows() {
         for value in rows.elements() {
             assert!((-10 <= value) && (value < 10));
         }
     }
 
-    let mi5: Matrix<i128> = Matrix::uniform([5, 5], -10, 10);
+    let mi5: Matrix<i128> = Matrix::uniform([5, 5], -10, 10).unwrap();
     for rows in mi5.rows() {
         for value in rows.elements() {
             assert!((-10 <= value) && (value < 10));
         }
     }
+}
+
+#[test]
+fn test_uniform_interval() {
+    // low < high
+    let x1 = Matrix::uniform([5, 5], -10, 10);
+    assert_eq!(x1.is_ok(), true);
+
+    // low = high
+    let x2 = Matrix::uniform([5, 5], 10, 10);
+    assert_eq!(x2.is_err(), true);
+
+    // low > high
+    let x3 = Matrix::uniform([5, 5], 10, -10);
+    assert_eq!(x3.is_err(), true);
 }
 
 #[test]
