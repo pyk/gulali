@@ -68,26 +68,6 @@ where
     }
 }
 
-// Conversion from Vec<Vec<T>>
-impl<T> From<Vec<Vec<T>>> for Matrix<T>
-where
-    T: Num + Copy,
-{
-    fn from(source: Vec<Vec<T>>) -> Self {
-        let nrows = source.len();
-        let ncols = source[0].len();
-        // Raise panic if number of columns on each row is inconsistent
-        let ncols_inconsistent = source.iter().any(|v| v.len() != ncols);
-        if ncols_inconsistent {
-            panic!("Invalid matrix: the number of columns is inconsistent")
-        }
-        // Flatten the vector
-        let vec = source.into_iter().flatten().collect();
-
-        Matrix { nrows, ncols, vec }
-    }
-}
-
 impl<T> fmt::Debug for Matrix<T>
 where
     T: Num + Copy + fmt::Debug + ToString,

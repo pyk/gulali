@@ -161,8 +161,11 @@
 use crate::vector::errors::{VectorBuilderError, VectorBuilderErrorKind};
 use crate::vector::Vector;
 use num::{Float, FromPrimitive, Num};
-use rand::distributions::uniform::SampleUniform;
-use rand::distributions::{Distribution, Normal, Uniform};
+use rand::{
+    distributions::uniform::SampleUniform, distributions::Distribution,
+    distributions::Normal, distributions::Uniform, rngs::SmallRng,
+    FromEntropy, SeedableRng,
+};
 use std::fmt;
 use std::ops;
 
@@ -519,10 +522,37 @@ where
     }
 }
 
-impl<T> Vector<T>
-where
-    T: Num + Copy,
+/// Random numeric vectors builder.
+pub struct RandomVectorBuilder
 {
+    rng: SmallRng,
+}
+
+impl RandomVectorBuilder {
+    /// Create a new random numeric vector builder.
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::prelude::*;
+    /// let rvb = RandomVectorBuilder::new();
+    /// ```
+    pub fn new() -> Self {
+        let rng = SmallRng::from_entropy();
+        RandomVectorBuilder{rng}
+    }
+
+    /// Set the seed of random numeric vector builder.
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::prelude::*;
+    /// let mut rvb = RandomVectorBuilder::new();
+    /// rvb.seed(12);
+    /// ```
+    pub fn seed(&mut self, value: u64) {
+        self.rng = SmallRng::seed_from_u64(value);
+    }
+
     /// Create a new numeric vector of the given length `len` and populate it
     /// with random samples from a uniform distribution over the half-open
     /// interval `[low, high)` (includes `low`, but excludes `high`).
@@ -532,15 +562,17 @@ where
     /// # Examples
     /// ```
     /// # use crabsformer::prelude::*;
-    /// let v = Vector::uniform(5, 0.0, 1.0).unwrap();
+    /// let mut rvb = RandomVectorBuilder::new();
+    /// let v = rvb.uniform(5, 0.0, 1.0).unwrap();
     /// ```
-    pub fn uniform(
+    pub fn uniform<T>(
+        &mut self,
         len: usize,
         low: T,
         high: T,
     ) -> Result<Vector<T>, VectorBuilderError>
     where
-        T: SampleUniform + PartialOrd + fmt::Display,
+        T: Num + Copy + SampleUniform + PartialOrd + fmt::Display,
     {
         // if low >= high returns an error
         if low >= high {
@@ -552,33 +584,43 @@ where
 
         let mut elements = Vec::with_capacity(len);
         let uniform_distribution = Uniform::new(low, high);
-        let mut rng = rand::thread_rng();
         for _ in 0..len {
-            elements.push(uniform_distribution.sample(&mut rng));
+            elements.push(uniform_distribution.sample(&mut self.rng));
         }
 
         Ok(Vector::from(elements))
     }
-}
 
-impl Vector<f64> {
     /// Create a new numeric vector of the given length `len` and populate it
     /// with random samples from a normal distribution `N(mean, std_dev**2)`.
+    ///
+    /// **Note that**: If `std_dev < 0` it will returns an error.
     ///
     /// # Examples
     /// ```
     /// # use crabsformer::prelude::*;
-    /// let v = Vector::normal(5, 0.0, 1.0); // Gaussian mean=0.0 std_dev=1.0
+    /// let mut rvb = RandomVectorBuilder::new();
+    /// // Gaussian mean=0.0 std_dev=1.0
+    /// let v = rvb.normal(5, 0.0, 1.0).unwrap();
     /// ```
-    pub fn normal(len: usize, mean: f64, std_dev: f64) -> Vector<f64> {
+    pub fn normal(
+        &mut self,
+        len: usize,
+        mean: f64,
+        std_dev: f64,
+    ) -> Result<Vector<f64>, VectorBuilderError> {
+        if std_dev < 0.0 {
+            return Err(VectorBuilderError::new(
+                VectorBuilderErrorKind::NegativeStandardDeviation,
+                format!("{}", std_dev),
+            ));
+        }
         let mut elements = Vec::with_capacity(len);
         let normal_distribution = Normal::new(mean, std_dev);
-        // Populate the vector with the default value
-        let mut rng = rand::thread_rng();
         for _ in 0..len {
-            elements.push(normal_distribution.sample(&mut rng));
+            elements.push(normal_distribution.sample(&mut self.rng));
         }
 
-        Vector { data: elements }
+        Ok(Vector::from(elements))
     }
 }

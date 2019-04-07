@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Crabsformer is an easy-to-use fundamental library for scientific computing with
-//! Rust, highly inspired by [NumPy].
+//! Crabsformer is an easy-to-use fundamental library for scientific computing
+//! with Rust, highly inspired by [NumPy].
 //!
-//! **Notice!** This project is in early phase. Expect bugs and missing features.
+//! **Notice!** This project is in early phase. Expect bugs and missing
+//! features.
 //!
 //! [NumPy]: http://www.numpy.org/
 //!
@@ -29,7 +30,7 @@
 //!
 //! and this to your crate root:
 //!
-//! ```rust
+//! ```
 //! use crabsformer::prelude::*;
 //! ```
 //!
@@ -38,23 +39,23 @@
 //! # Quickstart Tutorial
 //!
 //! ## Prerequisites
-//! Before reading this quick tutorial you should know a bit of Rust.
-//! If you would like to refresh your memory, take a look at the
-//! [Rust book].
+//! Before reading this quick tutorial you should know a bit of Rust. If you
+//! would like to refresh your memory, take a look at the [Rust book].
 //!
 //! [Rust book]: https://doc.rust-lang.org/book/
 //!
 //! ## The Basics
 //! There are two main data structures in Crabsformer:
 //!
-//! 1. [`Vector<T>`] is a fixed-length list of elements of the same [numeric type].
-//!    It has one atribute called [`len`] to represent the total number of elements.
-//! 2. [`Matrix<T>`] is a table of elements of the same [numeric type]. It has one
-//!    atribute called [`shape`] that represent the number of rows and the number
-//!    of columns.
+//! 1. [`Vector<T>`] is a fixed-length list of elements of the same
+//!     [numeric type]. It has one atribute called [`len`] to represent the
+//!     total number of elements.
+//! 2. [`Matrix<T>`] is a table of elements of the same [numeric type]. It has
+//!     one atribute called [`shape`] that represent the number of rows and
+//!     the number of columns.
 //!
-//! `Vector<T>` is pronounced as 'numeric vector' to avoid confussion with Rust's
-//! vector [`Vec<T>`] data structure.
+//! `Vector<T>` is pronounced as 'numeric vector' to avoid confussion with
+//! Rust's vector [`Vec<T>`] data structure.
 //!
 //! [`Vector<T>`]: vector/struct.Vector.html
 //! [`Matrix<T>`]: matrix/struct.Matrix.html
@@ -62,7 +63,7 @@
 //! [`shape`]: matrix/struct.Matrix.html#method.shape
 //! [`Vec<T>`]: https://doc.rust-lang.org/std/vec/struct.Vec.html
 //!
-//! ### Numeric Vector Creation
+//! ### Numeric Vector Builders
 //! There are several ways to create numeric vector.
 //!
 //! For example, you can create a numeric vector from a Rust vector using
@@ -75,8 +76,8 @@
 //! let y = Vector::from(x);
 //! ```
 //!
-//! The [`vector!`] macro is provided to make initialization of the
-//! numeric vector more convenient.
+//! The [`vector!`] macro is provided to make initialization of the numeric
+//! vector more convenient.
 //!
 //! ```
 //! # use crabsformer::prelude::*;
@@ -90,18 +91,8 @@
 //! let v = vector![0; 5]; // vector![0, 0, 0, 0, 0]
 //! ```
 //!
-//! The function [`uniform`] creates a numeric vector of the given
-//! length and populate it with random samples from a uniform
-//! distribution over the half-open interval.
-//!
-//! ```
-//! # use crabsformer::prelude::*;
-//! let v = Vector::uniform(5, 0.0, 1.0);
-//! // Vector([0.054709196, 0.86043775, 0.21187294, 0.6413728, 0.14186311]) (Random)
-//! ```
-//!
-//! To create a numeric vector of evenly spaced values, Crabformer provide [`range`]
-//! function.
+//! To create a numeric vector of evenly spaced values, Crabformer provide
+//! [`Vector::range`] function.
 //!
 //! ```
 //! # use crabsformer::prelude::*;
@@ -109,29 +100,43 @@
 //! assert_eq!(x, vector![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
 //! ```
 //!
-//! See also: [`vector!`], [`zeros`], [`zeros_like`], [`ones`], [`ones_like`],
-//! [`full`], [`full_like`], [`range`], [`linspace`], [`uniform`], [`normal`].
+//! To create random numeric vectors, Crabsformer provide
+//! [`RandomVectorBuilder`]. It can be explicitly seeded to make the results
+//! are reproducible.
+//!
+//! ```
+//! # use crabsformer::prelude::*;
+//! let mut rvb = RandomVectorBuilder::new();
+//! ```
+//!
+//! The method [`rvb.uniform`] creates a numeric vector of the given length
+//! and populate it with random samples from a uniform distribution over the
+//! half-open interval.
+//!
+//! ```
+//! # use crabsformer::prelude::*;
+//! # let mut rvb = RandomVectorBuilder::new();
+//! let v = rvb.uniform(5, 0.0, 1.0).unwrap();
+//! // Random
+//! // [0.054709196, 0.86043775, 0.21187294, 0.6413728, 0.14186311]
+//! ```
+//!
+//! See also: [Numeric Vector Builders].
 //!
 //! [`vector!`]: macro.vector.html
-//! [`zeros`]: struct.Vector.html#method.zeros
-//! [`zeros_like`]: struct.Vector.html#method.zeros_like
-//! [`ones`]: struct.Vector.html#method.ones
-//! [`ones_like`]: struct.Vector.html#method.ones_like
-//! [`full`]: struct.Vector.html#method.full
-//! [`full_like`]: struct.Vector.html#method.full_like
-//! [`range`]: struct.Vector.html#method.range
-//! [`linspace`]: struct.Vector.html#method.linspace
-//! [`uniform`]: struct.Vector.html#method.uniform
-//! [`normal`]: struct.Vector.html#method.normal
+//! [`RandomVectorBuilder`]: vector/builders/struct.RandomVectorBuilder.html
+//! [`rvb.uniform`]: vector/builders/struct.RandomVectorBuilder.html#method.uniform
+//! [Numeric Vector Builders]: vector/builders/index.html
+//! [`Vector::range`]: vector/struct.Vector.html#method.range
 //!
 //! ### Numeric Vector Basic Operations
-//! You can perform arithmetic operations on a numeric vector.
-//! Arithmetic operators on numeric vectors apply elementwise.
-//! A new numeric vector is created and filled with the result.
+//! You can perform arithmetic operations on a numeric vector. Arithmetic
+//! operators on numeric vectors apply elementwise. A new numeric vector is
+//! created and filled with the result.
+//!
 //! For example, if you add the numeric vector, the arithmetic operator
 //! will work element-wise. The output will be a numeric vector of the same
 //! length.
-//!
 //!
 //! ```rust
 //! # use crabsformer::prelude::*;
@@ -150,9 +155,9 @@
 //! assert_eq!(y, vector![10, 4, 4]);
 //! ```
 //!
-//! You can run an arithmetic operation on the numeric vector with
-//! a scalar value too. For example, this code multiplies each element
-//! of the numeric vector by 2.
+//! You can run an arithmetic operation on the numeric vector with a scalar
+//! value too. For example, this code multiplies each element of the numeric
+//! vector by 2.
 //!
 //! ```
 //! # use crabsformer::prelude::*;
@@ -177,14 +182,16 @@
 //! assert_eq!(x, vector![10, 6, 12]);
 //! ```
 //!
-//! If you try to add, substract or multiply numeric vector with a
-//! different number of elements, you will get an error. For example:
+//! If you try to add, substract or multiply numeric vector with a different
+//! number of elements, you will get an error. For example:
 //!
 //! ```should_panic
 //! # use crabsformer::prelude::*;
 //! let x = vector![3, 1, 4, 1, 5] + vector![2, 10, 9];
 //! // thread 'main' panicked at 'Vector addition with invalid length: 5 != 3' src/main.rs:12:13
 //! ```
+//!
+//! *TODO: add alternative x.add() to return Result instead of panics*
 //!
 //! If you would like to square of the individual elements of the numeric
 //! vector, or even higher up, use the [`power`] method. Here, each element of the
@@ -249,7 +256,7 @@
 //! }
 //! ```
 //!
-//! ### Matrix Creation
+//! ### Matrix Builders
 //! There are several ways to create matrix too.
 //!
 //! For example, you can create a matrix from a Rust's vector using
@@ -299,28 +306,31 @@
 //! let w = matrix![[3, 3] => 0]; // matrix![0, 0, 0; 0, 0, 0; 0, 0, 0]
 //! ```
 //!
-//! The function [`uniform`][m.uniform] creates a matrix of the given
-//! shape and populate it with random samples from a uniform
-//! distribution over the half-open interval.
+//! To create random matrix, Crabsformer provide
+//! [`RandomMatrixBuilder`]. It can be explicitly seeded to make the results
+//! are reproducible.
 //!
 //! ```
 //! # use crabsformer::prelude::*;
-//! let w = Matrix::uniform([2, 2], 0.0, 1.0);
+//! let mut rmb = RandomMatrixBuilder::new();
 //! ```
 //!
-//! See also: [`matrix!`], [`zeros`][m.zeros], [`zeros_like`][m.zeros_like],
-//! [`ones`][m.ones], [`ones_like`][m.ones_like], [`full`][m.full],
-//! [`full_like`][m.full_like], [`uniform`][m.uniform], [`normal`][m.normal].
+//! The method [`rmb.uniform`] creates a matrix of the given shape and
+//! populate it with random samples from a uniform distribution over the
+//! half-open interval.
+//!
+//! ```
+//! # use crabsformer::prelude::*;
+//! # let mut rmb = RandomMatrixBuilder::new();
+//! let v = rmb.uniform([5, 5], 0.0, 1.0).unwrap();
+//! ```
+//!
+//! See also: [Matrix Builders].
 //!
 //! [`matrix!`]: macro.matrix.html
-//! [m.zeros]: struct.Matrix.html#method.zeros
-//! [m.zeros_like]: struct.Matrix.html#method.zeros_like
-//! [m.ones]: struct.Matrix.html#method.ones
-//! [m.ones_like]: struct.Matrix.html#method.ones_like
-//! [m.full]: struct.Matrix.html#method.full
-//! [m.full_like]: struct.Matrix.html#method.full_like
-//! [m.uniform]: struct.Matrix.html#method.uniform
-//! [m.normal]: struct.Matrix.html#method.normal
+//! [`RandomMatrixBuilder`]: matrix/builders/struct.RandomMatrixBuilder.html
+//! [`rmb.uniform`]: matrix/builders/struct.RandomMatrixBuilder.html#method.uniform
+//! [Matrix Builders]: matrix/builders/index.html
 //!
 //! ### Matrix Basic Operations
 //! You can perform arithmetic operations on a matrix.

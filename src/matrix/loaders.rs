@@ -35,6 +35,7 @@ where
 {
     file_path: P,
     has_headers: bool,
+    // We use this to make compiler happy
     phantom: PhantomData<T>,
 }
 

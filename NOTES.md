@@ -1371,3 +1371,74 @@ let v: Vector<i32; 4> = Vector::zeros();
 Btw there is a related RFC for this
 
 1. https://github.com/rust-lang/rfcs/blob/master/text/2000-const-generics.md
+
+# Seedable RNG
+
+https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=1ef2a3799597226ce03fd499447abaf2
+
+# API For random generator
+
+Oke, we need to save the seed state.
+how to do that?
+
+Via struct ?
+Via global variable?
+
+```rust
+Vector::random()
+Vector::uniform()
+Vector::normal()
+```
+
+How to incorporate the `seed` on the API?
+
+```rust
+Vector::from_seed(314).uniform(len, );
+Vector::from_seed(314).normal();
+Vector::from_seed(314).normal();
+let random = Vector::from_seed(12);
+let mut random = Vector::random();
+random.seed(12);
+let x = random.uniform(len, low, high)
+```
+
+Oke jadi gini ya, ada `builders::RandomVectorBuilder`.
+yg ada method-method seperti uniform dll.
+
+```rust
+let random = Vector::from_seed(12);
+let mut random = Vector::random();
+random.seed(12);
+let x = random.uniform(len, low, high)
+let y = randomg.normal(len, ...)
+
+let mut random = Matrix::random();
+random.seed(12);
+let x = random.uniform(shape, low, high)
+let y = random.normal(shape, ...)
+```
+
+tak bisa mengalahkan ke simple-an
+
+```
+Matrix::random
+Matrix::uniform
+Matrix::sample
+Vector::random
+Vector::uniform
+Vector::sample
+Vector::shufle
+```
+
+So how we solve this?
+
+Global variable.
+
+nah.
+we will use `RandomVectorBuilder` and `RandomMatrixBuilder`. It is very easy to
+understand and use.
+
+
+
+
+

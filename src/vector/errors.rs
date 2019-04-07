@@ -24,7 +24,7 @@ pub enum VectorBuilderErrorKind {
     /// Invalid step value for numeric vectors range.
     ///
     /// Among other causes, this variant will be constructed when creating
-    /// new range vector and step value is invalid.
+    /// new numeric vector range and step value is invalid.
     InvalidStepValue,
 
     /// Invalid range for numeric vectors input.
@@ -32,6 +32,12 @@ pub enum VectorBuilderErrorKind {
     /// Among other causes, this variant will be constructed when creating
     /// new vector with invalid range, for example `low >= high`.
     InvalidRange,
+
+    /// Standard deviation value should not be negative.
+    ///
+    /// Among other causes, this variant will be constructed when creating
+    /// new random numeric vector using normal distribution with `std_dev < 0`.
+    NegativeStandardDeviation,
 }
 
 /// An error which can be returned when creating new numeric vectors.
@@ -59,6 +65,11 @@ impl VectorBuilderError {
             VectorBuilderErrorKind::InvalidStepValue => {
                 format!("Vector builder invalid step value: {}", self.message)
             }
+            VectorBuilderErrorKind::NegativeStandardDeviation => format!(
+                "Random vector builder standard deviation should not \
+                 be negative: {}",
+                self.message
+            ),
         }
     }
 }

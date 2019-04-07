@@ -32,6 +32,12 @@ pub enum MatrixBuilderErrorKind {
     /// new matrix with invalid range, for example `low >= high`.
     InvalidRange,
 
+    /// Standard deviation value should not be negative.
+    ///
+    /// Among other causes, this variant will be constructed when creating
+    /// new random matrix using normal distribution with `std_dev < 0`.
+    NegativeStandardDeviation,
+
     /// Any error not part of this list.
     Other,
 }
@@ -58,6 +64,12 @@ impl MatrixBuilderError {
             MatrixBuilderErrorKind::InvalidRange => {
                 format!("Matrix builder invalid range: {}", self.message)
             }
+            MatrixBuilderErrorKind::NegativeStandardDeviation => format!(
+                "Random matrix builder standard deviation should not \
+                 be negative: \
+                 {}",
+                self.message
+            ),
             MatrixBuilderErrorKind::Other => {
                 format!("Matrix builder error: {}", self.message)
             }
@@ -76,6 +88,12 @@ impl convert::From<VectorBuilderError> for MatrixBuilderError {
             VectorBuilderErrorKind::InvalidStepValue => {
                 MatrixBuilderError::new(
                     MatrixBuilderErrorKind::Other,
+                    error.message,
+                )
+            }
+            VectorBuilderErrorKind::NegativeStandardDeviation => {
+                MatrixBuilderError::new(
+                    MatrixBuilderErrorKind::NegativeStandardDeviation,
                     error.message,
                 )
             }

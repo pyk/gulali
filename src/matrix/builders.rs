@@ -20,7 +20,7 @@
 
 use crate::matrix::errors::MatrixBuilderError;
 use crate::matrix::Matrix;
-use crate::vector::Vector;
+use crate::vector::builders::RandomVectorBuilder;
 use num::{FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
 use std::fmt;
@@ -96,6 +96,26 @@ macro_rules! matrix {
         let elements = vec![$(vec![$($x),*]),*];
         $crate::matrix::Matrix::from(elements)
     }};
+}
+
+// Conversion from Vec<Vec<T>>
+impl<T> From<Vec<Vec<T>>> for Matrix<T>
+    where
+        T: Num + Copy,
+{
+    fn from(source: Vec<Vec<T>>) -> Self {
+        let nrows = source.len();
+        let ncols = source[0].len();
+        // Raise panic if number of columns on each row is inconsistent
+        let ncols_inconsistent = source.iter().any(|v| v.len() != ncols);
+        if ncols_inconsistent {
+            panic!("Invalid matrix: the number of columns is inconsistent")
+        }
+        // Flatten the vector
+        let vec = source.into_iter().flatten().collect();
+
+        Matrix { nrows, ncols, vec }
+    }
 }
 
 impl<T> Matrix<T>
@@ -207,10 +227,37 @@ where
     }
 }
 
-impl<T> Matrix<T>
-where
-    T: Num + Copy,
+/// Random matrices builder.
+pub struct RandomMatrixBuilder
 {
+    builder: RandomVectorBuilder,
+}
+
+impl RandomMatrixBuilder {
+    /// Creates new random matrix builder.
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::prelude::*;
+    /// let mut rmb = RandomMatrixBuilder::new();
+    /// ```
+    pub fn new() -> Self {
+        let builder = RandomVectorBuilder::new();
+        RandomMatrixBuilder { builder }
+    }
+
+    /// Set the seed of random matrix builder.
+    ///
+    /// # Examples
+    /// ```
+    /// # use crabsformer::prelude::*;
+    /// let mut rmb = RandomMatrixBuilder::new();
+    /// rmb.seed(12);
+    /// ```
+    pub fn seed(&mut self, value: u64) {
+        self.builder.seed(value);
+    }
+
     /// Create a new matrix of the given shape `shape` and populate it with
     /// random samples from a uniform distribution over the half-open
     /// interval `[low, high)` (includes `low`, but excludes `high`).
@@ -220,18 +267,20 @@ where
     /// # Examples
     /// ```
     /// # use crabsformer::prelude::*;
-    /// let w = Matrix::uniform([5, 5], 0.0, 1.0);
+    /// let mut rmb = RandomMatrixBuilder::new();
+    /// let w = rmb.uniform([5, 5], 0.0, 1.0);
     /// ```
-    pub fn uniform(
+    pub fn uniform<T>(
+        &mut self,
         shape: [usize; 2],
         low: T,
         high: T,
     ) -> Result<Matrix<T>, MatrixBuilderError>
     where
-        T: SampleUniform + PartialOrd + fmt::Display,
+        T: Num + Copy + SampleUniform + PartialOrd + fmt::Display,
     {
         let total_elements = shape.iter().product();
-        let vec = Vector::uniform(total_elements, low, high)?;
+        let vec = self.builder.uniform(total_elements, low, high)?;
 
         Ok(Matrix {
             nrows: shape[0],
@@ -239,26 +288,30 @@ where
             vec,
         })
     }
-}
 
-impl Matrix<f64> {
-    /// Create a new matrix of the given shape `shape` and
-    /// populate it with random samples from a normal distribution
-    /// `N(mean, std_dev**2)`.
+    /// Create a new matrix of the given shape `shape` and populate it with
+    /// random samples from a normal distribution `N(mean, std_dev**2)`.
+    ///
+    /// **Note that**: If `std_dev < 0` it will returns an error.
     ///
     /// # Examples
-    ///
     /// ```
     /// # use crabsformer::prelude::*;
-    /// let w = Matrix::normal([5, 5], 0.0, 1.0); // Gaussian mean=0.0 std_dev=1.0
+    /// let mut rmb = RandomMatrixBuilder::new();
+    /// let v = rmb.normal([5, 5], 0.0, 1.0); // Gaussian mean=0.0 std_dev=1.0
     /// ```
-    pub fn normal(shape: [usize; 2], mean: f64, std_dev: f64) -> Matrix<f64> {
+    pub fn normal(
+        &mut self,
+        shape: [usize; 2],
+        mean: f64,
+        std_dev: f64,
+    ) -> Result<Matrix<f64>, MatrixBuilderError> {
         let total_elements = shape.iter().product();
-        let vec = Vector::normal(total_elements, mean, std_dev);
-        Matrix {
+        let vec = self.builder.normal(total_elements, mean, std_dev)?;
+        Ok(Matrix {
             nrows: shape[0],
             ncols: shape[1],
             vec,
-        }
+        })
     }
 }

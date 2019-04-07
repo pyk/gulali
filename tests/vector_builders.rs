@@ -175,67 +175,69 @@ fn test_linspace() {
 
 #[test]
 fn test_uniform_data_types() {
-    let vf1: Vector<f32> = Vector::uniform(5, 0.0, 1.0).unwrap();
+    let mut rvb = RandomVectorBuilder::new();
+
+    let vf1: Vector<f32> = rvb.uniform(5, 0.0, 1.0).unwrap();
     for value in vf1.elements() {
         assert!((0.0 <= *value) && (*value < 1.0));
     }
 
-    let vf2: Vector<f64> = Vector::uniform(5, 0.0, 1.0).unwrap();
+    let vf2: Vector<f64> = rvb.uniform(5, 0.0, 1.0).unwrap();
     for value in vf2.elements() {
         assert!((0.0 <= *value) && (*value < 1.0));
     }
 
-    let vs1: Vector<usize> = Vector::uniform(5, 1, 10).unwrap();
+    let vs1: Vector<usize> = rvb.uniform(5, 1, 10).unwrap();
     for value in vs1.elements() {
         assert!((1 <= *value) && (*value < 10));
     }
 
-    let vu1: Vector<u8> = Vector::uniform(5, 1, 10).unwrap();
+    let vu1: Vector<u8> = rvb.uniform(5, 1, 10).unwrap();
     for value in vu1.elements() {
         assert!((1 <= *value) && (*value < 10));
     }
 
-    let vu2: Vector<u16> = Vector::uniform(5, 1, 10).unwrap();
+    let vu2: Vector<u16> = rvb.uniform(5, 1, 10).unwrap();
     for value in vu2.elements() {
         assert!((1 <= *value) && (*value < 10));
     }
 
-    let vu3: Vector<u32> = Vector::uniform(5, 1, 10).unwrap();
+    let vu3: Vector<u32> = rvb.uniform(5, 1, 10).unwrap();
     for value in vu3.elements() {
         assert!((1 <= *value) && (*value < 10));
     }
 
-    let vu4: Vector<u64> = Vector::uniform(5, 1, 10).unwrap();
+    let vu4: Vector<u64> = rvb.uniform(5, 1, 10).unwrap();
     for value in vu4.elements() {
         assert!((1 <= *value) && (*value < 10));
     }
 
-    let vu5: Vector<u128> = Vector::uniform(5, 1, 10).unwrap();
+    let vu5: Vector<u128> = rvb.uniform(5, 1, 10).unwrap();
     for value in vu5.elements() {
         assert!((1 <= *value) && (*value < 10));
     }
 
-    let vi1: Vector<i8> = Vector::uniform(5, -10, 10).unwrap();
+    let vi1: Vector<i8> = rvb.uniform(5, -10, 10).unwrap();
     for value in vi1.elements() {
         assert!((-10 <= *value) && (*value < 10));
     }
 
-    let vi2: Vector<i16> = Vector::uniform(5, -10, 10).unwrap();
+    let vi2: Vector<i16> = rvb.uniform(5, -10, 10).unwrap();
     for value in vi2.elements() {
         assert!((-10 <= *value) && (*value < 10));
     }
 
-    let vi3: Vector<i32> = Vector::uniform(5, -10, 10).unwrap();
+    let vi3: Vector<i32> = rvb.uniform(5, -10, 10).unwrap();
     for value in vi3.elements() {
         assert!((-10 <= *value) && (*value < 10));
     }
 
-    let vi4: Vector<i64> = Vector::uniform(5, -10, 10).unwrap();
+    let vi4: Vector<i64> = rvb.uniform(5, -10, 10).unwrap();
     for value in vi4.elements() {
         assert!((-10 <= *value) && (*value < 10));
     }
 
-    let vi5: Vector<i128> = Vector::uniform(5, -10, 10).unwrap();
+    let vi5: Vector<i128> = rvb.uniform(5, -10, 10).unwrap();
     for value in vi5.elements() {
         assert!((-10 <= *value) && (*value < 10));
     }
@@ -243,25 +245,29 @@ fn test_uniform_data_types() {
 
 #[test]
 fn test_uniform_interval() {
+    let mut rvb = RandomVectorBuilder::new();
+
     // low < high
-    let x1 = Vector::uniform(5, -10, 10).unwrap();
+    let x1 = rvb.uniform(5, -10, 10).unwrap();
     for value in x1.elements() {
         assert!((-10 <= *value) && (*value < 10));
     }
 
     // low = high
-    let x2 = Vector::uniform(5, 10, 10);
+    let x2 = rvb.uniform(5, 10, 10);
     assert_eq!(x2.is_err(), true);
 
     // low > high
-    let x3 = Vector::uniform(5, 10, -10);
+    let x3 = rvb.uniform(5, 10, -10);
     assert_eq!(x3.is_err(), true);
 }
 
 #[test]
 fn test_normal() {
-    let a = Vector::normal(5, 2.0, 4.0);
-    let b = Vector::normal(5, 2.0, 4.0);
+    let mut rvb = RandomVectorBuilder::new();
+
+    let a = rvb.normal(5, 2.0, 4.0).unwrap();
+    let b = rvb.normal(5, 2.0, 4.0).unwrap();
     assert_eq!(a.len(), b.len());
     assert_ne!(a, b);
 }

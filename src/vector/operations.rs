@@ -89,7 +89,7 @@ where
     /// # Examples
     /// ```
     /// # use crabsformer::prelude::*;
-    /// let x = Vector::uniform(5, -1.0, 1.0).unwrap();
+    /// let x: Vector<i32> = Vector::ones(5);
     /// let sum = x.sum();
     /// println!("sum = {}", sum);
     /// ```
