@@ -161,11 +161,10 @@
 use crate::vector::errors::{VectorBuilderError, VectorBuilderErrorKind};
 use crate::vector::Vector;
 use num::{Float, FromPrimitive, Num};
-use rand::{
-    distributions::uniform::SampleUniform, distributions::Distribution,
-    distributions::Normal, distributions::Uniform, rngs::SmallRng,
-    FromEntropy, SeedableRng,
-};
+use rand::distributions::uniform::SampleUniform;
+use rand::distributions::{Distribution, Normal, Uniform};
+use rand::{FromEntropy, SeedableRng};
+use rand::rngs::SmallRng;
 use std::fmt;
 use std::ops;
 
@@ -523,8 +522,7 @@ where
 }
 
 /// Random numeric vectors builder.
-pub struct RandomVectorBuilder
-{
+pub struct RandomVectorBuilder {
     rng: SmallRng,
 }
 
@@ -538,7 +536,7 @@ impl RandomVectorBuilder {
     /// ```
     pub fn new() -> Self {
         let rng = SmallRng::from_entropy();
-        RandomVectorBuilder{rng}
+        RandomVectorBuilder { rng }
     }
 
     /// Set the seed of random numeric vector builder.

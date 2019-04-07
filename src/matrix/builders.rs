@@ -100,8 +100,8 @@ macro_rules! matrix {
 
 // Conversion from Vec<Vec<T>>
 impl<T> From<Vec<Vec<T>>> for Matrix<T>
-    where
-        T: Num + Copy,
+where
+    T: Num + Copy,
 {
     fn from(source: Vec<Vec<T>>) -> Self {
         let nrows = source.len();
@@ -228,8 +228,7 @@ where
 }
 
 /// Random matrices builder.
-pub struct RandomMatrixBuilder
-{
+pub struct RandomMatrixBuilder {
     builder: RandomVectorBuilder,
 }
 
