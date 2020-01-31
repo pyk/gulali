@@ -46,6 +46,26 @@ To get started using Crabsformer, read the [quickstart tutorial].
 
 [quickstart tutorial]:  https://docs.rs/crabsformer#quickstart-tutorial
 
+## Development
+Clone the repository using the following command:
+
+```sh
+git clone https://github.com/pyk/Crabsformer.git --depth=1
+cd Crabsformer/
+```
+
+To build the project run the following command:
+
+```sh
+cargo build
+```
+
+To run the unit test run the following command:
+
+```sh
+cargo test
+```
+
 ## Getting help
 Feel free to start discussion at [GitHub issues].
 
