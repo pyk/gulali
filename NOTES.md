@@ -1439,6 +1439,115 @@ we will use `RandomVectorBuilder` and `RandomMatrixBuilder`. It is very easy to
 understand and use.
 
 
+## Implementasi Const Generic
 
+Tujuannya apa sih?
+
+aku pengen kalau waktu inialisasi numeric vector dengan informasi jumlah element
+di dalam numeric vektor. Supaya ketika dilakukan operasi aritmatic itu bisa di
+cek waktu compile time.
+
+Jadi ketika ada gini kasus ini
+
+    1D vector + 1D vector -> compiled
+    1D vector + 2D Vector -> akan error tidak bisa di compile
+
+Jadi kita coba bikin struct baru yg namanya `VectorConst`.
+
+vektor biasa:
+
+    let v = Vector::zeros(5); -> Vector
+
+Pengenku itu jadi gini:
+
+    let v1: VectorConst<i32, 5> = VectorConst::zeros();
+    let v2: VectorConst<i32, 6> = VectorConst::ones();
+
+    v3 = v1 + v2; # Compile error
+
+Ini dah bisa cuy, jadi nanti kira2 bakalan seperti ini:
+
+```rust
+use num::{FromPrimitive, Num};
+use std::ops::Add;
+
+pub struct VectorConst<T, const N: usize>
+where
+    T: Num + Copy,
+{
+    elements: Vec<T>,
+    dim: usize,
+}
+
+impl<T, const N: usize> VectorConst<T, { N }>
+where
+    T: FromPrimitive + Num + Copy,
+{
+    pub fn len(&self) -> usize {
+        self.dim
+    }
+
+    pub fn zeros() -> VectorConst<T, { N }> {
+        let elements = vec![T::from_i32(0).unwrap(); N];
+        VectorConst { elements, dim: N }
+    }
+}
+
+impl<T: Add<Output = T>, const N: usize> Add for VectorConst<T, { N }>
+where
+    T: Num + Copy,
+{
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self::Output {
+        let elements = self
+            .elements
+            .iter()
+            .enumerate()
+            .map(|(i, x)| *x + other.elements[i])
+            .collect();
+
+        VectorConst {
+            elements: elements,
+            dim: N,
+        }
+    }
+}
+```
+
+bentar, ini masalahnya kalau butuh dimensi vektor yg dinamis
+sesuai dengan input user seperti ini:
+
+```rust
+
+fn get_dim1() -> usize {
+    3
+}
+fn get_dim2() -> usize {
+    5
+}
+
+// For testing the compile error
+#[test]
+fn test_vector_const_compile() {
+    const dim1: usize = get_dim1();
+    const dim2: usize = get_dim2();
+
+    let v1: VectorConst<i32, dim1> = VectorConst::zeros();
+    let v2: VectorConst<i32, dim2> = VectorConst::zeros();
+
+    let v3 = v1 + v2;
+    let v4 = v1 + v1;
+    let v5 = v2 + v2;
+}
+
+```
+
+kode diatas gak akan ke compile karena `get_dim*` bukan fungsi constant.
+
+Untuk belajar fungsi constant ada [disini](https://blog.knoldus.com/no-more-run-time-enjoy-compile-time-function-evaluation-using-const-fn-in-rust/).
+
+ini akan masalah ketika dimensi vektornya itu diambil dari input2 dinamis lainnya
+misal dari jumlah filter ConvNet.
 
 
