@@ -1550,4 +1550,114 @@ Untuk belajar fungsi constant ada [disini](https://blog.knoldus.com/no-more-run-
 ini akan masalah ketika dimensi vektornya itu diambil dari input2 dinamis lainnya
 misal dari jumlah filter ConvNet.
 
+btw ini untuk testnya ada disini:
+
+```rust
+use crabsformer::prelude::*;
+
+#[test]
+fn test_vector_constant() {
+    let v: VectorConst<i32, 4> = VectorConst::zeros();
+    assert_eq!(v.len(), 4);
+}
+
+// For testing the compile error
+#[test]
+fn test_vector_const_compile() {
+    let v1: VectorConst<i32, 3> = VectorConst::zeros();
+    let v2: VectorConst<i32, 5> = VectorConst::zeros();
+
+    let v3 = v1 + v2;
+    let v4 = v1 + v1;
+    let v5 = v2 + v2;
+}
+
+fn get_dim1() -> usize {
+    3
+}
+fn get_dim2() -> usize {
+    5
+}
+
+// For testing the compile error
+#[test]
+fn test_vector_const_compile() {
+    const dim1: usize = get_dim1();
+    const dim2: usize = get_dim2();
+
+    let v1: VectorConst<i32, dim1> = VectorConst::zeros();
+    let v2: VectorConst<i32, dim2> = VectorConst::zeros();
+
+    let v3 = v1 + v2;
+    let v4 = v1 + v1;
+    let v5 = v2 + v2;
+}
+```
+
+Jadi pengennya nanti bakalan seperti ini API numeric vectornya:
+
+```rust
+let v: Vector<f32, 5> = Vector::zeros();
+let x: Vector<f32, 10> = Vector::ones();
+
+// Vector Ops
+let y = v + x; // compile error
+```
+
+Kasusnya gini:
+
+```rust
+let a = vector![1, 2, 3, 4, 5]; // Vector<i32, 5>
+```
+
+misalkan `a` ini kita filter element yg dibawah 3:
+
+```rust
+let b = a.filter(|x| x > 3);
+```
+
+Nah masalahnya adalah kan sebelumnya a itu `Vector<i32, 5>`, gimana ngasih tau
+kalau `filter` itu retuns `Vector<i32, N>` dimana `N <=5`.
+
+Gimana caranya?
+
+
+```
+    pub fn filter(&self, criteria: impl Fn(T) -> bool) -> Vector<T, { N }> {
+        let data: Vec<T> = self
+            .elements()
+            .filter(|&&x| criteria(x))
+            .map(|x| *x)
+            .collect();
+
+        N = data.len();
+
+        Vector { data }
+    }
+```
+
+Jadi aku nemu kasus kalau ada method yang merubah `N` di runtime itu gabisa.
+
+Oh untuk ngefilter suatu vektor kan harusnya gini:
+
+```
+let v: Vector<i32, 10> = ...
+
+v.filter(|x| x >=2) -> disini elementnya akan berkurang tapi N nya bakalan tetep
+
+```
+
+terus cara kedua kita bisa buat fungsi diluar sih ga pake method
+
+
+```
+crabsformer::filter(v, |x| x > 2);
+
+v -> punya informasi T, N
+outputnya itu filtered_v -> informasi T, M <= N
+```
+
+Misalkan waktu baca sebuah data: List of reviews
+dan kita pengen buat vektornya. Nah itu gabisa soalnya `N` dimensi vektornya
+itu harus tau sebelum program di compile.
 
