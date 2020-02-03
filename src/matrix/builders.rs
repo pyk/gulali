@@ -21,6 +21,7 @@
 use crate::matrix::errors::MatrixBuilderError;
 use crate::matrix::Matrix;
 use crate::vector::builders::RandomVectorBuilder;
+use crate::vector::Vector;
 use num::{FromPrimitive, Num};
 use rand::distributions::uniform::SampleUniform;
 use std::fmt;
@@ -207,6 +208,35 @@ where
         T: FromPrimitive,
     {
         matrix![shape => T::from_i32(1).unwrap()]
+    }
+
+    /// Create a new matrix with ones on the diagonal and zeros elsewhere.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use crabsformer::prelude::*;
+    /// let w1: Matrix<i32> = Matrix::eye([2, 2]);
+    /// ```
+    pub fn eye(shape: [usize; 2]) -> Matrix<T>
+    where
+        T: FromPrimitive,
+    {
+        let nrows = shape[0];
+        let ncols = shape[1];
+        let mut data = Vec::with_capacity(shape[0] * shape[1]);
+        for i in 0..nrows {
+            for j in 0..ncols {
+                if i == j {
+                    data.push(T::from_i32(1).unwrap());
+                } else {
+                    data.push(T::from_i32(0).unwrap());
+                }
+            }
+        }
+        // TODO: 
+        let vec = Vector::from(data);
+        Matrix { nrows, ncols, vec }
     }
 
     /// Create a new matrix that have the same shape and type

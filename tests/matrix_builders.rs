@@ -297,3 +297,9 @@ fn test_normal() {
     assert_eq!(a.shape(), b.shape());
     assert_ne!(a, b);
 }
+
+#[test]
+fn test_eye() {
+    let a: Matrix<i32> = Matrix::eye([2, 2]);
+    assert_eq!(a, matrix![1, 0; 0, 1]);
+}
